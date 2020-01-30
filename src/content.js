@@ -3,8 +3,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
-import App from "./App";
 import "./content.css";
+import Router, {goBack, goTo, Link} from "route-lite";
+import Initial from "./stages/initial";
+
+// const A = () => {
+//   return (
+//     <Link
+//       component={B}
+//       componentProps={{text: "!!!!!!!!!!!!!!!!!!!!Component B"}}
+//     >
+//       Component A
+//     </Link>
+//   );
+// }
+// const B = ({text}) => {
+//   return (<div>pppyukjfgfghffhg</div>, <div onClick={() => goBack()}>{text} PPLLLELASE</div>, <div onClick={() => goTo(A)}>{text} GO TO A</div>)
+// }
+
+
 
 class Main extends React.Component {
     render() {
@@ -12,16 +29,8 @@ class Main extends React.Component {
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}> 
                <FrameContextConsumer>
                {
-               // Callback is invoked with iframe's window and document instances
                    ({document, window}) => {
-                      // Render Children
-                       
-                      //  return (
-                      //     <div className={'my-extension'}>
-                      //          <h1>Hello world - My first Extension</h1>
-                      //     </div>
-                      //  )
-                      return <App document={document} window={window}/> 
+                     return(<Router><Initial /></Router>)
                     }
                 }
                 </FrameContextConsumer>

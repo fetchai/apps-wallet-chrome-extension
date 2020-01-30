@@ -1,6 +1,6 @@
 {
-  "short_name": "My Extension",
-  "name": "My Extension",
+  "short_name": "My Extension3",
+  "name": "My Extension3",
   "version": "1.0",
   "manifest_version": 2,
   "background": {
@@ -17,5 +17,8 @@
   "web_accessible_resources":[
     "/static/css/content.css"
   ],
+  "permissions": [
+          "storage"
+        ],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'"
 }
