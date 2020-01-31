@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import {Bootstrap, LedgerApi} from "fetchai-ledger-api/src/fetchai/ledger/api";
 import {NETWORK_NAME} from "../constants";
-import {form_error_message} from "../services/form_error_message";
+import {formErrorMessage} from "../services/formErrorMessage.js";
+import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
+import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 
 export default class Send extends Component {
 
@@ -10,33 +12,49 @@ export default class Send extends Component {
         this.address = props.address;
         this.validate = this.validate.bind(this)
         this.transfer = this.transfer.bind(this)
-        this.transfer_controller = this.transfer_controller.bind(this)
+        this.transferController = this.transferController.bind(this)
     }
-
 
     async componentDidMount() {
          const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME)
         this.api = new LedgerApi(host, port)
     }
 
-    async transfer_controller(event){
+    /**
+     * Controls logic to decide if we can do transfer, then calls transfer method if we can.
+     *
+     * @param event
+     * @returns {Promise<void>}
+     */
+    async transferController(event){
         event.preventDefault()
         let valid = await this.validate(event);
 
         if(valid){
              const to_address = event.target[0]
              const amount = event.target[1]
-            await this.transfer(to_address, this.address, amount)
+            await this.transfer(to_address, amount)
         }
     }
 
-    async transfer(to, from, amount){
-         const tx2 = await this.api.tokens.transfer(identity1, identity2, amount, 20).catch((error) => {
+    async transfer(to, amount){
+         const tx2 = await this.api.tokens.transfer(this.entity, to, amount, 20).catch((error) => {
         console.log('error occured: ' + error)
         throw new Error()
     })
 
-    await api.sync([tx2]).catch(errors => sync_error(errors))
+    await this.api.sync([tx2]).catch(errors => console.log(errors))
+    }
+
+
+    validAddress(address){
+                //todo swap to is_address when Ed updates public SDK
+         try {
+              new Address(address)
+        } catch(e){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -48,14 +66,12 @@ export default class Send extends Component {
     async validate(event){
         const to_address = event.target[0]
         const amount = event.target[1]
+        const password = event.target[1]
 
-        //todo swap to is_address when Ed updates public SDK
-        try {
-              new Address(to_address)
-        } catch(e){
-         form_error_message("to_address", "Invalid Address")
-            return false;
-        }
+       if(!this.validAddress(to_address)){
+                    formErrorMessage("to_address", "Invalid Address")
+       }
+
         let balance
         try {
               balance = await this.api.tokens.balance(this.address)
@@ -63,29 +79,31 @@ export default class Send extends Component {
             // error handling logic in-case key is invalid, or network request fails.
           //  add logic here
           //form_error_message("to_address", "Network Error")
+              console.log('error ossssssccured: ')
         }
 
         if (balance < amount) {
-          form_error_message("amount", `Insufficient funds ( Balance: ${balance})`)
+          formErrorMessage("amount", `Insufficient funds ( Balance: ${balance})`)
           return false;
         }
+
+         const json_str = localStorage.getItem('key_file')
+
+        this.entity = await Entity._from_json_object(JSON.parse(json_str, password)).catch(() => {
+              formErrorMessage("password", `Password Incorrect`)
+            return false;
+        })
+
         return true;
     }
 
-
-
-
-
-
-
     render() {
         return (
-            <form onSubmit={this.transfer_controller}>
-                                    Recipient Address:<br>
-                                    <input type="text" name="to_address" value="to_address">
+            <form onSubmit={this.transferController}>
+                Recipient Address:
+                                    <input type="text" name="to_address" value="to_address"></input>
                                     <input type="number" id="amount" name="amount" step='1'></input>
                                     <input type="password" id="password" name="password"></input>
-                                        <output name="result" htmlFor="a b">60</output>
                                     <input type="submit" value="Transfer"></input>
                             </form>
         );

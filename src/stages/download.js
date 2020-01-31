@@ -8,23 +8,27 @@ export default class Download extends Component {
         super(props)
         this.download = this.download.bind(this)
         this.make_QR = this.make_QR.bind(this)
-        this.address = props.address
+        this.state = {
+            address: props.address
+        }
     }
 
     componentDidMount() {
   this.make_QR()
     }
 
-
     make_QR() {
         let qr = qrCode(4, 'M')
-        qr.addData(this.address)
+        debugger;
+        const a = this.state.address
+        console.log("THIS IS A : " + a);
+        qr.addData(a)
         qr.make()
         document.getElementById('qr').innerHTML = qr.createImgTag();
     }
 
    async download() {
-      const json_str = localStorage.getItem('key');
+      const json_str = localStorage.getItem('key_file');
     const element = document.createElement("a");
     const file = new Blob([json_str], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);

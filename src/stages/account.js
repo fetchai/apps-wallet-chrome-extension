@@ -3,6 +3,9 @@ import {Bootstrap, LedgerApi} from "fetchai-ledger-api/src/fetchai/ledger/api";
 import {NETWORK_NAME} from "../constants";
 import {goTo} from "route-lite";
 import Download from "./download";
+import Send from "./send";
+import {isLoggedIn} from "../services/loggedIn";
+import Initial from "./initial";
 
 export default class Account extends Component {
 
@@ -11,7 +14,12 @@ export default class Account extends Component {
         debugger;
 
         this.balance = this.balance.bind(this)
-        this.handleDownload = this.handleDownload.bind(this)
+
+        if(!isLoggedIn()){
+            goTo(Initial)
+            return;
+        }
+
         this.address = props.address
         // account balance in hex
         this.state = {
@@ -40,7 +48,7 @@ try {
         return (
             <div>
             <span>{this.state.balance}</span>
-                 <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Download, this.address)}>
+                 <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Download, {address: this.address} )}>
                         Download
                     </button>
                     <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Send)}>
