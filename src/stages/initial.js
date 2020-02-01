@@ -11,9 +11,16 @@ export default class Initial extends Component {
     constructor(props) {
         super(props)
 
-        if(isLoggedIn()){
-         goTo(Account)
-        }
+    }
+
+    componentDidMount() {
+        debugger;
+           this.gaa()
+
+    }
+
+    gaa() {
+         return goTo(Create)
     }
 
     hasSavedKey() {

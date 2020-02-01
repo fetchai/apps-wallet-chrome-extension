@@ -14,7 +14,7 @@ export default class Create extends Component {
         this.handleSubmit = this.handleSubmit.bind(this)
     }
 
-      handleChange(event)
+    handleChange(event)
       {
     let change = {}
     change[event.target.name] = event.target.value
@@ -29,7 +29,6 @@ export default class Create extends Component {
          if(!Entity._strong_password(this.state.password)){
             let password = document.getElementById("password");
              password.setCustomValidity("Password too Weak");
-             // this.setCustomValidity("Merci d'indiquer votre adresse email!");
              password.reportValidity();
              return
          }
@@ -43,13 +42,13 @@ export default class Create extends Component {
 
          let entity = new Entity();
          const json_obj = await entity._to_json_object(this.state.password)
-         localStorage.setItem("key", JSON.stringify(json_obj))
-
-
+         localStorage.setItem("key_file", JSON.stringify(json_obj))
+         localStorage.setItem("address", new Address(entity).toString())
+         localStorage.setItem('logged_in', "true");
             // chrome.storage.sync.set({'key': json_str}, function() {
             //      console.log('saved in local storage');
             // });
-          goTo(Account, { address: new Address(entity).toString() })
+          goTo(Account)
        }
 
 

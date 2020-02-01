@@ -78,8 +78,9 @@ export default class Recover extends Component {
                  formErrorMessage("file", "Incorrect file type");
                     errors_flag = true
             } else {
+                debugger;
                 entity = await Entity._from_json_object(file_str, this.state.password).catch(() => {
-                    formErrorMessage("password", "Incorrect Passwordqq");
+                    formErrorMessage("password", "Unable to decrypt");
                     errors_flag = true
                 })
             }

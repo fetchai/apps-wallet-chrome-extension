@@ -6,6 +6,8 @@ import Frame, { FrameContextConsumer }from 'react-frame-component';
 import "./content.css";
 import Router, {goBack, goTo, Link} from "route-lite";
 import Initial from "./stages/initial";
+import {isLoggedIn} from "./services/loggedIn";
+import Create from "./stages/create";
 
 // const A = () => {
 //   return (
@@ -25,12 +27,20 @@ import Initial from "./stages/initial";
 
 class Main extends React.Component {
     render() {
+         let opening_page;
+
+    if(isLoggedIn()) {
+      opening_page = <Initial />
+    } else {
+      opening_page = <Create />
+    }
+
         return (
             <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}> 
                <FrameContextConsumer>
                {
                    ({document, window}) => {
-                     return(<Router><Initial /></Router>)
+                     return(<Router>{opening_page}</Router>)
                     }
                 }
                 </FrameContextConsumer>

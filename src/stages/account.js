@@ -4,23 +4,15 @@ import {NETWORK_NAME} from "../constants";
 import {goTo} from "route-lite";
 import Download from "./download";
 import Send from "./send";
-import {isLoggedIn} from "../services/loggedIn";
-import Initial from "./initial";
 
 export default class Account extends Component {
 
     constructor(props) {
         super(props)
-        debugger;
+        debugger
 
         this.balance = this.balance.bind(this)
-
-        if(!isLoggedIn()){
-            goTo(Initial)
-            return;
-        }
-
-        this.address = props.address
+        this.address = localStorage.getItem("address");
         // account balance in hex
         this.state = {
             balance: 'eeee'
@@ -41,7 +33,8 @@ try {
   } catch (e) {
     throw new Error('The following error occurred checking the balance: ' + e);
   }
-  this.setState({ balance: balance.toNumber })
+  // balance.toNumber
+  this.setState({ balance: 44 })
     }
 
     render() {
