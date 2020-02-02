@@ -5,7 +5,7 @@ import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
-import {handleChange} from "../utils/misc"
+import Authentication from "../services/authentication";
 
 
 export default class Login extends Component {
@@ -13,10 +13,18 @@ export default class Login extends Component {
     constructor(props) {
         super(props)
         this.state = { password: '', password_confirm: '' }
-        this.handleChange = handleChange.bind(this)
+        this.handleChange = this.handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleFileChange = this.handleFileChange.bind(this)
     }
+
+     handleChange(event)
+      {
+    let change = {}
+    change[event.target.name] = event.target.value
+          debugger;
+    this.setState(change)
+      }
 
       handleFileChange(event)
       {
@@ -35,23 +43,13 @@ export default class Login extends Component {
              return
          }
 
-          const key = localStorage.getItem('key_file');
-          //todo assumption here that address will exist.
-          const address = localStorage.getItem('address');
-
-
-          const entity = await Entity._from_json_object(JSON.parse(key), this.state.password).catch(() => {
-                           formErrorMessage("password", "Incorrect Password")
-                           return
-          })
-          debugger;
-          if (new Address(entity).toString() !== address) {
-                formErrorMessage("password", "Incorrect Password");
+          if(!(await Authentication.correctPassword(this.state.password))){
+               formErrorMessage("password", "Incorrect Password");
                 return
           }
 
            localStorage.setItem('logged_in', "true");
-           goTo(Account, {address: new Address(entity).toString()})
+           goTo(Account)
        }
 
 

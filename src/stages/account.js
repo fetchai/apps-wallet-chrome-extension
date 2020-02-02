@@ -32,9 +32,8 @@ export default class Account extends Component {
 try {
    balance = await this.api.tokens.balance(this.address);
   } catch (e) {
-    throw new Error('The following error occurred checking the balance: ' + e);
+   // throw new Error('The following error occurred checking the balance: ' + e);
   }
-  // balance.toNumber
   this.setState({ balance: 44 })
     }
 

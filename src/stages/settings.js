@@ -7,6 +7,9 @@ import {Authentication} from "../services/authentication";
 import Expand from "react-expand-animated";
 import {BoxExpand, BoxExpand1, BoxToggle, Button, ExpandBoxes} from "../css/main.styles";
 import {handleChange} from "../utils/misc"
+import {formErrorMessage} from "../services/formErrorMessage";
+import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
+import {VERSION} from "../constants";
 
 export default class Settings extends Component {
 
@@ -14,30 +17,86 @@ export default class Settings extends Component {
         super(props)
                 this.HandleLogOut = this.HandleLogOut.bind(this)
                 this.toggle = this.toggle.bind(this)
-                this.handleChange = handleChange.bind(this)
-
+                this.handleChange = this.handleChange.bind(this)
+                this.validPassword = this.validPassword.bind(this)
+                this.passwordConfirmValidate = this.passwordConfirmValidate.bind(this)
+                this.newPasswordValidate = this.newPasswordValidate.bind(this)
+                this.handlePasswordUpdate = this.handlePasswordUpdate.bind(this)
+                this.update_password = this.update_password.bind(this)
+            
          this.state = {
     collapsable_1: false,
     collapsable_2: false,
     collapsable_3: false,
     password: '',
-    password_confirm: '',
+    new_password_confirm: '',
     new_password: ''
   };
 
     }
 
+      handleChange(event)
+      {
+    let change = {}
+    change[event.target.name] = event.target.value
+          debugger;
+    this.setState(change)
+      }
+
+    passwordConfirmValidate(){
+   if(this.state.new_password !== this.new_password_confirm) {
+       formErrorMessage("password", "Incorrect Password")
+       return false;
+   } return true;
+}
+
+    async validPassword(){
+        if(!(await Authentication.correctPassword(this.state.password))) {
+            formErrorMessage("password", "Incorrect Password")
+            return false
+        }
+        return true;
+}
+
+   async newPasswordValidate(){
+        if(!(await Authentication.correctPassword(this.state.new_password))) {
+            formErrorMessage("new_password", "New password is the same as current password")
+            return false
+        }
+        else if(Entity._strong_password(this.state.new_password)) {
+            formErrorMessage("new_password", "Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character")
+            return false
+        }
+        return true;
+   }
+
       toggle(index) {
-    let collapse = "isOpen" + index;
+    let collapse = "collapsable_" + index;
     this.setState(prevState => ({ [collapse]: !prevState[collapse] }));
   };
 
 
+   async handlePasswordUpdate(){
+        let errors_flag = false;
 
-    handlePasswordUpdate(){
+        if(!(await this.validPassword())) errors_flag = true;
+        if(!(await this.newPasswordValidate())) errors_flag = true;
+        if(!this.passwordConfirmValidate()) errors_flag = true;
+        if(!errors_flag) this.update_password()
+}
 
-
-
+async update_password(){
+       //NOTE: assumes original password is checked for correctness before invoking this, else it will lead to key loss
+      const orig_key_file = localStorage.getItem('key_file');
+     const entity = Entity._from_json_object(orig_key_file, this.state.password)
+     const key_file = entity._to_json_object(this.state.new_password)
+      localStorage.setItem("key_file", JSON.stringify(key_file))
+this.setState({
+        password: '',
+    new_password_confirm: '',
+    new_password: ''
+    }, () => formErrorMessage("output", "Password successfully updated")
+    );
 }
 
     HandleLogOut(){
@@ -46,7 +105,6 @@ export default class Settings extends Component {
     }
 
     render() {
-
         const styles = {
       open: { background: "#ecf0f1" }
     };
@@ -92,20 +150,27 @@ export default class Settings extends Component {
             transitions={transitions}
           >
  <form id="form">
-                    <legend>Confirm password with HTML5</legend>
+                    <legend>Change Password</legend>
                             <input type="text" placeholder="Password" id="password" name ="password" value={this.state.password}
-                                   onChange={this.handleChange.bind(this)} required></input>
-                            <input type="text" placeholder="Confirm Password" id="password_confirm" name ="password_confirm" value={this.state.password_confirm}
-                                   onChange={this.handleChange.bind(this)} required></input>
+                                   onBlur = {this.validPassword.bind(this)} onChange={this.handleChange.bind(this)} required></input>
                             <input type="text" placeholder="Confirm Password" id="password_confirm" name ="password_confirm" value={this.state.new_password}
-                                   onChange={this.handleChange.bind(this)} required></input>
+                                   onBlur = {this.newPasswordValidate.bind(this)} onChange={this.handleChange.bind(this)} required></input>
+      <input type="text" placeholder="New Password" id="new_password" name ="new_password" value={this.state.new_password_confirm}
+                                   onBlur = {this.passwordConfirmValidate.bind(this)} onChange={this.handleChange.bind(this)} required></input>
+     <output type="text" id="output"></output>
                     <button type="submit" className="pure-button pure-button-primary" onClick={this.handlePasswordUpdate}>Update</button>
                 </form>
-
-                <BoxToggle>
+        </Expand>
             <Button onClick={() => this.toggle(3)}>About</Button>
-          </BoxToggle>
-
+  <Expand
+            open={this.state.collapsable_3}
+            duration={500}
+            styles={styles}
+            transitions={transitions}
+          >
+      <p>FET Wallet Version {VERSION}</p>
+      <p>Developed and Designed by Fetch.ai Cambridge</p>
+  </Expand>
 
 
 

@@ -4,6 +4,7 @@ import {NETWORK_NAME} from "../constants";
 import {formErrorMessage} from "../services/formErrorMessage.js";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
+import {validAddress} from "../utils/validAddress";
 
 export default class Send extends Component {
 
@@ -52,16 +53,6 @@ export default class Send extends Component {
     }
 
 
-    validAddress(address){
-                //todo swap to is_address when Ed updates public SDK
-         try {
-              new Address(address)
-        } catch(e){
-            return false;
-        }
-        return true;
-    }
-
     /**
      *
      *
@@ -73,7 +64,7 @@ export default class Send extends Component {
         const amount = event.target[1]
         const password = event.target[1]
 
-       if(!this.validAddress(to_address)){
+       if(!validAddress(to_address)){
                     formErrorMessage("to_address", "Invalid Address")
        }
 
