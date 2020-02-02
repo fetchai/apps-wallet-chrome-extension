@@ -46,13 +46,13 @@ export default class Login extends Component {
           const address = localStorage.getItem('address');
 
 
-          const entity = Entity._from_json_object(JSON.parse(key), this.state.password).catch(() => {
+          const entity = await Entity._from_json_object(JSON.parse(key), this.state.password).catch(() => {
                            formErrorMessage("password", "Incorrect Password")
                            return
           })
-
-          if (new Address(entity).toString() !== this.state.address) {
-                formErrorMessage("address", "Incorrect Password");
+          debugger;
+          if (new Address(entity).toString() !== address) {
+                formErrorMessage("password", "Incorrect Password");
                 return
           }
 

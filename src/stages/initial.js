@@ -3,7 +3,6 @@ import {goTo, Link} from "route-lite";
 import Create from "./create";
 import Login from "./login";
 import Recover from "./recover";
-import {isLoggedIn} from "../services/loggedIn";
 import Account from "./account";
 
 export default class Initial extends Component {
@@ -13,15 +12,15 @@ export default class Initial extends Component {
 
     }
 
-    componentDidMount() {
-        debugger;
-           this.gaa()
-
-    }
-
-    gaa() {
-         return goTo(Create)
-    }
+    // componentDidMount() {
+    //     debugger;
+    //        this.gaa()
+    //
+    // }
+    //
+    // gaa() {
+    //      return goTo(Create)
+    // }
 
     hasSavedKey() {
         return localStorage.getItem('key_file') !== null

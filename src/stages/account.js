@@ -4,6 +4,7 @@ import {NETWORK_NAME} from "../constants";
 import {goTo} from "route-lite";
 import Download from "./download";
 import Send from "./send";
+import Settings from "./settings";
 
 export default class Account extends Component {
 
@@ -40,8 +41,11 @@ try {
     render() {
         return (
             <div>
+            <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Settings)}>
+                        Settings
+                    </button>
             <span>{this.state.balance}</span>
-                 <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Download, {address: this.address} )}>
+                 <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Download)}>
                         Download
                     </button>
                     <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Send)}>

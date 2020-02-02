@@ -8,8 +8,9 @@ export default class Download extends Component {
         super(props)
         this.download = this.download.bind(this)
         this.make_QR = this.make_QR.bind(this)
+
         this.state = {
-            address: props.address
+            address: localStorage.getItem('address')
         }
     }
 

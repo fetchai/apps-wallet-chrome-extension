@@ -6,8 +6,8 @@ import Frame, { FrameContextConsumer }from 'react-frame-component';
 import "./content.css";
 import Router, {goBack, goTo, Link} from "route-lite";
 import Initial from "./stages/initial";
-import {isLoggedIn} from "./services/loggedIn";
 import Create from "./stages/create";
+import Authentication from "./services/authentication";
 
 // const A = () => {
 //   return (
@@ -29,7 +29,7 @@ class Main extends React.Component {
     render() {
          let opening_page;
 
-    if(isLoggedIn()) {
+    if(Authentication.isLoggedIn()) {
       opening_page = <Initial />
     } else {
       opening_page = <Create />

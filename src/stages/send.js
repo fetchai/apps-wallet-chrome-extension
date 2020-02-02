@@ -17,7 +17,11 @@ export default class Send extends Component {
 
     async componentDidMount() {
          const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME)
-        this.api = new LedgerApi(host, port)
+        // this.api = new LedgerApi(host, port)
+        const HOST = '127.0.0.1'
+        const PORT = 8000
+
+        this.api = new LedgerApi(HOST, PORT)
     }
 
     /**
@@ -43,7 +47,8 @@ export default class Send extends Component {
         throw new Error()
     })
 
-    await this.api.sync([tx2]).catch(errors => console.log(errors))
+    await this.api.sync(tx2).catch(errors => console.log(errors))
+
     }
 
 
@@ -72,15 +77,10 @@ export default class Send extends Component {
                     formErrorMessage("to_address", "Invalid Address")
        }
 
-        let balance
-        try {
-              balance = await this.api.tokens.balance(this.address)
-        } catch (e) {
-            // error handling logic in-case key is invalid, or network request fails.
-          //  add logic here
-          //form_error_message("to_address", "Network Error")
-              console.log('error ossssssccured: ')
-        }
+       const balance = await this.api.tokens.balance(this.address).catch(() => {
+                   formErrorMessage("amount", `Insufficient funds ( Balance: ${balance})`)
+          return false;
+              })
 
         if (balance < amount) {
           formErrorMessage("amount", `Insufficient funds ( Balance: ${balance})`)
@@ -101,9 +101,10 @@ export default class Send extends Component {
         return (
             <form onSubmit={this.transferController}>
                 Recipient Address:
-                                    <input type="text" name="to_address" value="to_address"></input>
-                                    <input type="number" id="amount" name="amount" step='1'></input>
-                                    <input type="password" id="password" name="password"></input>
+                                    <input type="text" name="to_address"  id="to_address" value="to_address"></input>
+                                    <input type="number" name="amount" id="amount" name="amount" step='1'></input>
+                                    <input type="password" name="password" id="password"></input>
+                                    <span id ="send_error"></span>
                                     <input type="submit" value="Transfer"></input>
                             </form>
         );
