@@ -6,6 +6,7 @@ import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
 import {validJSONObject} from "../utils/json";
+import {handleChange} from "../utils/misc"
 
 const CONFIRM_MESSAGE = "Decrypting without providing an Address means that if the password is wrong it will decrypt to the wrong address " +
             "rather than throw an error. Click yes to proceed or cancel and provide an address ";
@@ -15,7 +16,7 @@ export default class Recover extends Component {
     constructor(props) {
         super(props);
         this.handleFileChange = this.handleFileChange.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChange = handleChange.bind(this);
 
         this.state = {
             file: "",
@@ -35,12 +36,6 @@ export default class Recover extends Component {
                 reject(null);
             }
         })
-    }
-
-    handleChange(event) {
-        let change = {};
-        change[event.target.name] = event.target.value;
-        this.setState(change)
     }
 
     handleFileChange(event) {

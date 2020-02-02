@@ -5,6 +5,7 @@ import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
+import {handleChange} from "../utils/misc"
 
 
 export default class Login extends Component {
@@ -12,17 +13,10 @@ export default class Login extends Component {
     constructor(props) {
         super(props)
         this.state = { password: '', password_confirm: '' }
-        this.handleChange = this.handleChange.bind(this)
+        this.handleChange = handleChange.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this)
         this.handleFileChange = this.handleFileChange.bind(this)
     }
-
-      handleChange(event)
-      {
-    let change = {}
-    change[event.target.name] = event.target.value
-    this.setState(change)
-      }
 
       handleFileChange(event)
       {
