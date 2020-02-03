@@ -1,5 +1,6 @@
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
+import {Storage} from "./storage"
 
 export default class Authentication {
 
@@ -14,7 +15,7 @@ static hasSavedKey() {
 }
 
 static logOut() {
-    localStorage.setItem('logged_in', "false");
+    Storage.setLocalStorage('logged_in', "false");
     }
 
     /**
@@ -37,7 +38,5 @@ static logOut() {
 }
 
 }
-
-
 
 export { Authentication }

@@ -4,6 +4,7 @@ import {goBack, goTo} from "route-lite";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
+import {Storage} from "../services/storage"
 
 export default class Create extends Component {
 
@@ -41,9 +42,9 @@ export default class Create extends Component {
 
          let entity = new Entity();
          const json_obj = await entity._to_json_object(this.state.password)
-         localStorage.setItem("key_file", JSON.stringify(json_obj))
-         localStorage.setItem("address", new Address(entity).toString())
-         localStorage.setItem('logged_in', "true");
+         Storage.setLocalStorage("key_file", JSON.stringify(json_obj))
+         Storage.setLocalStorage("address", new Address(entity).toString())
+         Storage.setLocalStorage('logged_in', "true");
             // chrome.storage.sync.set({'key': json_str}, function() {
             //      console.log('saved in local storage');
             // });

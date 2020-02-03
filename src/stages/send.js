@@ -6,6 +6,7 @@ import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {validAddress} from "../utils/validAddress";
 import Authentication from "../services/authentication";
+import {Storage} from "../services/storage"
 
 export default class Send extends Component {
 

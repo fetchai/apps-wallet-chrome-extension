@@ -3,6 +3,7 @@ import {goTo, Link} from "route-lite";
 import Create from "./create";
 import Login from "./login";
 import Recover from "./recover";
+import {Storage} from "../services/storage"
 
 export default class Initial extends Component {
 

@@ -7,6 +7,7 @@ import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
 import {validJSONObject} from "../utils/json";
 import {validAddress} from "../utils/validAddress";
+import {Storage} from "../services/storage"
 
 const CONFIRM_MESSAGE = "Decrypting without providing an Address means that if the password is wrong it will decrypt to the wrong address " +
             "rather than throw an error. Click yes to proceed or cancel and provide an address ";
@@ -132,8 +133,8 @@ export default class Recover extends Component {
 
         // if no errors then we store the data.
         if (!error_flag) {
-            localStorage.setItem("key_file", file_str);
-            localStorage.setItem("address", new Address(entity).toString());
+            Storage.setLocalStorage("key_file", file_str);
+            Storage.setLocalStorage("address", new Address(entity).toString());
             goTo(Account)
         }
     }

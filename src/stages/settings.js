@@ -8,6 +8,7 @@ import {BoxExpand, BoxExpand1, BoxToggle, Button, ExpandBoxes} from "../css/main
 import {formErrorMessage} from "../services/formErrorMessage";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {VERSION} from "../constants";
+import {Storage} from "../services/storage"
 import Login from "./login";
 
 export default class Settings extends Component {
@@ -102,7 +103,7 @@ async update_password(){
       debugger
      const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
      const key_file = await entity._to_json_object(this.state.new_password)
-      localStorage.setItem("key_file", JSON.stringify(key_file))
+      Storage.setLocalStorage("key_file", JSON.stringify(key_file))
 this.setState({
         password: '',
     new_password_confirm: '',

@@ -3,6 +3,7 @@ import qrCode from 'qrcode-generator'
 import {KEY_FILE_NAME} from "../constants";
 import {goTo} from "route-lite";
 import Account from "./account";
+import {Storage} from "../services/storage"
 
 export default class Download extends Component {
 

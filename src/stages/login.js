@@ -4,6 +4,7 @@ import {goBack, goTo} from "route-lite";
 import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
 import Authentication from "../services/authentication";
+import {Storage} from "../services/storage"
 
 export default class Login extends Component {
 
@@ -31,7 +32,7 @@ export default class Login extends Component {
                 return
           }
 
-           localStorage.setItem('logged_in', "true");
+           Storage.setLocalStorage('logged_in', "true");
            goTo(Account)
        }
 

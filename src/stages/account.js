@@ -5,6 +5,7 @@ import {goTo} from "route-lite";
 import Download from "./download";
 import Send from "./send";
 import Settings from "./settings";
+import {Storage} from "../services/storage"
 
 export default class Account extends Component {
 
