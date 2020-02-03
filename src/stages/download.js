@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import qrCode from 'qrcode-generator'
 import {KEY_FILE_NAME} from "../constants";
+import {goTo} from "route-lite";
+import Account from "./account";
 
 export default class Download extends Component {
 
@@ -18,12 +20,9 @@ export default class Download extends Component {
   this.make_QR()
     }
 
-    make_QR() {
+make_QR() {
         let qr = qrCode(4, 'M')
-        debugger;
-        const a = this.state.address
-        console.log("THIS IS A : " + a);
-        qr.addData(a)
+        qr.addData(this.state.address)
         qr.make()
         document.getElementById('qr').innerHTML = qr.createImgTag();
     }
@@ -42,6 +41,9 @@ export default class Download extends Component {
     render() {
         return (
             <div>
+                  <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Account)}>
+                        X
+                </button>
                 <div id="qr"></div>
             <span>{this.state.address}</span>
                  <a className='btn btn-primary btn-block' href={"www.fetch.ai"}>

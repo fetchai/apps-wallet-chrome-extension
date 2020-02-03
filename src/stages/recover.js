@@ -105,33 +105,36 @@ export default class Recover extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         // validate
-        let errors_flag = false;
+        let error_flag = false;
         let entity;
         let file_str;
 
-        if(!this.validPassword())  errors_flag = true
-        if(!this.validFile())  errors_flag = true
+        if(!this.validPassword())  error_flag = true
+        if(!this.validFile())  error_flag = true
         else {
-            entity = await Entity._from_json_object(file_str, this.state.password).catch(() => {
+            file_str = await this.read_file(this.state.file);
+            debugger;
+            entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password).catch(() => {
                 formErrorMessage("password", "Unable to decrypt");
-                errors_flag = true
+                error_flag = true
             })
         }
 
         if (this.state.address && entity instanceof Entity) {
             if (new Address(entity).toString() !== this.state.address) {
                 formErrorMessage("address", "Incorrect Password or Address");
-                errors_flag = true
+                error_flag = true
             }
-        } else if (!errors_flag && !window.confirm(CONFIRM_MESSAGE)) {
-            errors_flag = true
+        } else if (!error_flag && !window.confirm(CONFIRM_MESSAGE)) {
+            error_flag = true
         }
 
+
         // if no errors then we store the data.
-        if (!errors_flag) {
-            localStorage.setItem("key", file_str);
+        if (!error_flag) {
+            localStorage.setItem("key_file", file_str);
             localStorage.setItem("address", new Address(entity).toString());
-            goTo(Account, {address: new Address(entity).toString()})
+            goTo(Account)
         }
     }
 
@@ -145,9 +148,9 @@ render()
                 <input label='file' id="file" type="file"
                        value={this.state.file_name} onBlur={this.validFile.bind(this)} onChange={this.handleFileChange.bind(this)}></input>
                 <input type="text" placeholder="Password" id="password" name="password" value={this.state.password}
-                       onBlur={this.validPassword.bind(this)} onChange={this.handleChange.bind(this)} required></input>
-                <label>Address: optional2</label>
-                <input label='address' id="address" type="text" name="address" onBlur={() => {if(this.state.address !== "") this.validAddress.bind(this)} }
+                        onChange={this.handleChange.bind(this)} required></input>
+                <label>Address (optional)</label>
+                <input label='address' id="address" type="text" name="address"
                        value={this.state.address} onChange={this.handleChange.bind(this)}></input>
                 <button type="submit" className="pure-button pure-button-primary"
                         onClick={this.handleSubmit.bind(this)}>Upload

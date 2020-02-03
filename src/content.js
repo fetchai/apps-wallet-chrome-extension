@@ -9,22 +9,6 @@ import Initial from "./stages/initial";
 import Create from "./stages/create";
 import Authentication from "./services/authentication";
 
-// const A = () => {
-//   return (
-//     <Link
-//       component={B}
-//       componentProps={{text: "!!!!!!!!!!!!!!!!!!!!Component B"}}
-//     >
-//       Component A
-//     </Link>
-//   );
-// }
-// const B = ({text}) => {
-//   return (<div>pppyukjfgfghffhg</div>, <div onClick={() => goBack()}>{text} PPLLLELASE</div>, <div onClick={() => goTo(A)}>{text} GO TO A</div>)
-// }
-
-
-
 class Main extends React.Component {
     render() {
          let opening_page;

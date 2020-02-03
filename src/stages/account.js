@@ -10,13 +10,10 @@ export default class Account extends Component {
 
     constructor(props) {
         super(props)
-        debugger
-
         this.balance = this.balance.bind(this)
         this.address = localStorage.getItem("address");
-        // account balance in hex
         this.state = {
-            balance: 'eeee'
+            balance: ''
         }
     }
 
@@ -32,9 +29,11 @@ export default class Account extends Component {
 try {
    balance = await this.api.tokens.balance(this.address);
   } catch (e) {
+      this.setState({ balance: "unavailable" })
+
    // throw new Error('The following error occurred checking the balance: ' + e);
   }
-  this.setState({ balance: 44 })
+  this.setState({ balance: balance })
     }
 
     render() {

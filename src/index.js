@@ -9,11 +9,14 @@ import Router, { Link, goBack } from 'route-lite';
 import Account from "./stages/account";
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";
+import Login from "./stages/login";
 
   let opening_page;
 // browser uses this
     if(Authentication.isLoggedIn()) {
       opening_page = <Account />
+    } else if(Authentication.hasSavedKey()) {
+      opening_page = <Login />
     } else {
       opening_page = <Initial />
     }
