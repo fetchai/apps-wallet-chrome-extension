@@ -4,19 +4,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import "./content.css";
-import Router, {goBack, goTo, Link} from "route-lite";
+import Router from "route-lite";
 import Initial from "./stages/initial";
-import Create from "./stages/create";
 import Authentication from "./services/authentication";
+import Account from "./stages/account";
+import Login from "./stages/login";
 
 class Main extends React.Component {
     render() {
-         let opening_page;
 
+     let opening_page;
+// browser uses this.
     if(Authentication.isLoggedIn()) {
-      opening_page = <Initial />
+      opening_page = <Account />
+    } else if(Authentication.hasSavedKey()) {
+      opening_page = <Login />
     } else {
-      opening_page = <Create />
+      opening_page = <Initial />
     }
 
         return (

@@ -13,7 +13,7 @@ export default class Initial extends Component {
     }
 
     hasSavedKey() {
-        return localStorage.getItem('key_file') !== null
+        return Storage.getLocalStorage('key_file') !== null
     }
 
     render() {

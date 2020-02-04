@@ -12,7 +12,7 @@ export default class Account extends Component {
     constructor(props) {
         super(props)
         this.balance = this.balance.bind(this)
-        this.address = localStorage.getItem("address");
+        this.address = Storage.getLocalStorage("address");
         this.state = {
             balance: ''
         }

@@ -4,7 +4,6 @@ import {goTo} from "route-lite";
 import Account from "./account";
 import {Authentication} from "../services/authentication";
 import Expand from "react-expand-animated";
-import {BoxExpand, BoxExpand1, BoxToggle, Button, ExpandBoxes} from "../css/main.styles";
 import {formErrorMessage} from "../services/formErrorMessage";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {VERSION} from "../constants";
@@ -54,7 +53,6 @@ export default class Settings extends Component {
 }
 
     async validPassword(show_error, event){
-        debugger
 
         if(!(await Authentication.correctPassword(this.state.password))) {
              if(show_error) {
@@ -90,7 +88,7 @@ export default class Settings extends Component {
 
    async handlePasswordUpdate(event){
         event.preventDefault();
-        //if(!(await this.validPassword(true,event))) return
+        if(!(await this.validPassword(true,event))) return
         if(!(await this.newPasswordValidate(true,event)))  return
         if(!this.passwordConfirmValidate(true, event))  return
         this.update_password()
@@ -99,7 +97,7 @@ export default class Settings extends Component {
 async update_password(){
         this.setState({output: ""})
        //NOTE: assumes original password is checked for correctness before invoking this, else it will lead to key loss
-      const orig_key_file = localStorage.getItem('key_file');
+      const orig_key_file = Storage.getLocalStorage('key_file');
       debugger
      const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
      const key_file = await entity._to_json_object(this.state.new_password)
@@ -181,7 +179,7 @@ this.setState({
                     <button type="submit" className="pure-button pure-button-primary" onClick={this.handlePasswordUpdate.bind(this)}>Update</button>
                 </form>
         </Expand>
-            <Button onClick={() => this.toggle(3)}>About</Button>
+            <button onClick={() => this.toggle(3)}>About</button>
   <Expand
             open={this.state.collapsable_3}
             duration={500}

@@ -13,7 +13,8 @@ export default class Download extends Component {
         this.make_QR = this.make_QR.bind(this)
 
         this.state = {
-            address: localStorage.getItem('address')
+            address: Storage.getLocalStorage('address'),
+            QR:""
         }
     }
 
@@ -25,11 +26,11 @@ make_QR() {
         let qr = qrCode(4, 'M')
         qr.addData(this.state.address)
         qr.make()
-        document.getElementById('qr').innerHTML = qr.createImgTag();
+    this.setState({QR: qr.createDataURL()});
     }
 
    async download() {
-      const json_str = localStorage.getItem('key_file');
+      const json_str = Storage.getLocalStorage('key_file');
     const element = document.createElement("a");
     const file = new Blob([json_str], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
@@ -45,7 +46,8 @@ make_QR() {
                   <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Account)}>
                         X
                 </button>
-                <div id="qr"></div>
+                {this.state.QR ? <img src={this.state.QR} width="82" height="82"/>: ''}
+                {/*<div id="qr">{this.state.QR}</div>*/}
             <span>{this.state.address}</span>
                  <a className='btn btn-primary btn-block' href={"www.fetch.ai"}>
                         View on Fetch.ai

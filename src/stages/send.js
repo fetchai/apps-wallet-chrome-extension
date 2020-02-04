@@ -12,7 +12,7 @@ export default class Send extends Component {
 
     constructor(props) {
         super(props)
-        this.address = localStorage.getItem('address');
+        this.address = Storage.getLocalStorage('address');
         this.sufficientFunds = this.sufficientFunds.bind(this)
         this.transfer = this.transfer.bind(this)
         this.transferController = this.transferController.bind(this)
@@ -67,7 +67,7 @@ export default class Send extends Component {
              error_flag = true;
          }
 
-        const json_str = localStorage.getItem('key_file')
+        const json_str = Storage.getLocalStorage('key_file')
 
         if(error_flag) return;
 
