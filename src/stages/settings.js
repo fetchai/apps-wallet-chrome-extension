@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, { Component } from "react";
-import {goTo} from "route-lite";
+import {goTo} from "../services/router";
 import Account from "./account";
 import {Authentication} from "../services/authentication";
 import Expand from "react-expand-animated";
@@ -64,7 +64,6 @@ export default class Settings extends Component {
 }
 
    async newPasswordValidate(show_error, event){
-        debugger
         if(await Authentication.correctPassword(this.state.new_password)) {
             if(show_error) {
                 formErrorMessage("new_password", "New password is the same as current password")

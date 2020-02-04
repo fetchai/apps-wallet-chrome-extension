@@ -10,8 +10,7 @@ static isLoggedIn() {
 }
 
 static hasSavedKey() {
-       const logged_in = Storage.getLocalStorage('key_file');
-       return Boolean(JSON.parse(logged_in))
+        return Storage.getLocalStorage('key_file') !== null
 }
 
 static logOut() {
@@ -31,8 +30,6 @@ static logOut() {
           let valid_flag = true
           const entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
             // check it creates correct address from decryption.
-
-        debugger;
           if (new Address(entity).toString() !== address) valid_flag = false
           return valid_flag;
 }

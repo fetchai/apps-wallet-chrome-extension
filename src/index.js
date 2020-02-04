@@ -2,10 +2,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-
 import './index.css';
 import registerServiceWorker from './registerServiceWorker';
-import Router, { Link, goBack } from 'route-lite';
+import Router, { Link, goBack } from './services/router';
 import Account from "./stages/account";
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";

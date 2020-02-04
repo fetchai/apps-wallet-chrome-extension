@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, {Component} from "react";
-import {goTo} from "route-lite";
+import {goTo} from "../services/router";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";

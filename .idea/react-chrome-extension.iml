@@ -9,6 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ledger-api-javascript" />
     <orderEntry type="module" module-name="ledger-api-javascript" />
+    <orderEntry type="module" module-name="ledger-api-javascript" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_FOLDERS">

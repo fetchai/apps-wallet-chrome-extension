@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import {Bootstrap, LedgerApi} from "fetchai-ledger-api/src/fetchai/ledger/api";
 import {NETWORK_NAME} from "../constants";
-import {goTo} from "route-lite";
+import {goTo} from "../services/router";
 import Download from "./download";
 import Send from "./send";
 import Settings from "./settings";
@@ -31,7 +31,6 @@ try {
    balance = await this.api.tokens.balance(this.address);
   } catch (e) {
       this.setState({ balance: "unavailable" })
-
    // throw new Error('The following error occurred checking the balance: ' + e);
   }
   this.setState({ balance: balance })

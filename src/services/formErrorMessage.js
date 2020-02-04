@@ -18,8 +18,6 @@ let password = y.getElementById(id)
  password.setCustomValidity(message);
     password.reportValidity();
 });
-
-
     // let password = document.getElementById('myframe1').contentWindow.document.getElementById('x')
     // let password = document.getElementById(id);
     // password.setCustomValidity(message);

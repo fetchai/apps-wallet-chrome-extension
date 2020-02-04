@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, { Component } from "react";
-import {goBack, goTo} from "route-lite";
+import {goBack, goTo} from "../services/router";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
@@ -45,9 +45,6 @@ export default class Create extends Component {
          Storage.setLocalStorage("key_file", JSON.stringify(json_obj))
          Storage.setLocalStorage("address", new Address(entity).toString())
          Storage.setLocalStorage('logged_in', "true");
-            // chrome.storage.sync.set({'key': json_str}, function() {
-            //      console.log('saved in local storage');
-            // });
           goTo(Account)
        }
 

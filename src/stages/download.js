@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import qrCode from 'qrcode-generator'
 import {KEY_FILE_NAME} from "../constants";
-import {goTo} from "route-lite";
+import {goTo} from "../services/router";
 import Account from "./account";
 import {Storage} from "../services/storage"
 

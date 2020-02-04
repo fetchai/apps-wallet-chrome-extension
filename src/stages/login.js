@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, { Component } from "react";
-import {goBack, goTo} from "route-lite";
+import {goTo} from "../services/router";
 import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
 import Authentication from "../services/authentication";
