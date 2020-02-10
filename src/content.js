@@ -4,10 +4,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Frame, { FrameContextConsumer }from 'react-frame-component';
 import "./content.css";
-import Router from "route-lite";
+import Router from './services/router';
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";
-import Account from "./stages/account";
 import Login from "./stages/login";
 
 class Main extends React.Component {
@@ -15,8 +14,9 @@ class Main extends React.Component {
 
      let opening_page;
 // browser uses this.
-    if(Authentication.isLoggedIn()) {
-      opening_page = <Account />
+    //if(Authentication.isLoggedIn()) {
+    if(true) {
+      opening_page = <Initial />
     } else if(Authentication.hasSavedKey()) {
       opening_page = <Login />
     } else {
@@ -36,7 +36,7 @@ class Main extends React.Component {
         )
     }
 }
-
+console.log("QWERTTYYYYYYYYYY")
 const app = document.createElement('div');
 app.id = "my-extension-root";
 

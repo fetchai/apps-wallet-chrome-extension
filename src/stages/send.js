@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import {Bootstrap, LedgerApi} from "fetchai-ledger-api/src/fetchai/ledger/api";
-import {NETWORK_NAME} from "../constants";
+import {DEFAULT_FEE_LIMIT, NETWORK_NAME} from "../constants";
 import {formErrorMessage} from "../services/formErrorMessage.js";
-import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {validAddress} from "../utils/validAddress";
 import Authentication from "../services/authentication";
@@ -76,7 +75,7 @@ export default class Send extends Component {
     }
 
     async transfer(to, amount){
-         const tx2 = await this.api.tokens.transfer(this.entity, to, amount, 20).catch((error) => {
+         const tx2 = await this.api.tokens.transfer(this.entity, to, amount, DEFAULT_FEE_LIMIT).catch((error) => {
         console.log('error occured: ' + error)
         throw new Error()
     })

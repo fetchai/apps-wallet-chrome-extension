@@ -26,7 +26,7 @@ export default class Create extends Component {
       {
           event.preventDefault()
 
-         if(!Entity._strong_password(this.state.password)){
+         if(!Entity._strong_password(this.state.password)) {
             let password = document.getElementById("password");
              password.setCustomValidity("Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character");
              password.reportValidity();

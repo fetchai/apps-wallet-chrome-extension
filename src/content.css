@@ -1,16 +1,31 @@
-/* src/content.css */
+#reddy {
+    color: green;
+}
 
-/*.my-extension{*/
-/*    padding: 20px;*/
-/*}*/
+.vid {
+    top:0;
+    float: left;
+    width: 100%;
+    height:  100%;
+    z-index: -999;
+}
 
-/*.my-extension h1{*/
-/*    color: #000;*/
-/*}*/
+.overlay {
+  position: fixed;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  padding: 20px;
+}
 
-.body {
-          width: 400px;
-          height: 600px;
-          font-size: 16px;
-    background:
+.fetch-button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }

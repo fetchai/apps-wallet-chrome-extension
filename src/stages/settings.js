@@ -17,9 +17,6 @@ export default class Settings extends Component {
                 this.HandleLogOut = this.HandleLogOut.bind(this)
                 this.toggle = this.toggle.bind(this)
                 this.handleChange = this.handleChange.bind(this)
-                // this.validPassword = this.validPassword.bind(this)
-                // this.passwordConfirmValidate = this.passwordConfirmValidate.bind(this)
-                // this.newPasswordValidate = this.newPasswordValidate.bind(this)
                 this.handlePasswordUpdate = this.handlePasswordUpdate.bind(this)
                 this.update_password = this.update_password.bind(this)
             
@@ -97,11 +94,10 @@ async update_password(){
         this.setState({output: ""})
        //NOTE: assumes original password is checked for correctness before invoking this, else it will lead to key loss
       const orig_key_file = Storage.getLocalStorage('key_file');
-      debugger
-     const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
-     const key_file = await entity._to_json_object(this.state.new_password)
+      const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
+      const key_file = await entity._to_json_object(this.state.new_password)
       Storage.setLocalStorage("key_file", JSON.stringify(key_file))
-this.setState({
+      this.setState({
         password: '',
     new_password_confirm: '',
     new_password: ''
