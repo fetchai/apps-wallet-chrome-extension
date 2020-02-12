@@ -28,9 +28,13 @@ static logOut() {
          const key_file = Storage.getLocalStorage('key_file');
           const address = Storage.getLocalStorage('address');
           let valid_flag = true
-          const entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
+        let entity;
+
+            entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
+
             // check it creates correct address from decryption.
-          if (new Address(entity).toString() !== address) valid_flag = false
+        debugger;
+          if (valid_flag && new Address(entity).toString() !== address) valid_flag = false
           return valid_flag;
 }
 

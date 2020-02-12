@@ -51,17 +51,20 @@ export default class Create extends Component {
 
     render() {
         return (
-            <div className="container">
-                <h2>Create Account</h2>
+            <div className="OverlayMain"><div className="OverlayMainInner">
+                <h1>Create account</h1>
+                <hr></hr>
                 <form id="form">
-                    <legend>Confirm password with HTML5</legend>
-                            <input type="text" placeholder="Password" id="password" name ="password" value={this.state.password}
+                            <input type="text" className="large-button" placeholder="Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)} required></input>
-                            <input type="text" placeholder="Confirm Password" id="password_confirm" name ="password_confirm" value={this.state.password_confirm}
+                            <input type="text" className="large-button" placeholder="Confirm Password" id="password_confirm" name ="password_confirm" value={this.state.password_confirm}
                                    onChange={this.handleChange.bind(this)} required></input>
-                    <button type="button" className="pure-button pure-button-primary" onClick={(event) => { event.preventDefault(); goBack()}}>Back</button>
-                    <button type="submit" className="pure-button pure-button-primary" onClick={this.handleSubmit}>Next</button>
+                    <div className="small-button-container">
+                    <button type="button" className="small-button" onClick={(event) => { event.preventDefault(); goBack()}}>Back</button>
+                    <button type="submit" className="small-button" onClick={this.handleSubmit}>Next</button>
+                    </div>
                 </form>
+            </div>
             </div>
         );
     }

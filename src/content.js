@@ -23,21 +23,24 @@ class Main extends React.Component {
       opening_page = <Initial />
     }
 
-        return (
-            <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}> 
-               <FrameContextConsumer>
-               {
-                   ({document, window}) => {
-                     return(<Router>{opening_page}</Router>)
-                    }
-                }
-                </FrameContextConsumer>
-            </Frame>
-        )
+        // return (
+        //     <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
+        //        <FrameContextConsumer>
+        //        {
+        //            ({document, window}) => {
+        //              return(<Router>{opening_page}</Router>)
+        //             }
+        //         }
+        //         </FrameContextConsumer>
+        //     </Frame>
+        // )
+
+         return(<Router>{opening_page}</Router>)
+
     }
 }
 console.log("QWERTTYYYYYYYYYY")
-const app = document.createElement('div');
+const app = document.createElement('iframe');
 app.id = "my-extension-root";
 
 document.body.appendChild(app);

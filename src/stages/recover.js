@@ -111,7 +111,7 @@ export default class Recover extends Component {
         let file_str;
 
         if(!this.validPassword())  error_flag = true
-        if(!this.validFile())  error_flag = true
+        if(!(await this.validFile()))  error_flag = true
         else {
             file_str = await this.read_file(this.state.file);
             debugger;

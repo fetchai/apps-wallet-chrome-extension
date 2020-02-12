@@ -1,13 +1,191 @@
+* {
+  font-family: "acumin-pro-semi-condensed", sans-serif;
+        color: white;
+}
+
+/** Headings: Sol Pro Regular  */
+h1, h2 {
+    margin-top: 28px;
+ font-family: "sol-pro", sans-serif;
+        margin-bottom: 0px;
+}
+
+/** Body Text: Acumin Pro SemiCondensed Regular */
+body {
+ font-weight: 400;
+}
+
+/** Buttons & Sub-headings: Acumin Pro SemiCondensed Semibold */
+button, h2, h3, h3, h4, h5, h6  {
+  /* semi-bold */
+  font-weight: 600;
+}
+
+/* buttons in login and initial page, no container div */
+.button-free-standing {
+     width: 85%;
+     margin: 10px auto;
+}
+
+button, input {
+    font-weight: 600;
+    display: block;
+    /* margin: auto; */
+    font-size: 24px;
+    border-width: 3px;
+    border-radius: 35px;
+    background-color: Transparent;
+    /* border-color: coral; */
+    border-color: #00b6a0;
+    border-style: solid;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.large-button {
+    width: 98%;
+    margin: 15px 0;
+}
+
+input.large-button  {
+        text-indent: 20px;
+    font-size: 16px;
+
+}
+
+hr
+{
+    background-color: #eee;
+    border: 0 none;
+    color: #eee;
+    height: 3px;
+}
+
+.small-button {
+ display: inline;
+    width: 48%;
+    margin: 10px 1px;
+}
+.small-button-container {
+
+}
+
+button:focus {
+    outline:none;
+}
+
+input {
+        text-indent: 20px;
+    font-size: 21px;
+
+}
+
+/* different placeholder css for different browsers */
+::-webkit-input-placeholder { /* Edge */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+::placeholder {
+  color: white;
+}
+
+.logo {
+        height: 56px;
+}
+
+/** Sub-text: Acumin Pro SemiCondensed Light */
+p {
+ font-weight: 300;
+}
+
 #my-extension-root{
   position: fixed;
   top: 0px;
   right: 0px;
-  background-color: yellow;
+   width: 369px;
+  height: 656px;
+     /*background-color: Transparent;*/
+    background-color: #1c2846;
   box-shadow: 0px 0px 5px #0000009e;
+  z-index: 99999999999999;
+  display: block;
 }
 
-#my-extension-root iframe {
-  width: 369px;
-  height: 656px;
+.overlay1 {
+     position: absolute;
+  top: 0px;
+}
+
+.OverlayMain {
+    position: absolute;
+  top: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.OverlayMainInner {
+    margin-left: 10%;
+    width: 80%;
+}
+
+.overlayN {
+     position: absolute;
+  top: 0px;
+     color: #FFF;
+    width:100%
+}
+.overlayNinner {
+margin-left: 10%;
+    width: 80%;
+}
+
+.overlay2 {
+  position: absolute;
+  top: 300px;
+  color: #FFF;
+  text-align: center;
+  /*background-color: rgba(221, 221, 221, 0.3);*/
+  z-index: 2147483647;
+  width: 100%;
+}
+
+.overlay3 {
+
+}
+
+#reddy {
+    color: green;
+}
+
+.vid {
+    top:0;
+    float: left;
+    width: 100%;
+    height:  100%;
+
+}
+
+/*.overlay {*/
+/*  position: fixed;*/
+/*  top: 0;*/
+/*  background: rgba(0, 0, 0, 0.5);*/
+
+/*  color: #f1f1f1;*/
+/*  width: 100%;*/
+/*  padding: 20px;*/
+/*}*/
+
+.fetch-button {
+  background-color: #4CAF50;
   border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
 }

@@ -36,18 +36,33 @@ export default class Login extends Component {
            goTo(Account)
        }
 
-
     render() {
+        let welcome, logo;
+
+        if(false) {
+           welcome = chrome.runtime.getURL("welcome.mp4")
+           logo = chrome.runtime.getURL("welcome.mp4")
+      } else {
+           welcome = "./assets/welcome.mp4"
+            logo =  "./assets/fetchai_logo.svg"
+      }
+
         return (
-            <div className="container">
-                <h2>Login</h2>
-                <form id="form">
-                     <legend>Login with Password</legend>
-                            <input type="text" placeholder="Password" id="password" name ="password" value={this.state.password}
+             <div>
+                 <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
+                    <source src={welcome} type="video/mp4"></source>
+                </video>
+                  <div className="overlay1"><img src={logo} alt="Fetch.ai's Logo" className="logo"></img></div>
+                <div className="overlay2">
+                    <div className="overlay3">
+                      <form id="form">
+                            <input type="text" className="button-free-standing" placeholder="Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)} required></input>
-                    <button type="submit" className="pure-button pure-button-primary" onClick={this.handleSubmit}>Login</button>
+                    <button type="submit" className="button-free-standing" onClick={this.handleSubmit}>Login</button>
                 </form>
-            </div>
+                </div>
+                </div>
+                </div>
         );
     }
 }
