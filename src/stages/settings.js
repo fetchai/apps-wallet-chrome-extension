@@ -114,6 +114,14 @@ async update_password(){
     }
 
     render() {
+
+            let cross;
+
+          //   if(false) {
+      //      account = chrome.runtime.getURL("account_icon.svg")
+      // } else {
+           cross = "./assets/cross_icon.svg"
+     // }
         const styles = {
       open: { background: "#ecf0f1" }
     };
@@ -121,12 +129,13 @@ async update_password(){
     const transitions = ["height", "opacity", "background"];
 
         return (
-            <div>
-                <h1>Settings</h1> <button className='btn btn-primary btn-block' onClick={goTo.bind(null, Account)}>
-                        X
-                </button>
+            <div className="OverlayMain"><div className="OverlayMainInner">
+                 <div className='address_title'>
+                <h1>Settings</h1>
+                <img className='cross' src={cross} onClick={goTo.bind(null, Account)}/>
+                 </div>
                 <hr></hr>
-            <button onClick={() => this.toggle(1)}>General</button>
+            <button className="plain_button" onClick={() => this.toggle(1)}>General</button>
           <Expand
             open={this.state.collapsable_1}
             duration={500}
@@ -151,7 +160,7 @@ async update_password(){
                 </select>
       </form>
           </Expand>
-            <button onClick={() => this.toggle(2)}>Security & Privacy</button>
+            <button className="plain_button" onClick={() => this.toggle(2)}>Security & Privacy</button>
   <Expand
             open={this.state.collapsable_2}
             duration={500}
@@ -174,7 +183,7 @@ async update_password(){
                     <button type="submit" className="pure-button pure-button-primary" onClick={this.handlePasswordUpdate.bind(this)}>Update</button>
                 </form>
         </Expand>
-            <button onClick={() => this.toggle(3)}>About</button>
+            <button className="plain_button" onClick={() => this.toggle(3)}>About</button>
   <Expand
             open={this.state.collapsable_3}
             duration={500}
@@ -185,9 +194,10 @@ async update_password(){
       <p>Developed and Designed by Fetch.ai Cambridge</p>
   </Expand>
 
-                <button className='btn btn-primary btn-block' onClick={this.HandleLogOut}>
+                <button className="large-button" onClick={this.HandleLogOut}>
                         Log out
                 </button>
+            </div>
             </div>
         );
     }

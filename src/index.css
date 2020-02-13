@@ -3,11 +3,83 @@
         color: white;
 }
 
+.account {
+width: 50px;
+}
+
+.cross {
+
+   position: absolute;
+    max-width: 17px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.cross:hover {
+    cursor: pointer;
+}
+
+.qr {
+    /*    display: block;*/
+    /*position: absolute;*/
+    /*left: 0;*/
+    width: 125px;
+    /*right: 0;*/
+    /*margin: auto;*/
+}
+
+.qr_container {
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
+
+.qr_caption {
+    display: block;
+}
+
+
+
+/*
+ position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+ */
+
+.account_address {
+        display: inline;
+    font-size: 20px;
+}
+
+.address_title {
+    position: relative;
+display: inline-block;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.settings_title {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.address_title_inner {
+display: inline-block;
+    margin-left: 15px;
+}
+
 /** Headings: Sol Pro Regular  */
 h1, h2 {
-    margin-top: 28px;
- font-family: "sol-pro", sans-serif;
-        margin-bottom: 0px;
+        margin-top: 28px;
+    font-family: "sol-pro", sans-serif;
+    margin-bottom: 18px;
+    font-weight: 500;
+    font-size: 32px;
 }
 
 /** Body Text: Acumin Pro SemiCondensed Regular */
@@ -27,7 +99,7 @@ button, h2, h3, h3, h4, h5, h6  {
      margin: 10px auto;
 }
 
-button, input {
+.fetch_link, button, input {
     font-weight: 600;
     display: block;
     /* margin: auto; */
@@ -39,7 +111,11 @@ button, input {
     border-color: #00b6a0;
     border-style: solid;
     padding-top: 3px;
-    padding-bottom: 3px;
+    padding-bottom: 9px;
+}
+
+.fetch_link {
+  text-decoration: none;
 }
 
 .large-button {
@@ -48,9 +124,8 @@ button, input {
 }
 
 input.large-button  {
-        text-indent: 20px;
+        text-indent: 44px;
     font-size: 16px;
-
 }
 
 hr
@@ -58,14 +133,22 @@ hr
     background-color: #eee;
     border: 0 none;
     color: #eee;
-    height: 3px;
+    height: 2px;
+    margin-top: 12px;
+    margin-bottom: 25px;
 }
 
 .small-button {
  display: inline;
-    width: 48%;
-    margin: 10px 1px;
+    width: 47%;
+    margin: 10px 3px;
+    font-size: 24px;
 }
+
+.plain_button {
+        border: none;
+}
+
 .small-button-container {
 
 }
@@ -75,9 +158,12 @@ button:focus {
 }
 
 input {
-        text-indent: 20px;
-    font-size: 21px;
-
+    background: url('/assets/lock_icon.svg') no-repeat;
+    text-indent: 50px;
+    font-size: 16px;
+    padding: 11px 0px;
+    background-size: 24px 24px;
+    background-position: 14px 10px;
 }
 
 /* different placeholder css for different browsers */
@@ -94,7 +180,7 @@ input {
 }
 
 .logo {
-        height: 56px;
+        height: 64px;
 }
 
 /** Sub-text: Acumin Pro SemiCondensed Light */
@@ -145,7 +231,7 @@ margin-left: 10%;
 
 .overlay2 {
   position: absolute;
-  top: 300px;
+  top: 425px;
   color: #FFF;
   text-align: center;
   /*background-color: rgba(221, 221, 221, 0.3);*/
@@ -188,4 +274,12 @@ margin-left: 10%;
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
+}
+
+.lock {
+background-image: url('/assets/lock_icon.svg');
+background-repeat: no-repeat;
+background-position: left;
+padding-right: 5px;
+
 }

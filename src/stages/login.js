@@ -56,7 +56,7 @@ export default class Login extends Component {
                 <div className="overlay2">
                     <div className="overlay3">
                       <form id="form">
-                            <input type="text" className="button-free-standing" placeholder="Password" id="password" name ="password" value={this.state.password}
+                            <input type="text" className="button-free-standing " placeholder="Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)} required></input>
                     <button type="submit" className="button-free-standing" onClick={this.handleSubmit}>Login</button>
                 </form>
