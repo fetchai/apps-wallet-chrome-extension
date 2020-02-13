@@ -79,7 +79,16 @@ export default class Settings extends Component {
 
       toggle(index) {
     let collapse = "collapsable_" + index;
+
     this.setState(prevState => ({ [collapse]: !prevState[collapse] }));
+
+    // make sure the other two dropdowns are closed.
+          for(let i=1; i <= 3; i++){
+             if(i === index) continue;
+             collapse = "collapsable_" + i;
+              this.setState({collapse: false})
+          }
+
   };
 
    async handlePasswordUpdate(event){
@@ -123,7 +132,7 @@ async update_password(){
            cross = "./assets/cross_icon.svg"
      // }
         const styles = {
-      open: { background: "#ecf0f1" }
+      open: { background: " #1c2846" }
     };
 
     const transitions = ["height", "opacity", "background"];
@@ -142,14 +151,16 @@ async update_password(){
             styles={styles}
             transitions={transitions}
           >
-            <form>
-                 <label for="conversion">Currency Conversion</label>
-         <select  id="conversion" name = "dropdown">
+            <form className="settings_form">
+                <div className="input_container">
+                <label for="conversion">Conversion<br></br>Currency</label>
+         <select  id="conversion" class="custom-select" name = "dropdown">
             <option value = "USD">USD</option>
             <option value = "XBT">XBT</option>
             <option value = "EUR">EUR</option>
             <option value = "GBP">GBP</option>
          </select>
+                </div>
                 <br></br>
                 <label htmlFor="conversion">Language</label>
                 <select id="conversion" name="dropdown">
@@ -194,7 +205,7 @@ async update_password(){
       <p>Developed and Designed by Fetch.ai Cambridge</p>
   </Expand>
 
-                <button className="large-button" onClick={this.HandleLogOut}>
+                <button className="large-button logout_button" onClick={this.HandleLogOut}>
                         Log out
                 </button>
             </div>

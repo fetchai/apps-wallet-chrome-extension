@@ -46,7 +46,6 @@ make_QR() {
     element.click();
 }
 
-
     render() {
 
      let account, cross;
@@ -57,7 +56,6 @@ make_QR() {
            account = "./assets/account_icon.svg"
            cross = "./assets/cross_icon.svg"
      // }
-
 
         return (
             <div className="OverlayMain"><div className="OverlayMainInner">

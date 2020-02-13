@@ -58,7 +58,7 @@ export default class Login extends Component {
                       <form id="form">
                             <input type="text" className="button-free-standing " placeholder="Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)} required></input>
-                    <button type="submit" className="button-free-standing" onClick={this.handleSubmit}>Login</button>
+                    <button type="submit" className="button-free-standing" disabled={!this.state.password.length} onClick={this.handleSubmit}>Login</button>
                 </form>
                 </div>
                 </div>

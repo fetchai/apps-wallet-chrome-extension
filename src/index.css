@@ -84,13 +84,7 @@ h1, h2 {
 
 /** Body Text: Acumin Pro SemiCondensed Regular */
 body {
- font-weight: 400;
-}
-
-/** Buttons & Sub-headings: Acumin Pro SemiCondensed Semibold */
-button, h2, h3, h3, h4, h5, h6  {
-  /* semi-bold */
-  font-weight: 600;
+ font-weight: 600;
 }
 
 /* buttons in login and initial page, no container div */
@@ -100,7 +94,6 @@ button, h2, h3, h3, h4, h5, h6  {
 }
 
 .fetch_link, button, input {
-    font-weight: 600;
     display: block;
     /* margin: auto; */
     font-size: 24px;
@@ -117,6 +110,21 @@ button, h2, h3, h3, h4, h5, h6  {
 .fetch_link {
   text-decoration: none;
 }
+
+.logout_button {
+        position: absolute;
+    bottom: 10px;
+}
+
+.input_container label {
+    padding-left: 10px;
+    display: inline-block;
+}
+
+.settings_form {
+    margin-top: 10px;
+}
+
 
 .large-button {
     width: 98%;
@@ -146,7 +154,9 @@ hr
 }
 
 .plain_button {
-        border: none;
+            border: none;
+    padding: 0px;
+    margin-left: 0px;
 }
 
 .small-button-container {
@@ -183,11 +193,6 @@ input {
         height: 64px;
 }
 
-/** Sub-text: Acumin Pro SemiCondensed Light */
-p {
- font-weight: 300;
-}
-
 #my-extension-root{
   position: fixed;
   top: 0px;
@@ -216,6 +221,7 @@ p {
 .OverlayMainInner {
     margin-left: 10%;
     width: 80%;
+    height: 100%;
 }
 
 .overlayN {
@@ -283,3 +289,72 @@ background-position: left;
 padding-right: 5px;
 
 }
+
+/** custom select start */
+
+/* The container must be positioned relative: */
+.custom-select {
+    width:180px;
+    position: relative;
+    background-color: #1c2846;
+    border-width: medium;
+    border-radius: 9px;
+    border-color: white;
+}
+
+.custom-select select {
+  display: none; /*hide original SELECT element: */
+}
+
+.select-selected {
+  background-color: DodgerBlue;
+}
+
+/* Style the arrow inside the select element: */
+.select-selected:after {
+  position: absolute;
+  content: "";
+  top: 14px;
+  right: 10px;
+  width: 0;
+  height: 0;
+  border: 6px solid transparent;
+  border-color: #fff transparent transparent transparent;
+}
+
+/* Point the arrow upwards when the select box is open (active): */
+.select-selected.select-arrow-active:after {
+  border-color: transparent transparent #fff transparent;
+  top: 7px;
+}
+
+/* style the items (options), including the selected item: */
+.select-items div,.select-selected {
+  color: #ffffff;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+  cursor: pointer;
+}
+
+/* Style items (options): */
+.select-items {
+  position: absolute;
+  background-color: DodgerBlue;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+}
+
+/* Hide the items when the select box is closed: */
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/** custom select end */
+
