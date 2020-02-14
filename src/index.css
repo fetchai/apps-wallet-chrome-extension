@@ -307,7 +307,7 @@ padding-right: 5px;
 }
 
 .select-selected {
-  background-color: DodgerBlue;
+  background-color: pink;
 }
 
 /* Style the arrow inside the select element: */
@@ -318,7 +318,7 @@ padding-right: 5px;
   right: 10px;
   width: 0;
   height: 0;
-  border: 6px solid transparent;
+  border: 6px solid orange;
   border-color: #fff transparent transparent transparent;
 }
 
@@ -332,7 +332,7 @@ padding-right: 5px;
 .select-items div,.select-selected {
   color: #ffffff;
   padding: 8px 16px;
-  border: 1px solid transparent;
+  border: 1px solid green;
   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
   cursor: pointer;
 }
@@ -340,11 +340,11 @@ padding-right: 5px;
 /* Style items (options): */
 .select-items {
   position: absolute;
-  background-color: DodgerBlue;
+  background-color: red;
   top: 100%;
   left: 0;
   right: 0;
-  z-index: 99;
+  z-index: 99999999999;
 }
 
 /* Hide the items when the select box is closed: */
