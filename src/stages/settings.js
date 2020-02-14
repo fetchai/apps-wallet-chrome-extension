@@ -19,7 +19,7 @@ export default class Settings extends Component {
                 this.handleChange = this.handleChange.bind(this)
                 this.handlePasswordUpdate = this.handlePasswordUpdate.bind(this)
                 this.update_password = this.update_password.bind(this)
-            
+
          this.state = {
     collapsable_1: false,
     collapsable_2: false,
@@ -78,17 +78,17 @@ export default class Settings extends Component {
    }
 
       toggle(index) {
-    let collapse = "collapsable_" + index;
+          for(let i=1; i <= 3; i++) {
+             let collapse = "collapsable_" + i;
 
-    this.setState(prevState => ({ [collapse]: !prevState[collapse] }));
-
-    // make sure the other two dropdowns are closed.
-          for(let i=1; i <= 3; i++){
-             if(i === index) continue;
-             collapse = "collapsable_" + i;
-              this.setState({collapse: false})
+             if(i === index) {
+                 // we toggle the settings button that was clicked on
+                 this.setState(prevState => ({ [collapse]: !prevState[collapse] }));
+                 continue;
+             }
+            // but with the other ones we close them for better UI
+              this.setState({[collapse]: false})
           }
-
   };
 
    async handlePasswordUpdate(event){
@@ -111,7 +111,6 @@ async update_password(){
     new_password_confirm: '',
     new_password: ''
     }, () => {
-
   this.setState({output: "Password successfully updated"})
     }
     );
@@ -154,21 +153,27 @@ async update_password(){
             <form className="settings_form">
                 <div className="input_container">
                 <label for="conversion">Conversion<br></br>Currency</label>
-         <select  id="conversion" class="custom-select" name = "dropdown">
+                     <div className="select_container">
+         <select  id="conversion" className="custom_select" name = "dropdown">
             <option value = "USD">USD</option>
             <option value = "XBT">XBT</option>
             <option value = "EUR">EUR</option>
             <option value = "GBP">GBP</option>
          </select>
                 </div>
+                </div>
                 <br></br>
+                 <div className="input_container form_label_single_line">
                 <label htmlFor="conversion">Language</label>
-                <select id="conversion" name="dropdown">
+                      <div className="select_container">
+                <select id="conversion" className="custom_select" name="dropdown">
                     <option value="EN">English</option>
                     <option value="CN">Chinese</option>
                     <option value="ESN">Spanish</option>
                     <option value="FRN">French</option>
                 </select>
+                                     </div>
+                                     </div>
       </form>
           </Expand>
             <button className="plain_button" onClick={() => this.toggle(2)}>Security & Privacy</button>
@@ -179,30 +184,30 @@ async update_password(){
             transitions={transitions}
           >
  <form id="form">
-                    <legend>Change Password</legend>
-                            <input type="text" placeholder="Password" id="password" name ="password" value={this.state.password}
+                    <legend className="change_password_legend">Change Password</legend>
+                    <input type="text" className="change_password_input" placeholder="Old Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)}></input>
 
-      <input type="text" placeholder="New Password" id="new_password" name ="new_password" value={this.state.new_password}
+      <input type="text" className="change_password_input" placeholder="New Password" id="new_password" name ="new_password" value={this.state.new_password}
                                    onChange={this.handleChange.bind(this)}></input>
 
 
-       <input type="text" placeholder="Confirm Password" id="new_password_confirm" name ="new_password_confirm" value={this.state.new_password_confirm}
+       <input type="text" className="change_password_input" placeholder="Confirm New Password" id="new_password_confirm" name ="new_password_confirm" value={this.state.new_password_confirm}
                                    onChange={this.handleChange.bind(this)}></input>
 
-     <output type="text" id="output">{this.state.output}</output>
-                    <button type="submit" className="pure-button pure-button-primary" onClick={this.handlePasswordUpdate.bind(this)}>Update</button>
+     <output type="text" className="change_password_input" id="output">{this.state.output}</output>
+                    <button type="submit" className="update_button" onClick={this.handlePasswordUpdate.bind(this)}>Update</button>
                 </form>
         </Expand>
-            <button className="plain_button" onClick={() => this.toggle(3)}>About</button>
+            <button className="plain_button clear" onClick={() => this.toggle(3)}>About</button>
   <Expand
             open={this.state.collapsable_3}
             duration={500}
             styles={styles}
             transitions={transitions}
           >
-      <p>FET Wallet Version {VERSION}</p>
-      <p>Developed and Designed by Fetch.ai Cambridge</p>
+      <p className="settings_about" >FET Wallet Version {VERSION}</p>
+      <p className="settings_about" >Developed and Designed by Fetch.ai Cambridge</p>
   </Expand>
 
                 <button className="large-button logout_button" onClick={this.HandleLogOut}>

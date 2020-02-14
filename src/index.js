@@ -8,9 +8,9 @@ import Router from './services/router';
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";
 import Login from "./stages/login";
-import Create from "./stages/create";
-import Download from "./stages/download";
 import Settings from "./stages/settings";
+import Create from "./stages/create";
+import Account from "./stages/account";
 
 class Main extends React.Component {
     render() {
@@ -19,7 +19,7 @@ class Main extends React.Component {
 // browser uses this.
     //if(Authentication.isLoggedIn()) {
     if(true) {
-      opening_page = <Settings />
+      opening_page = <Account />
     } else if(Authentication.hasSavedKey()) {
       opening_page = <Login />
     } else {

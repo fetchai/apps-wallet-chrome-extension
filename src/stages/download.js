@@ -5,9 +5,6 @@ import {goTo} from "../services/router";
 import Account from "./account";
 import {Storage} from "../services/storage"
 
-
-
-
 export default class Download extends Component {
 
     constructor(props) {
@@ -25,7 +22,7 @@ export default class Download extends Component {
   this.make_QR()
     }
 
-    chop(val){
+    format(val){
 return val.substring(0, 12) + "..."
 }
 
@@ -64,14 +61,14 @@ make_QR() {
                 <div className='address_title_inner'>
                 <h1 className="account_address">Account address</h1>
                     <br></br>
-                <span>{this.chop(this.state.address)}</span>
+                <span>{this.format(this.state.address)}</span>
                          </div>
                 <img className='cross' src={cross} onClick={goTo.bind(null, Account)}/>
                      </div>
                 <hr></hr>
                 <div className="qr_container">
                 {this.state.QR ? <img src={this.state.QR} className='qr'/>: ''}
-                <span className='qr_caption' >{this.chop(this.state.address)}</span>
+                <span className='qr_caption' >{this.format(this.state.address)}</span>
 
                  <a  className='large-button fetch_link' href={"www.fetch.ai"}>
                         View on Fetch.ai
