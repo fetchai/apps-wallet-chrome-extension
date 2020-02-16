@@ -65,6 +65,7 @@ display: inline-block;
     position: relative;
     display: inline-block;
     width: 100%;
+    margin-top: 10px;
 }
 
 .address_title_inner {
@@ -179,6 +180,10 @@ body {
     margin: 15px 0;
 }
 
+.balance_container {
+    text-align: center;
+}
+
 input.large-button  {
         text-indent: 44px;
     font-size: 16px;
@@ -199,6 +204,10 @@ hr
     width: 47%;
     margin: 10px 3px;
     font-size: 24px;
+}
+
+.plus {
+width: 125px;
 }
 
 .plain_button {

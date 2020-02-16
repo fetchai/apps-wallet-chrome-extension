@@ -52,7 +52,7 @@ export default class Login extends Component {
                  <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
                     <source src={welcome} type="video/mp4"></source>
                 </video>
-                  <div className="overlay1"><img src={logo} alt="Fetch.ai's Logo" className="logo"></img></div>
+                 <div className="overlay1"><img src={logo} alt="Fetch.ai's Logo" className="logo"></img></div>
                 <div className="overlay2">
                     <div className="overlay3">
                       <form id="form">
