@@ -60,19 +60,19 @@ export default class Account extends Component {
         response.json().then(data => {
   // do something with your data
 
-            if(response.detail === "Invalid page.") {
-                console.log("Invalid page.")
-                //debugger
-                return;
-            }
+            // if(response.detail === "Invalid page.") {
+            //     console.log("Invalid page.")
+            //     //debugger
+            //     return;
+            // }
 
-            if(typeof response.results !== "undefined" || response.results.length === 0) {
+            if(typeof data === "undefined" || data.results.length === 0) {
                 //debugger
                 console.log(" response.results !== \"undefined\" || response.results.length === 0")
                 return;
             }
 
-           this.setState({history: response.results})
+           this.setState({history: data.results})
 debugger;
 });
     }
@@ -180,26 +180,26 @@ debugger;
                     </button>
                    </div>
           </Expand>
-    {Object.keys(this.state.history).length > 0 ?
-    [<Expand
+   {(this.state.history !== null && Object.keys(this.state.history).length > 0)?
+    <Expand
             open={this.state.collapsable_2}
             duration={500}
             styles={styles}
             transitions={transitions}
-    >,
+    >
 
-  <h1 className="account_address">History</h1>,
-        <hr></hr>,
-        <div>,
-            <div className="history_item">,<span>{{this.state.history[0]}</span>,</div>,
-            {Object.keys(this.state.history).length > 1 ? <div className="history_item"></div> : "" },
-        </div>,
+  <h1 className="account_address">History</h1>
+        <hr></hr>
+        <div>
+            <div className="history_item"><span>{this.state.history[0]}</span></div>
+            {Object.keys(this.state.history).length > 1 ? <div className="history_item"></div> : "" }
+        </div>
          <button className="large-button" onClick={this.viewAll}>
                         View All
-          </button>,
+          </button>
 
-    </Expand>] : ""}
-
+    </Expand>
+       : ""}
            </div>
            </div>
         );
