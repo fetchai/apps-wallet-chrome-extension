@@ -1,11 +1,17 @@
 import React, { Component } from "react";
 import {Bootstrap, LedgerApi} from "fetchai-ledger-api/src/fetchai/ledger/api";
-import {DEFAULT_FEE_LIMIT, NETWORK_NAME} from "../constants";
+import {DEFAULT_FEE_LIMIT, DOLLAR_PRICE_CHECK_INTERVAL_MS, DOLLAR_PRICE_URI, NETWORK_NAME} from "../constants";
 import {formErrorMessage} from "../services/formErrorMessage.js";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {validAddress} from "../utils/validAddress";
 import Authentication from "../services/authentication";
 import {Storage} from "../services/storage"
+import {format} from "../utils/format";
+import {goTo} from "../services/router";
+import Settings from "./settings";
+import Download from "./download";
+import Expand from "react-expand-animated";
+import Account from "./account";
 
 export default class Send extends Component {
 
@@ -16,19 +22,78 @@ export default class Send extends Component {
         this.transfer = this.transfer.bind(this)
         this.transferController = this.transferController.bind(this)
         this.handleChange = this.handleChange.bind(this)
+        this.handleAmountChange = this.handleAmountChange.bind(this)
+        this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
 
         this.state = {
             password: "",
             to_address: "",
-            amount: 0
+            percentage: null,
+            amount: null,
+            address: Storage.getLocalStorage("address"),
         }
     }
 
     async componentDidMount() {
-         const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME)
-        const HOST = '127.0.0.1'
-        const PORT = 8000
+         const [HOST, PORT] = await Bootstrap.server_from_name(NETWORK_NAME)
+        // const HOST = '127.0.0.1'
+        // const PORT = 8000
         this.api = new LedgerApi(HOST, PORT)
+ this.fetchDollarPrice();
+   this.balance_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
+
+    }
+
+ componentWillUnmount() {
+     clearInterval(this.balance_request_loop)
+ }
+
+     fetchDollarPrice() {
+         fetch(DOLLAR_PRICE_URI).then(
+              (response) => {
+                 if (response.status !== 200) {
+                     console.log('Looks like there was a problem. Status Code: ' +
+                         response.status);
+                     return;
+                 }
+
+                 // Examine the text in the response
+                 response.json().then((data) => {
+                     console.log(data);
+
+                     if (typeof data.percentage === "number") {
+                         let dollar = null;
+                         if (this.state.amount !== null) {
+                             if (this.state.amount === 0) {
+                                 dollar = 0;
+                             } else {
+                                 dollar = this.calculateDollar(this.state.amount, data.percentage)
+                             }
+                         }
+                         this.setState({percentage: data.percentage, dollar: dollar})
+                     }
+
+                 });
+             }
+         )
+             .catch(function (err) {
+                 console.log('Fetch Error :-S', err);
+             });
+     }
+
+
+     calculateDollar(amount, percentage){
+         return Number.parseFloat(amount * percentage).toFixed(2);
+     }
+
+
+     handleAmountChange(event){
+        if(this.state.percentage === null) return this.setState({ dollar: null, amount: event.target.value })
+debugger
+        //todo 53 byte issue
+if(event.target.value == 0) return this.setState({ dollar: 0 })
+
+this.setState({ dollar: this.calculateDollar(event.target.value, this.state.percentage), amount: event.target.value })
     }
 
 
@@ -107,15 +172,47 @@ export default class Send extends Component {
 
 
     render() {
+           let account, plus;
+         account = "./assets/account_icon.svg"
+           plus = "./assets/plus_icon.svg"
+
         return (
+             <div className="OverlayMain"><div className="OverlayMainInner">
+                <div className='settings_title'>
+                <img src={account} alt="Fetch.ai Account (ALT)" className='account'/>
+                <div className='address_title_inner'>
+                <h1 className="account_address">Account address</h1>
+                    <br></br>
+                <span>{format(this.state.address)}</span>
+                         </div>
+                <img className='cross' src={plus} onClick={goTo.bind(null, Settings)}/>
+                     </div>
+                <hr></hr>
+                 <h3 className="send-title">Send</h3>
             <form onSubmit={this.transferController}>
-                Recipient Address:
-                                    <input type="text" name="to_address"  id="to_address"  onChange={this.handleChange.bind(this)} value={this.state.to_address}></input>
-                                    <input type="number" name="amount" id="amount"  onChange={this.handleChange.bind(this)} name="amount" value={this.state.amount} step='1'></input>
-                                    <input type="text" name="password"  onChange={this.handleChange.bind(this)} value={this.state.password} id="password"></input>
-                                    <span id ="send_error"></span>
-                                    <input type="submit" value="Transfer"></input>
+                <div className="send_form_row">
+                    <label htmlFor="to_address">Account<br></br> Number: </label>
+                                    <input className="send_form_input" type="text" name="to_address"  id="to_address"  onChange={this.handleChange.bind(this)} value={this.state.to_address}></input>
+                </div>
+                <div className="send_form_row">
+                                  <label htmlFor="amount">Amount: </label>
+                <div className="send_form_row_output_wrapper send_form_input">
+                    <div className="amount_stack_wrapper">
+                                    <input className="amount_input" type="number" placeholder="0 FET" name="amount" id="amount"  onChange={this.handleAmountChange.bind(this)} name="amount" value={this.state.amount}></input>
+                        <br></br><output>{typeof this.state.dollar !== "undefined" && this.state.dollar !== null? '$' + this.state.dollar + " USD" : ""}</output></div>
+                                  </div ></div ><div className="send_form_row send_form_row_password">
+                                   <label htmlFor="password">Password: </label>
+                                    <input className="send_form_input" type="password" name="password"  onChange={this.handleChange.bind(this)} value={this.state.password} id="password"></input>
+                </div>
+                <span id ="send_error"></span>
+                <div className="small-button-container">
+                     <button className="small-button send_buttons" onClick={goTo.bind(null, Account)}>
+                        Cancel
+                    </button>
+                    <input className="small-button send_buttons" type="submit" value="Send"></input>
+                                     </div>
                             </form>
+             </div></div>
         );
     }
 }

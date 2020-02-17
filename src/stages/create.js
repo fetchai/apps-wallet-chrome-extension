@@ -28,7 +28,7 @@ export default class Create extends Component {
 
          if(!Entity._strong_password(this.state.password)) {
             let password = document.getElementById("password");
-             password.setCustomValidity("Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character");
+             password.setCustomValidity("Weak Password: choose password with 14 characters including an uppercase, lowercase, number and special character");
              password.reportValidity();
              return
          }
@@ -55,12 +55,12 @@ export default class Create extends Component {
                 <h1>Create account</h1>
                 <hr></hr>
                 <form id="form">
-                            <input type="text" className="large-button" placeholder="Password" id="password" name ="password" value={this.state.password}
+                            <input type="password" className="large-button" placeholder="Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)} required></input>
-                            <input type="text" className="large-button" placeholder="Confirm Password" id="password_confirm" name ="password_confirm" value={this.state.password_confirm}
+                            <input type="password" className="large-button" placeholder="Confirm Password" id="password_confirm" name ="password_confirm" value={this.state.password_confirm}
                                    onChange={this.handleChange.bind(this)} required></input>
                     <div className="small-button-container">
-                    <button type="button" className="small-button" onClick={(event) => { event.preventDefault(); goBack()}}>Back</button>
+                    <button type="button" className="small-button" onClick={event => { event.preventDefault(); goBack()}}>Back</button>
                     <button type="submit" className="small-button" onClick={this.handleSubmit}>Next</button>
                     </div>
                 </form>

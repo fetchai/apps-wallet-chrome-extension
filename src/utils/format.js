@@ -1,3 +1,3 @@
-   const format = (val) => val.substring(0, 12) + "..."
+   const format = (val, last = 12) => val.substring(0, last) + "..."
 
 export {format}

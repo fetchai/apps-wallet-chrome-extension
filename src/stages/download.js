@@ -14,7 +14,8 @@ export default class Download extends Component {
 
         this.state = {
             address: Storage.getLocalStorage('address'),
-            QR:""
+            QR:"",
+            hover_1: false
         }
     }
 
@@ -26,7 +27,12 @@ make_QR() {
         let qr = qrCode(4, 'M')
         qr.addData(this.state.address)
         qr.make()
-    this.setState({QR: qr.createDataURL()});
+    this.setState({QR: qr.createDataURL(2, 0)});
+    }
+
+    toggleHover(index) {
+             const hover = "hover_" + index;
+             this.setState(prevState => ({ [hover]: !prevState[hover] }));
     }
 
    async download() {
@@ -64,12 +70,13 @@ make_QR() {
                 <hr></hr>
                 <div className="qr_container">
                 {this.state.QR ? <img src={this.state.QR} className='qr'/>: ''}
-                <span className='qr_caption' >{format(this.state.address)}</span>
+                <span className='qr_caption'  onMouseOver={() => this.toggleHover(1)}
+                 onMouseOut={() => this.toggleHover(1)}>{(this.state.hover_1) ? this.state.address : format(this.state.address)}</span>
 
-                 <a  className='large-button fetch_link' href={"www.fetch.ai"}>
+                 <a  className='large-button fetch_link account-button' href={"www.fetch.ai"}>
                         View on Fetch.ai
                     </a>
-                    <button className='large-button' onClick={this.download}>
+                    <button className='large-button account-button' onClick={this.download}>
                          Export Private Key
                     </button>
                      </div>

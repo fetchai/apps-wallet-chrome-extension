@@ -10,6 +10,8 @@ import Settings from "./settings";
 import {Storage} from "../services/storage"
 import {format} from "../utils/format";
 import Expand from "react-expand-animated";
+import InfiniteScroll from "react-infinite-scroller";
+import History from "./history";
 
 export default class Account extends Component {
 
@@ -19,15 +21,19 @@ export default class Account extends Component {
         this.fetchHistory = this.fetchHistory.bind(this)
         this.viewAll = this.viewAll.bind(this)
         this.hide = this.hide.bind(this)
+        this.toggleHover = this.toggleHover.bind(this)
+        this.copyAddressClipboard = this.copyAddressClipboard.bind(this)
 
         this.state = {
             balance: null,
             percentage: null,
             dollar_balance: null,
             address: Storage.getLocalStorage("address"),
-            collapsable_1: true,
-            collapsable_2: true,
-            collapsable_3: false,
+            collapsable_1: false,
+            collapsable_2: false,
+            collapsable_3: true,
+            hover_1:false,
+            hover_2:false,
             history: null,
         }
     }
@@ -35,9 +41,20 @@ export default class Account extends Component {
     async componentDidMount() {
         const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME)
  this.api = new LedgerApi(host, port)
- setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
- setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
- setInterval(this.fetchHistory.bind(null), TRANSACTION_HISTORY_CHECK_INTERVAL_MS)
+
+        this.balance();
+        this.fetchDollarPrice();
+        this.fetchHistory();
+
+ this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
+ this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
+ this.history_request_loop = setInterval(this.fetchHistory.bind(null), TRANSACTION_HISTORY_CHECK_INTERVAL_MS)
+    }
+
+    componentWillUnmount() {
+         clearInterval(this.balance_request_loop)
+         clearInterval(this.dollar_request_loop)
+         clearInterval(this.history_request_loop)
     }
 
     /**
@@ -53,7 +70,7 @@ export default class Account extends Component {
       });
     }
 
-    processHistory(response){
+    processHistory(response) {
         if(response.status !== 200){
             return;
         }
@@ -73,7 +90,6 @@ export default class Account extends Component {
             }
 
            this.setState({history: data.results})
-debugger;
 });
     }
 
@@ -82,10 +98,19 @@ debugger;
       .then(data => {
 
           //debugger
-          if(data.percentage === "number"){
+          if(typeof data.percentage === "number"){
                this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
           }
       });
+    }
+
+    toggleHover(index){
+             const hover = "hover_" + index;
+             const hover_2 = "hover_" + 2;
+             // const collapse = "hover_" + 1;
+             this.setState(prevState => ({ [hover]: !prevState[hover] }));
+             // we also toggle visibility of the plus icon
+             this.setState(prevState => ({ [hover_2]: !prevState[hover_2] }));
     }
 
    viewAll() {
@@ -100,7 +125,13 @@ debugger;
     collapsable_3: false});
   };
 
-
+    toLocaleDateString(str){
+        // constructing locale date without comma
+        // https://stackoverflow.com/questions/49982572/how-to-remove-comma-between-date-and-time-on-tolocalestring-in-js
+        const dateOptions = { day: '2-digit', month: 'short' };
+const timeOptions = { hour12: true, hour: '2-digit', minute:'2-digit' };
+return new Date(str).toLocaleString('en', dateOptions) + " " + new Date(str).toLocaleString('en', timeOptions);
+    }
 
     calculateDollarBalance(){
        // if we have both a balance and a dollar price then we calculate the dollar balance,
@@ -123,13 +154,25 @@ debugger;
     }
 
     async balance(){
+           console.log("balance is called")
         let balance;
    try {
    balance = await this.api.tokens.balance(this.state.address);
   } catch {
       return;
-  }
+   }
+
+
   this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
+    }
+
+    copyAddressClipboard(){
+        navigator.clipboard.writeText(this.state.address).then(() => {
+            console.log('Async: Copying to clipboard was successful!');
+            // todo write response to this event.
+        },  (err) => {
+            console.error('Async: Could not copy text: ', err);
+        });
     }
 
     render() {
@@ -155,9 +198,11 @@ debugger;
                 <div className='address_title_inner'>
                 <h1 className="account_address">Account address</h1>
                     <br></br>
-                <span>{format(this.state.address)}</span>
+                <span className="hoverable-address" onMouseOver={() => this.toggleHover(1)}
+                                                    onMouseOut={() => this.toggleHover(1)}
+                onClick={this.copyAddressClipboard}>{(this.state.hover_1)? this.state.address : format(this.state.address)}</span>
                          </div>
-                <img className='cross' src={plus} onClick={goTo.bind(null, Settings)}/>
+                    {(this.state.hover_1)? "" : <img className='cross' src={plus} onClick={goTo.bind(null, Settings)}/>}
                      </div>
                 <hr></hr>
           <Expand
@@ -168,14 +213,14 @@ debugger;
           >
                <div className="balance_container">
                <img className='plus' alt="fetch circular logo" src={circle}/><br></br>
-              {this.state.dollar_balance !== null ? <span>{this.state.balance} FET</span>: ""} <br></br>
+              {this.state.balance !== null ? <span className="fet-balance">{this.state.balance} FET</span>: ""} <br></br>
               {this.state.dollar_balance > 0 ? <span>{this.state.dollar_balance} USD</span> : ""}
                </div>
                    <div className="small-button-container">
-                     <button className="small-button" onClick={goTo.bind(null, Download)}>
+                     <button className="small-button account-button" onClick={goTo.bind(null, Download)}>
                         Download
                     </button>
-                    <button className="small-button" onClick={goTo.bind(null, Send)}>
+                    <button className="small-button account-button" onClick={goTo.bind(null, Send)}>
                          Send
                     </button>
                    </div>
@@ -188,18 +233,33 @@ debugger;
             transitions={transitions}
     >
 
-  <h1 className="account_address">History</h1>
-        <hr></hr>
+  <h1 className="account_address history-header">History</h1>
+        <hr className="history-hr"></hr>
         <div>
-            <div className="history_item"><span>{this.state.history[0]}</span></div>
-            {Object.keys(this.state.history).length > 1 ? <div className="history_item"></div> : "" }
+            <div className="history_item"><span className="history_left_value">{format(this.state.history[0].digest, 13)}</span><span className="history_right_value">-80</span><br></br>
+                <span className="history_left_value light">{this.state.history[0].status}</span><span className="history_right_value light">{this.toLocaleDateString(this.state.history[0].created_date)}</span></div>
+            {Object.keys(this.state.history).length > 1 ?             <div className="history_item"><span className="history_left_value">{format(this.state.history[1].digest, 13)}</span><span className="history_right_value">-80</span><br></br>
+                <span className="history_left_value light">{this.state.history[1].status}</span><span className="history_right_value light">{this.toLocaleDateString(this.state.history[1].created_date)}</span></div> : "" }
         </div>
-         <button className="large-button" onClick={this.viewAll}>
+         <button className="button-large-thin account-button" onClick={this.viewAll}>
                         View All
           </button>
 
     </Expand>
        : ""}
+
+        <Expand
+            open={this.state.collapsable_3}
+            duration={500}
+            styles={styles}
+            transitions={transitions}
+          >
+            <History/>
+             <button className="button-large-thin account-button" onClick={this.hide}>
+                        Hide
+          </button>
+        </Expand>
+
            </div>
            </div>
         );

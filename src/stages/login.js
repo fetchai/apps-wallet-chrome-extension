@@ -44,7 +44,7 @@ export default class Login extends Component {
            logo = chrome.runtime.getURL("welcome.mp4")
       } else {
            welcome = "./assets/welcome.mp4"
-            logo =  "./assets/fetchai_logo.svg"
+           logo =  "./assets/fetchai_logo.svg"
       }
 
         return (
@@ -56,7 +56,7 @@ export default class Login extends Component {
                 <div className="overlay2">
                     <div className="overlay3">
                       <form id="form">
-                            <input type="text" className="button-free-standing " placeholder="Password" id="password" name ="password" value={this.state.password}
+                            <input type="password" className="button-free-standing " placeholder="Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)} required></input>
                     <button type="submit" className="button-free-standing" disabled={!this.state.password.length} onClick={this.handleSubmit}>Login</button>
                 </form>

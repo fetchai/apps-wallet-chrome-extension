@@ -3,8 +3,8 @@ import React, { Component } from "react";
 import {goTo} from "../services/router";
 import Create from "./create";
 import Recover from "./recover";
-import Authentication from "../services/authentication";
-import Login from "./login";
+
+import  * as InfiniteScroll  from "infinite-scroll"
 
 export default class Initial extends Component {
 
@@ -18,6 +18,23 @@ let welcome, logo;
            welcome = "./assets/welcome.mp4"
             logo =  "./assets/fetchai_logo.svg"
       }
+
+      let elem = document.querySelector('.container');
+
+let infScroll = new InfiniteScroll( elem, {
+  // options
+  path: '.pagination__next',
+  append: '.post',
+  history: false,
+});
+
+debugger;
+
+// element argument can be a selector string
+//   for an individual element
+ infScroll = new InfiniteScroll( '.container', {
+  // options
+});
 
         return (
              <div>

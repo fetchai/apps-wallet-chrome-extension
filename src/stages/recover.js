@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, {Component} from "react";
-import {goTo} from "../services/router";
+import {goBack, goTo} from "../services/router";
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
@@ -8,24 +8,27 @@ import {formErrorMessage} from "../services/formErrorMessage";
 import {validJSONObject} from "../utils/json";
 import {validAddress} from "../utils/validAddress";
 import {Storage} from "../services/storage"
-
-const CONFIRM_MESSAGE = "Decrypting without providing an Address means that if the password is wrong it will decrypt to the wrong address " +
-            "rather than throw an error. Click yes to proceed or cancel and provide an address ";
+import Expand from "react-expand-animated";
 
 export default class Recover extends Component {
 
     constructor(props) {
         super(props);
         this.handleFileChange = this.handleFileChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.validPassword = this.validPassword.bind(this);
         this.validFile = this.validFile.bind(this);
         this.validAddress = this.validAddress.bind(this);
+        this.handleConfirmation = this.handleConfirmation.bind(this);
+        this.hideConfirmation = this.hideConfirmation.bind(this);
 
         this.state = {
             file: "",
             password: "",
-            address: ""
+            address: "",
+            collapsable_1: true,
+            collapsable_2: false
         }
     }
 
@@ -126,37 +129,82 @@ export default class Recover extends Component {
                 formErrorMessage("address", "Incorrect Password or Address");
                 error_flag = true
             }
-        } else if (!error_flag && !window.confirm(CONFIRM_MESSAGE)) {
-            error_flag = true
-        }
 
-
-        // if no errors then we store the data.
-        if (!error_flag) {
+            if (!error_flag) {
             Storage.setLocalStorage("key_file", file_str);
             Storage.setLocalStorage("address", new Address(entity).toString());
             goTo(Account)
         }
+
+        } else if (!error_flag) {
+             // show the confirmation dialog. //
+            this.setState({collapsable_1: false, collapsable_2: true})
+
+        }
+    }
+
+   async  handleConfirmation(){
+        // we have already confirmed the values are correct earlier, so don't need to do this again.
+         const file_str = await this.read_file(this.state.file);
+         const entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password)
+
+          Storage.setLocalStorage("key_file", file_str);
+          Storage.setLocalStorage("address", new Address(entity).toString());
+          goTo(Account)
+    }
+
+    hideConfirmation(){
+          this.setState({collapsable_1: true, collapsable_2: false})
     }
 
 render()
 {
+       const styles = {
+      open: { background: " #1c2846" }
+    };
+
+    const transitions = ["height", "opacity", "background"];
+
     return (
-        <div className="container">
-            <h2>Login</h2>
+       <div className="OverlayMain"><div className="OverlayMainInner">
+            <h2>Upload</h2>
+           <hr></hr>
+            <Expand
+            open={this.state.collapsable_1}
+            duration={500}
+            styles={styles}
+            transitions={transitions}
+            >
+
+
             <form id="form">
                 <legend>Upload File with Password</legend>
                 <input label='file' id="file" type="file"
-                       value={this.state.file_name} onBlur={this.validFile.bind(this)} onChange={this.handleFileChange.bind(this)}></input>
+                       value={this.state.file_name}  onChange={this.handleFileChange.bind(this)}></input>
                 <input type="text" placeholder="Password" id="password" name="password" value={this.state.password}
                         onChange={this.handleChange.bind(this)} required></input>
                 <label>Address (optional)</label>
                 <input label='address' id="address" type="text" name="address"
                        value={this.state.address} onChange={this.handleChange.bind(this)}></input>
-                <button type="submit" className="pure-button pure-button-primary"
-                        onClick={this.handleSubmit.bind(this)}>Upload
-                </button>
+                 <div className="small-button-container">
+                    <button type="button" className="small-button" onClick={event => { event.preventDefault(); goBack()}}>Back</button>
+                    <button type="submit" className="small-button" onClick={this.handleSubmit}>Next</button>
+                 </div>
             </form>
+            </Expand>
+           <Expand
+            open={this.state.collapsable_2}
+            duration={500}
+            styles={styles}
+            transitions={transitions}
+            >
+               <p>Decrypting without providing an Address means that if the password is wrong it will decrypt to the wrong address rather than throw an error. Click yes to proceed or cancel and provide an address </p>
+ <div className="small-button-container">
+                    <button type="button" className="small-button" onClick={this.hideConfirmation}>Back</button>
+                    <button type="submit" className="small-button" onClick={this.handleConfirmation}>Next</button>
+                 </div>
+           </Expand>
+        </div>
         </div>
     );
 }

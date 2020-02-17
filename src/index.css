@@ -1,3 +1,44 @@
+/** disable default outline orange onfocus on inputs */
+* {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0) !important;
+    -webkit-focus-ring-color: rgba(255, 255, 255, 0) !important;
+    outline: none !important;
+}
+
+/** make autofill background color correct **
+ */
+
+/* Change the white to any color ;) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus  {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+/*Change text in autofill textbox*/
+input:-webkit-autofill {
+    -webkit-text-fill-color: white !important;
+}
+
+
+/**  hide step from text input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+
 * {
   font-family: "acumin-pro-semi-condensed", sans-serif;
         color: white;
@@ -5,6 +46,11 @@
 
 .account {
 width: 50px;
+}
+
+.fet-balance {
+    font-size: 30px;
+    color: #00b6a0;
 }
 
 .cross {
@@ -25,8 +71,6 @@ width: 50px;
     /*position: absolute;*/
     /*left: 0;*/
     width: 125px;
-    /*right: 0;*/
-    /*margin: auto;*/
 }
 
 .qr_container {
@@ -40,14 +84,11 @@ width: 50px;
     display: block;
 }
 
-
-
-/*
- position: absolute;
-    top: 0;
-    bottom: 0;
-    margin: auto;
- */
+.hoverable-address {
+  max-width: 223px;
+  overflow-wrap: break-word;
+    display: block;
+}
 
 .account_address {
         display: inline;
@@ -204,6 +245,8 @@ hr
     width: 47%;
     margin: 10px 3px;
     font-size: 24px;
+    line-height: 38px;
+    font-weight: 700;
 }
 
 .plus {
@@ -217,8 +260,128 @@ width: 125px;
 }
 
 .small-button-container {
+margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.history-header {
+    font-weight:700
+}
+
+.history-hr {
+   margin-top:5px
+}
+
+.account-button {
+    font-size: 17px;
+    line-height: 23px;
+    padding-bottom: 3px;
+    padding-top: 0px;
+    font-weight: 700;
+}
+
+.history_item {
+        margin-top: 22px;
+    border-style: solid;
+    border-color: white;
+    border-radius: 10px;
+    border-width: 2px;
+        padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.history-container {
 
 }
+
+.history_left_value {
+padding-left: 10px
+}
+
+.button-large-thin {
+    font-size: 15px;
+    width: 98%;
+    margin: 15px 0;
+    height: 33px;
+    margin-top: 23px;
+}
+
+.light {
+   font-width: 200;
+}
+
+.history_right_value {
+float: right;
+    padding-right: 15px;
+}
+/** send stuff **/
+.send_form_row {
+margin-top: 30px;
+        display: flex;
+    height: 50px;
+}
+
+.send_buttons {
+        background:none;
+    padding: 0 0;
+    text-indent:0;
+}
+
+/* different placeholder css for different browsers */
+::-webkit-input-placeholder { /* Edge */
+  color: white;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: white;
+}
+
+.amount_input{
+    border:none;
+    background:none;
+    display: inline;
+}
+
+.send_form_row label {
+margin-left: 10px;
+    margin-right: 15px;
+}
+
+.send_form_input {
+        border-style: solid;
+border-radius: 10px;
+    background: none;
+    border-color: white;
+    width: 100%;
+    text-indent: 10px;
+}
+
+.amount_input{
+    padding:0px;
+    border: none;
+    background: none;
+    display: inline;
+text-indent: 10px;
+}
+
+.send-title {
+        font-size: 24px;
+}
+
+.send_form_row_password label {
+    margin-right: 1px;
+}
+
+.send_form_row_output_wrapper{
+display: inline-table;
+        height: 50px;
+}
+
+.send_form_row_output_wrapper output {
+padding-left: 10px;
+}
+
+/** end send **/
 
 button:focus {
     outline:none;
@@ -233,14 +396,7 @@ input {
     background-position: 14px 10px;
 }
 
-/* different placeholder css for different browsers */
-::-webkit-input-placeholder { /* Edge */
-  color: white;
-}
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-  color: white;
-}
 
 ::placeholder {
   color: white;
@@ -318,16 +474,6 @@ margin-left: 10%;
 
 }
 
-/*.overlay {*/
-/*  position: fixed;*/
-/*  top: 0;*/
-/*  background: rgba(0, 0, 0, 0.5);*/
-
-/*  color: #f1f1f1;*/
-/*  width: 100%;*/
-/*  padding: 20px;*/
-/*}*/
-
 .fetch-button {
   background-color: #4CAF50;
   border: none;
@@ -355,64 +501,6 @@ padding-right: 5px;
     position: relative;
     background-color: #1c2846;
     border-width: medium;
-    border-radius: 9px;
+    border-radius: 10px;
     border-color: white;
 }
-
-/*.custom_select select {*/
-/*  display: none; !*hide original SELECT element: *!*/
-/*}*/
-
-/*.select-selected {*/
-/*  background-color: pink;*/
-/*}*/
-
-/* Style the arrow inside the select element: */
-/*.select-selected:after {*/
-/*  position: absolute;*/
-/*  content: "";*/
-/*  top: 14px;*/
-/*  right: 10px;*/
-/*  width: 0;*/
-/*  height: 0;*/
-/*  border: 6px solid red;*/
-/*  border-width: medium;*/
-/*  border-color: #fff transparent transparent transparent;*/
-/*}*/
-
-/*!* Point the arrow upwards when the select box is open (active): *!*/
-/*.select-selected.select-arrow-active:after {*/
-/*  border-color: transparent transparent #fff transparent;*/
-/*  top: 7px;*/
-/*}*/
-
-/*!* style the items (options), including the selected item: *!*/
-/*.select-items div,.select-selected {*/
-/*  color: #ffffff;*/
-/*  padding: 8px 16px;*/
-/*  border: 1px solid green;*/
-/*  border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;*/
-/*  cursor: pointer;*/
-/*}*/
-
-/*!* Style items (options): *!*/
-/*.select-items {*/
-/*  position: absolute;*/
-/*  background-color: red;*/
-/*  top: 100%;*/
-/*  left: 0;*/
-/*  right: 0;*/
-/*  z-index: 99999999999;*/
-/*}*/
-
-/*!* Hide the items when the select box is closed: *!*/
-/*.select-hide {*/
-/*  display: none;*/
-/*}*/
-
-/*.select-items div:hover, .same-as-selected {*/
-/*  background-color: green;*/
-/*}*/
-
-/** custom select end */
-

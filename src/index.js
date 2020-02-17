@@ -8,8 +8,8 @@ import Router from './services/router';
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";
 import Login from "./stages/login";
-import Settings from "./stages/settings";
-import Create from "./stages/create";
+import Download from "./stages/download";
+import History from "./stages/history";
 import Account from "./stages/account";
 
 class Main extends React.Component {

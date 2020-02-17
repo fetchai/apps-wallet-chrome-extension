@@ -8,6 +8,7 @@ import Router from './services/router';
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";
 import Login from "./stages/login";
+import Create from "./stages/create";
 
 class Main extends React.Component {
     render() {
@@ -16,7 +17,7 @@ class Main extends React.Component {
 // browser uses this.
     //if(Authentication.isLoggedIn()) {
     if(true) {
-      opening_page = <Initial />
+      opening_page = <Create />
     } else if(Authentication.hasSavedKey()) {
       opening_page = <Login />
     } else {
@@ -39,8 +40,8 @@ class Main extends React.Component {
 
     }
 }
-console.log("QWERTTYYYYYYYYYY")
-const app = document.createElement('iframe');
+console.log("QWERTTYYYYYYYYYY99999999999999999")
+const app = document.createElement('div');
 app.id = "my-extension-root";
 
 document.body.appendChild(app);

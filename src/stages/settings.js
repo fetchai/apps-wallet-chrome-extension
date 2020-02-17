@@ -77,6 +77,12 @@ export default class Settings extends Component {
         return true;
    }
 
+    /**
+     * Not only a toggle of i but toggles collapsable_${index} and sets the other collapsables to closed
+     * to show false so hides other setting expandables
+     *
+     * @param index of collapsable to toggle
+     */
       toggle(index) {
           for(let i=1; i <= 3; i++) {
              let collapse = "collapsable_" + i;
@@ -185,14 +191,14 @@ async update_password(){
           >
  <form id="form">
                     <legend className="change_password_legend">Change Password</legend>
-                    <input type="text" className="change_password_input" placeholder="Old Password" id="password" name ="password" value={this.state.password}
+                    <input type="password" className="change_password_input" placeholder="Old Password" id="password" name ="password" value={this.state.password}
                                    onChange={this.handleChange.bind(this)}></input>
 
-      <input type="text" className="change_password_input" placeholder="New Password" id="new_password" name ="new_password" value={this.state.new_password}
+      <input type="password" className="change_password_input" placeholder="New Password" id="new_password" name ="new_password" value={this.state.new_password}
                                    onChange={this.handleChange.bind(this)}></input>
 
 
-       <input type="text" className="change_password_input" placeholder="Confirm New Password" id="new_password_confirm" name ="new_password_confirm" value={this.state.new_password_confirm}
+       <input type="password" className="change_password_input" placeholder="Confirm New Password" id="new_password_confirm" name ="new_password_confirm" value={this.state.new_password_confirm}
                                    onChange={this.handleChange.bind(this)}></input>
 
      <output type="text" className="change_password_input" id="output">{this.state.output}</output>
