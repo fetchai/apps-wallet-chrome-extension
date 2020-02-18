@@ -1,5 +1,5 @@
 /*global chrome*/
-import {NOT_EXTENTION} from "../constants";
+import {EXTENSION} from "../constants";
 
 /**
  * The purose of this is that by centralising the get/sets to local storage it
@@ -8,20 +8,20 @@ import {NOT_EXTENTION} from "../constants";
  */
 export default class Storage {
 
-       static setLocalStorage(k, v) {
-              if(NOT_EXTENTION){
-                     chrome.storage.sync.set({k,v})
-              } else {
-                     localStorage.setItem(k, v);
-              }
-       }
+    static setLocalStorage(k, v) {
+        // if (!EXTENSION) {
+        //     chrome.storage.sync.set({k, v})
+        // } else {
+            localStorage.setItem(k, v);
+        // }
+    }
 
-       static getLocalStorage(k) {
-               if(NOT_EXTENTION){
-                       return chrome.storage.sync.get(k)
-               } else {
-                      return localStorage.getItem(k);
-               }
-       }
+    static getLocalStorage(k) {
+        // if (!EXTENSION) {
+        //     return chrome.storage.sync.get(k)
+        // } else {
+            return localStorage.getItem(k);
+        // }
+    }
 }
-export { Storage }
+export {Storage}

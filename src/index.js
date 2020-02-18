@@ -8,33 +8,34 @@ import Router from './services/router';
 import Initial from "./stages/initial";
 import Authentication from "./services/authentication";
 import Login from "./stages/login";
-import Download from "./stages/download";
-import History from "./stages/history";
 import Account from "./stages/account";
 
 class Main extends React.Component {
     render() {
 
-     let opening_page;
+        let opening_page;
 // browser uses this.
-    //if(Authentication.isLoggedIn()) {
-    if(true) {
-      opening_page = <Account />
-    } else if(Authentication.hasSavedKey()) {
-      opening_page = <Login />
-    } else {
-      opening_page = <Initial />
-    }
-      return(<Router>{opening_page}</Router>)
-
+        //if(Authentication.isLoggedIn()) {
+        if (true) {
+            opening_page = <Initial/>
+        } else if (Authentication.hasSavedKey()) {
+            opening_page = <Login/>
+        } else {
+            opening_page = <Initial/>
+        }
+        return (<Router>{opening_page}</Router>)
     }
 }
-console.log("QWERTTYYYYYYYYY222Y")
+
+console.log("QWERTTYYYYYYYYY222Y");
+
+
+
 const app = document.createElement('div');
 app.id = "my-extension-root";
 
 document.body.appendChild(app);
-ReactDOM.render(<Main />, app);
+ReactDOM.render(<Main/>, app);
 
 //app.style.display = "none";
 

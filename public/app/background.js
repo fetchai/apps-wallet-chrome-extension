@@ -6,3 +6,19 @@ chrome.browserAction.onClicked.addListener(function(tab) {
         chrome.tabs.sendMessage(activeTab.id, {"message": "clicked_browser_action"});
    });
 });
+
+// background.js
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  fetch(request.input).then(function(response) {
+    return response.text().then(function(text) {
+      sendResponse([{
+        body: text,
+        status: response.status,
+        statusText: response.statusText,
+      }, null]);
+    });
+  }, function(error) {
+    sendResponse([null, error]);
+  });
+  return true;
+});

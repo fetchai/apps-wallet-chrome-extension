@@ -4,8 +4,7 @@
  * @param id
  * @param message
  */
-const formErrorMessage = (id, message) =>
-{
+const formErrorMessage = (id, message) => {
 //     var selection = document.getElementsByTagName('iframe');
 // var iframes = Array.prototype.slice.call(selection);
 //
@@ -20,12 +19,9 @@ const formErrorMessage = (id, message) =>
 // });
 
 
-
-
-
     let password = document.getElementById(id);
     password.setCustomValidity(message);
     password.reportValidity();
-}
+};
 
 export {formErrorMessage}
