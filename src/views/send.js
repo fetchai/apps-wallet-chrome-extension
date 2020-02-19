@@ -19,6 +19,9 @@ import Account from "./account";
 import {getAssetURI} from "../utils/getAsset";
 import {fetchResource} from "../utils/fetchRescource";
 
+/**
+ * Corresponds to the send view.
+ */
 export default class Send extends Component {
 
     constructor(props) {
@@ -54,6 +57,9 @@ export default class Send extends Component {
         clearInterval(this.balance_request_loop)
     }
 
+    /**
+     * fetches current dollar price of FET
+     */
     fetchDollarPrice() {
 
         if(EXTENSION){
@@ -70,7 +76,8 @@ export default class Send extends Component {
     }
 
     /**
-     *
+     * Processes the result of fetching dollar price of FET. We save to it to state. If we have an a FET amount in state
+     * then we look to recalculate the dollar display string and update the user.
      *
      * @param response
      */
@@ -85,9 +92,12 @@ export default class Send extends Component {
                     console.log(data);
 
                     // this indicates bad api call so rather then set to null we just leave pre-existing value in state.
+                    //todo check if this can ever occur, and remove if not.
                     if (typeof data.percentage !== "number") return
 
+                        // Dollar variable (and therefore state.dollar) represents the display dollar amount to show the user when typing in a FET amount.
                         let dollar
+
                         if (this.state.amount === null) {
                             dollar = null;
                         } else if (this.state.amount === 0) {
@@ -115,6 +125,11 @@ export default class Send extends Component {
     }
 
 
+    /**
+     * When amount is changed (if we have a dollar price of FET from api) we update the dollar amount to show user
+     *
+     * @param event
+     */
     handleAmountChange(event) {
         if (this.state.percentage === null) return this.setState({dollar: null, amount: event.target.value});
         debugger
@@ -135,7 +150,7 @@ export default class Send extends Component {
     }
 
     /**
-     * Controls logic to decide if we can do transfer, then calls transfer method if we can.
+     * Controls logic to decide if we can do transfer, then calls transfer method if requirements to transfer are met.
      *
      * @param event
      * @returns {Promise<void>}
@@ -170,6 +185,14 @@ export default class Send extends Component {
         await this.transfer(entity, to_address, amount)
     }
 
+    /**
+     * Actual logic performing a transfer.
+     *
+     * @param entity entity of sender
+     * @param to
+     * @param amount
+     * @returns {Promise<void>}
+     */
     async transfer(entity, to, amount) {
         const tx2 = await this.api.tokens.transfer(entity, to, amount, DEFAULT_FEE_LIMIT).catch((error) => {
             console.log('error occured: ' + error);
@@ -181,7 +204,7 @@ export default class Send extends Component {
 
 
     /**
-     * checks if we have sufficient funds
+     * Checks if we have sufficient funds to transfer transfer_amount + DEFAULT_FEE_LIMIT
      *
      * @param event
      * @returns {Promise<boolean>}
@@ -193,7 +216,7 @@ export default class Send extends Component {
             return false;
         });
 
-        if (balance < transfer_amount) {
+        if (balance < (transfer_amount + DEFAULT_FEE_LIMIT)) {
             formErrorMessage("amount", `Insufficient funds ( Balance: ${balance})`);
             return false;
         }

@@ -8,8 +8,8 @@ import {getAssetURI} from "../utils/getAsset";
 import {fetchResource} from "../utils/fetchRescource";
 
 /**
- * Whilst all other stages map to a page in the original wireframes this component is the infinite scroll
- * when you expand to view all on the account page
+ * Whilst all other views map directly to a page in the original 8 wireframes this component is the infinite scroll which
+ * is displayed from the accounts page when "view all" button is clicked.
  */
 
 export default class History extends Component {
@@ -33,11 +33,18 @@ export default class History extends Component {
     }
 
 
+    /**
+     * This is specific to our list of history items and at the index of the clicked history item it changes the clicked property,
+     * of the history item at the given index in the state. This is used to show large history when clicked, and small item when not clicked.
+     *
+     * @param index
+     */
     toggleClicked(index) {
         const results = this.state.results
         results[index].clicked = !this.state.results[index].clicked
         this.setState({results: results})
     }
+
 
     createLargeHistoryItem({digest, status, fee, created_date, clicked, index})
           {
@@ -102,6 +109,11 @@ export default class History extends Component {
                 })
     }
 
+    /**
+     * Iterate over items and return list of history items to show in our infinitely scrolling div.
+     *
+     * @returns {[]}
+     */
     showItems() {
         const items = [];
         for (let i = 0; i < this.state.results.length; i++) {

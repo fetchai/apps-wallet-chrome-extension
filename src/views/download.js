@@ -7,6 +7,10 @@ import {Storage} from "../services/storage"
 import {format} from "../utils/format";
 import {getAssetURI} from "../utils/getAsset";
 
+/**
+ * component corresponds to download view.
+ *
+ */
 export default class Download extends Component {
     constructor(props) {
         super(props);
@@ -28,6 +32,10 @@ export default class Download extends Component {
         this.setState({QR: ""});
     }
 
+    /**
+     * Create a QR code image from a users address and
+     * stores it as a DataURI (string) in state
+     */
     make_QR() {
         let qr = qrCode(4, 'M');
         qr.addData(this.state.address);
@@ -39,6 +47,12 @@ export default class Download extends Component {
         const hover = "hover_" + index;
         this.setState(prevState => ({[hover]: !prevState[hover]}));
     }
+
+    /**
+     * Causes download of encrypted key file as json file, taking key file from storage.
+     *
+     * @returns {Promise<void>}
+     */
 
     async download() {
         const json_str = Storage.getLocalStorage('key_file');

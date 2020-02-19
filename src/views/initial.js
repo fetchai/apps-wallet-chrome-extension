@@ -5,6 +5,12 @@ import Create from "./create";
 import Recover from "./recover";
 import {getAssetURI} from "../utils/getAsset";
 
+/**
+ * Each stage corresponds to a page as per the original 8 pages of the wireframes, and this corresponds to the initial view.
+ *
+ * It should not be shown to a user with a key saved in memory.
+ */
+
 export default class Initial extends Component {
 
     render() {

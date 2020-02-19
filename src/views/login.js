@@ -7,6 +7,11 @@ import Authentication from "../services/authentication";
 import {Storage} from "../services/storage"
 import {getAssetURI} from "../utils/getAsset";
 
+/**
+ * Our login Page.
+ *
+ * Note: login page should only be shown if user can login ie if they have an account saved in memory.
+ */
 export default class Login extends Component {
 
     constructor(props) {
@@ -23,6 +28,11 @@ export default class Login extends Component {
     }
 
 
+    /**
+     * Processes login form submission. If the password is correct we set logged-in to true in local storage and redirect to account page.
+     *
+     */
+
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -38,6 +48,7 @@ export default class Login extends Component {
     render() {
         return (
             <div>
+                {/*Video is not background but attached to top div with other elements placed over it via absolute positioning*/}
                 <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
                     <source src={getAssetURI("welcome.mp4")} type="video/mp4"></source>
                 </video>

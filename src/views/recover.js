@@ -7,9 +7,9 @@ import Account from "./account";
 import {formErrorMessage} from "../services/formErrorMessage";
 import {validJSONObject} from "../utils/json";
 import {validAddress} from "../utils/validAddress";
-import {Storage} from "../services/storage"
 import Expand from "react-expand-animated";
 import {TRANSITION_DURATION_MS} from "../constants";
+import Authentication from "../services/authentication";
 
 export default class Recover extends Component {
 
@@ -21,7 +21,7 @@ export default class Recover extends Component {
         this.validPassword = this.validPassword.bind(this);
         this.validFile = this.validFile.bind(this);
         this.validAddress = this.validAddress.bind(this);
-        this.handleConfirmation = this.handleConfirmation.bind(this);
+        this.handleConfirmationSubmit = this.handleConfirmationSubmit.bind(this);
         this.hideConfirmation = this.hideConfirmation.bind(this);
 
         this.state = {
@@ -29,8 +29,8 @@ export default class Recover extends Component {
             password: "",
             address: "",
             file_name: "",
-            collapsable_1: true,
-            collapsable_2: false
+            collapsible_1: true,
+            collapsible_2: false
         }
     }
 
@@ -55,7 +55,6 @@ export default class Recover extends Component {
     }
 
     handleFileChange(event) {
-        debugger
         this.setState({
             file: event.target.files[0],
             file_name: event.target.value
@@ -63,7 +62,7 @@ export default class Recover extends Component {
     };
 
     /**
-     *
+     * Checks is password is "valid" (not whether correct) ie is not empty, and is "strong"; as per javascript SDK.
      *
      * @returns {boolean}
      */
@@ -78,6 +77,12 @@ export default class Recover extends Component {
         return true
     }
 
+    /**
+     * Checks if file exists in state, and if it is valid JSON and returns Promise<boolean>. Side-effect is setting appropriate
+     * form error message.
+     *
+     * @returns {Promise<boolean>}
+     */
     async validFile() {
         if (!(this.state.file instanceof Blob)) {
             formErrorMessage("file", "File required");
@@ -98,15 +103,30 @@ export default class Recover extends Component {
         return true;
     }
 
+    /**
+     * Checks if Address is valid (ie correct format + length + valid checksum) and returns according boolean.
+     * Side-effect is setting error message on address field if false.
+     *
+     * @returns {boolean}
+     */
     validAddress() {
         if (!validAddress(this.state.address)) {
-            formErrorMessage("address", "invalid address");
+            formErrorMessage("address", "Invalid address");
             return false;
         }
         return true;
     }
 
-
+    /**
+     * Main logic processing of page. Checks if password is correct and file is of correct form and decrypts if true,
+     * setting error message(s) otherwise. If an Address is not provided it does not then log user in but shows dialog
+     * to confirm issue regarding decryption without providing an address. If address is provided it checks if file decrypts
+     * create private key corresponding to the given address. If this is the case it sets encrypted key_file and address in storage,
+     * sets the logged_in flag and then redirects to the account page. If this is not the case then it displays an error message to that effect.
+     *
+     * @param event
+     * @returns {Promise<void>}
+     */
     async handleSubmit(event) {
         event.preventDefault();
         // validate
@@ -132,30 +152,34 @@ export default class Recover extends Component {
             }
 
             if (!error_flag) {
-                Storage.setLocalStorage("key_file", file_str);
-                Storage.setLocalStorage("address", new Address(entity).toString());
+                Authentication.storeNewUser(entity, file_str)
                 goTo(Account)
             }
 
         } else if (!error_flag) {
             // show the confirmation dialog. //
-            this.setState({collapsable_1: false, collapsable_2: true})
+            this.setState({collapsible_1: false, collapsible_2: true})
 
         }
     }
 
-    async handleConfirmation() {
-        // we have already confirmed the values are correct earlier, so don't need to do this again.
+    /**
+     * This is called when user confirms they are ok to login without providing an address.
+     * We already have validated the user's input so can proceed at this point to merely log them in and
+     * then redirect to account page.
+     *
+     * @returns {Promise<void>}
+     */
+    async handleConfirmationSubmit() {
+        // we have already confirmed the values are correct earlier, so don't need to validate again.
         const file_str = await this.read_file(this.state.file);
         const entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password);
-
-        Storage.setLocalStorage("key_file", file_str);
-        Storage.setLocalStorage("address", new Address(entity).toString());
+         Authentication.storeNewUser(entity, file_str)
         goTo(Account)
     }
 
     hideConfirmation() {
-        this.setState({collapsable_1: true, collapsable_2: false})
+        this.setState({collapsible_1: true, collapsible_2: false})
     }
 
     render() {
@@ -171,7 +195,7 @@ export default class Recover extends Component {
                     <h2>Recover</h2>
                     <hr></hr>
                     <Expand
-                        open={this.state.collapsable_1}
+                        open={this.state.collapsible_1}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}
@@ -200,7 +224,7 @@ export default class Recover extends Component {
                         </form>
                     </Expand>
                     <Expand
-                        open={this.state.collapsable_2}
+                        open={this.state.collapsible_2}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}
@@ -213,7 +237,7 @@ export default class Recover extends Component {
                                     onClick={this.hideConfirmation}>Back
                             </button>
                             <button type="submit" className="small-button recover-small-button"
-                                    onClick={this.handleConfirmation}>Next
+                                    onClick={this.handleConfirmationSubmit}>Next
                             </button>
                         </div>
                     </Expand>

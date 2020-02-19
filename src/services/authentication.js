@@ -9,6 +9,20 @@ export default class Authentication {
         return Boolean(JSON.parse(logged_in))
     }
 
+    /**
+     * When user is created, or account recovered (uploaded), this method
+     * saves the three relavent details in local storage (encrypted key-file-string, b58-encoded address
+     * and logged_in flag, which we now set to true.
+     *
+     * @param entity
+     * @param file_str
+     */
+    static storeNewUser(entity, file_str){
+        Storage.setLocalStorage("key_file", file_str);
+        Storage.setLocalStorage("address", new Address(entity).toString());
+        Storage.setLocalStorage('logged_in', "true");
+    }
+
     static hasSavedKey() {
         return Storage.getLocalStorage('key_file') !== null
     }
@@ -18,8 +32,8 @@ export default class Authentication {
     }
 
     /**
-     * Check if password decrypts to give entity corresponding to the correct address as saved in local storage
-     * using key file also saved in local storage.
+     * Determines whether password decrypts key file to entity corresponding to address saved in local storage.
+     * Key file is retrieved from local storage.
      *
      * @param password
      * @returns {Promise<boolean>}

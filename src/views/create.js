@@ -5,7 +5,12 @@ import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import Account from "./account";
 import {Storage} from "../services/storage"
+import Authentication from "../services/authentication";
 
+/**
+ * corresponds to the create view of initial wireframes (v4) and handles view + associated logic for new account creation.
+ *
+ */
 export default class Create extends Component {
 
     constructor(props) {
@@ -21,6 +26,13 @@ export default class Create extends Component {
         this.setState(change)
     }
 
+    /**
+     * Checks only if password provided, and if it is of adequate strength as per our javascript SDK.
+     * Sets error message if not and returns. If true creates user, logs them in, and redirects to account page.
+     *
+     * @param event
+     * @returns {Promise<void>}
+     */
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -40,10 +52,7 @@ export default class Create extends Component {
 
         let entity = new Entity();
         const json_obj = await entity._to_json_object(this.state.password);
-        debugger;
-        Storage.setLocalStorage("key_file", JSON.stringify(json_obj));
-        Storage.setLocalStorage("address", new Address(entity).toString());
-        Storage.setLocalStorage('logged_in', "true");
+         Authentication.storeNewUser(entity, JSON.stringify(json_obj))
         goTo(Account)
     }
 

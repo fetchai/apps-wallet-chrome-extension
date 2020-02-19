@@ -5,10 +5,10 @@ import ReactDOM from 'react-dom';
 import "./content.css";
 import "./index.css";
 import Router from './services/router';
-import Initial from "./stages/initial";
+import Initial from "./views/initial";
 import Authentication from "./services/authentication";
-import Login from "./stages/login";
-import Account from "./stages/account";
+import Login from "./views/login";
+import Account from "./views/account";
 
 class Main extends React.Component {
     render() {

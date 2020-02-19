@@ -22,6 +22,10 @@ import {toLocaleDateString} from "../utils/toLocaleDateString";
 import {getAssetURI} from "../utils/getAsset";
 import {fetchResource} from "../utils/fetchRescource";
 
+/**
+ * This corresponds to the account page. The account page comprises this component and the History component.
+ */
+
 export default class Account extends Component {
 
     constructor(props) {
@@ -31,16 +35,16 @@ export default class Account extends Component {
         this.viewAll = this.viewAll.bind(this);
         this.hide = this.hide.bind(this);
         this.toggleHover = this.toggleHover.bind(this);
-        this.copyAddressClipboard = this.copyAddressClipboard.bind(this);
+        this.copyAddressToClipboard = this.copyAddressToClipboard.bind(this);
 
         this.state = {
             balance: null,
             percentage: null,
             dollar_balance: null,
             address: Storage.getLocalStorage("address"),
-            collapsable_1: false,
-            collapsable_2: false,
-            collapsable_3: true,
+            collapsible_1: true,
+            collapsible_2: true,
+            collapsible_3: false,
             hover_1: false,
             hover_2: false,
             history: null,
@@ -67,12 +71,11 @@ export default class Account extends Component {
 
 
     /**
-     * Fetch first page of history for first page
+     * Fetch first page of history which is shown on account page.
      *
      * @param page_number
      */
     fetchHistory(page_number) {
-
         if(EXTENSION){
             // contentScript.js
            fetchResource(ACCOUNT_HISTORY_URI).then(response => {
@@ -88,15 +91,18 @@ export default class Account extends Component {
         }
     }
 
-
-    processHistory(response) {
+/**
+ * result of transaction history API call for account is processed here. We check if
+ * the status code is 200, and the data exists, and save in state if true.
+ *
+ */
+    processHistory(response)
+    {
         if (response.status !== 200) {
             return;
         }
         response.json().then(data => {
             if (typeof data === "undefined" || data.results.length === 0) {
-                //debugger
-                console.log(" response.results !== \"undefined\" || response.results.length === 0");
                 return;
             }
 
@@ -104,6 +110,10 @@ export default class Account extends Component {
         });
     }
 
+    /**
+     * Fetch the current dollar price of FET and save in state.
+     *
+     */
     fetchDollarPrice() {
         fetch(DOLLAR_PRICE_URI)
             .then(data => {
@@ -125,17 +135,17 @@ export default class Account extends Component {
 
     viewAll() {
         this.setState({
-            collapsable_1: false,
-            collapsable_2: false,
-            collapsable_3: true
+            collapsible_1: false,
+            collapsible_2: false,
+            collapsible_3: true
         });
     };
 
     hide() {
         this.setState({
-            collapsable_1: true,
-            collapsable_2: true,
-            collapsable_3: false
+            collapsible_1: true,
+            collapsible_2: true,
+            collapsible_3: false
         });
     };
 
@@ -160,6 +170,9 @@ export default class Account extends Component {
         this.setState({dollar_balance: dollar_balance.toString(16)})
     }
 
+/**
+ * Fetch the account balance for address stored in state. Upon result we also call method to recalculate the dollar display string.
+ */
 
     async balance() {
         let balance;
@@ -171,7 +184,7 @@ export default class Account extends Component {
         this.setState({balance: new BN(balance).toString(16)}, this.calculateDollarBalance)
     }
 
-    copyAddressClipboard() {
+    copyAddressToClipboard() {
         navigator.clipboard.writeText(this.state.address).then(() => {
             console.log('Async: Copying to clipboard was successful!');
             // todo write response to this event.
@@ -197,14 +210,14 @@ export default class Account extends Component {
                             <br></br>
                             <span className="hoverable-address" onMouseOver={() => this.toggleHover(1)}
                                   onMouseOut={() => this.toggleHover(1)}
-                                  onClick={this.copyAddressClipboard}>{(this.state.hover_1) ? this.state.address : format(this.state.address)}</span>
+                                  onClick={this.copyAddressToClipboard}>{(this.state.hover_1) ? this.state.address : format(this.state.address)}</span>
                         </div>
                         {(this.state.hover_1) ? "" :
                             <img className='cross' src={getAssetURI("plus_icon.svg")} onClick={goTo.bind(null, Settings)}/>}
                     </div>
                     <hr></hr>
                     <Expand
-                        open={this.state.collapsable_1}
+                        open={this.state.collapsible_1}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}
@@ -226,7 +239,7 @@ export default class Account extends Component {
                     </Expand>
                     {(this.state.history !== null && Object.keys(this.state.history).length > 0) ?
                         <Expand
-                            open={this.state.collapsable_2}
+                            open={this.state.collapsible_2}
                             duration={TRANSITION_DURATION_MS}
                             styles={styles}
                             transitions={transitions}
@@ -261,7 +274,7 @@ export default class Account extends Component {
                         : ""}
 
                     <Expand
-                        open={this.state.collapsable_3}
+                        open={this.state.collapsible_3}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}

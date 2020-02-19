@@ -11,6 +11,10 @@ import {Storage} from "../services/storage"
 import Login from "./login";
 import {getAssetURI} from "../utils/getAsset";
 
+/**
+ * corresponds to the settings page.
+ *
+ */
 export default class Settings extends Component {
 
     constructor(props) {
@@ -22,9 +26,9 @@ export default class Settings extends Component {
         this.update_password = this.update_password.bind(this);
 
         this.state = {
-            collapsable_1: false,
-            collapsable_2: false,
-            collapsable_3: false,
+            collapsible_1: false,
+            collapsible_2: false,
+            collapsible_3: false,
             password: '',
             new_password_confirm: '',
             new_password: '',
@@ -39,54 +43,61 @@ export default class Settings extends Component {
         this.setState(change)
     }
 
-    passwordConfirmValidate(show_error, event) {
+    /**
+     * checks password matches confirm password field.
+     *
+     * @returns {boolean}
+     */
+    passwordConfirmValidate() {
         if (this.state.new_password !== this.state.new_password_confirm) {
-            debugger;
-            if (show_error) {
                 formErrorMessage("new_password_confirm", "Passwords don't match!")
-            }
             return false;
         }
         return true;
     }
 
-    async validPassword(show_error, event) {
-
+    /**
+     * Checks if password decrypts stored key file to the correct address, otherwise sets error message.
+     *
+     * @returns {Promise<boolean>}
+     */
+    async correctPassword() {
         if (!(await Authentication.correctPassword(this.state.password))) {
-            if (show_error) {
                 formErrorMessage("password", "Incorrect Password1")
-            }
-            return false
-        }
-        return true;
-    }
-
-    async newPasswordValidate(show_error, event) {
-        if (await Authentication.correctPassword(this.state.new_password)) {
-            if (show_error) {
-                formErrorMessage("new_password", "New password is the same as current password")
-            }
-            return false
-        }
-
-        if (!Entity._strong_password(this.state.new_password)) {
-            if (show_error) {
-                formErrorMessage("new_password", "Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character")
-            }
             return false
         }
         return true;
     }
 
     /**
-     * Not only a toggle of i but toggles collapsable_${index} and sets the other collapsables to closed
+     * checks that a new password is acceptable (not current pwd + strong enough)
+     *
+     * @returns {Promise<boolean>}
+     */
+    async newPasswordValidate() {
+        if (await Authentication.correctPassword(this.state.new_password)) {
+                formErrorMessage("new_password", "New password is the same as current password")
+            return false
+        }
+
+        if (!Entity._strong_password(this.state.new_password)) {
+
+                formErrorMessage("new_password", "Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character")
+
+            return false
+        }
+        return true;
+    }
+
+    /**
+     * Not only a toggle collapsible_${index} but sets the other collapsibles to closed
      * to show false so hides other setting expandables
      *
-     * @param index of collapsable to toggle
+     * @param index of collapsible to toggle
      */
     toggle(index) {
         for (let i = 1; i <= 3; i++) {
-            let collapse = "collapsable_" + i;
+            let collapse = "collapsible_" + i;
 
             if (i === index) {
                 // we toggle the settings button that was clicked on
@@ -98,14 +109,27 @@ export default class Settings extends Component {
         }
     };
 
+    /**
+     * Main controlling logic for updating one's password. If the password form is valid we call update method, else we
+     * display error message(s)
+     *
+     * @param event
+     * @returns {Promise<void>}
+     */
     async handlePasswordUpdate(event) {
         event.preventDefault();
-        if (!(await this.validPassword(true, event))) return;
-        if (!(await this.newPasswordValidate(true, event))) return;
-        if (!this.passwordConfirmValidate(true, event)) return;
+        if (!(await this.correctPassword())) return;
+        if (!(await this.newPasswordValidate())) return;
+        if (!this.passwordConfirmValidate()) return;
         this.update_password()
     }
 
+    /**
+     * Password is updated by decrypting key-file with password, then re-encrypting with new password variable stored in state
+     * and over-writing key file in local storage.
+     *
+     * @returns {Promise<void>}
+     */
     async update_password() {
         this.setState({output: ""});
         //NOTE: assumes original password is checked for correctness before invoking this, else it will lead to key loss
@@ -123,6 +147,11 @@ export default class Settings extends Component {
         );
     }
 
+    /**
+     * Logs user out and redirects to Login view.
+     *
+     * @constructor
+     */
     HandleLogOut() {
         Authentication.logOut();
         goTo(Login)
@@ -146,7 +175,7 @@ export default class Settings extends Component {
                     <hr></hr>
                     <button className="plain_button" onClick={() => this.toggle(1)}>General</button>
                     <Expand
-                        open={this.state.collapsable_1}
+                        open={this.state.collapsible_1}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}
@@ -179,7 +208,7 @@ export default class Settings extends Component {
                     </Expand>
                     <button className="plain_button" onClick={() => this.toggle(2)}>Security & Privacy</button>
                     <Expand
-                        open={this.state.collapsable_2}
+                        open={this.state.collapsible_2}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}
@@ -209,7 +238,7 @@ export default class Settings extends Component {
                     </Expand>
                     <button className="plain_button clear" onClick={() => this.toggle(3)}>About</button>
                     <Expand
-                        open={this.state.collapsable_3}
+                        open={this.state.collapsible_3}
                         duration={TRANSITION_DURATION_MS}
                         styles={styles}
                         transitions={transitions}
