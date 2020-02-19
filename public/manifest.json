@@ -2,7 +2,7 @@
   "short_name": "Fetch.ai Wallet",
   "name": "Fetch.ai Web Wallet",
   "version": "1.0",
-  "manifest_version": 2,
+  "manifest_version": 1,
   "background": {
     "scripts": ["app/background.js"]
   },
@@ -21,7 +21,6 @@
     "/assets/*.gif",
     "https://unpkg.com/infinite-scroll@3/dist/infinite-scroll.pkgd.min.js",
     "https://unpkg.com",
-    "https://use.typekit.net",
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/",
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*"
   ],
@@ -30,5 +29,5 @@
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/",
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*"
         ],
-  "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'"
+  "content_security_policy": "script-src 'self' object-src 'self'"
 }

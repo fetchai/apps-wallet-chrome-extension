@@ -1,5 +1,5 @@
 /**
- * Get substring of address with three appended dots, for UI display
+ * Get substring of address with three appended dots; for UI display.
  *
  * @param val
  * @param last

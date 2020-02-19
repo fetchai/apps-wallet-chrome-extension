@@ -10,6 +10,8 @@ import Authentication from "./services/authentication";
 import Login from "./views/login";
 import Account from "./views/account";
 
+
+
 class Main extends React.Component {
     render() {
 
@@ -29,13 +31,39 @@ class Main extends React.Component {
 
 console.log("QWERTTYYYYYYYYY222Y");
 
-
-
 const app = document.createElement('div');
 app.id = "my-extension-root";
 
 document.body.appendChild(app);
 ReactDOM.render(<Main/>, app);
+
+
+//
+// let otherhead = frm.getElementsByTagName("head")[0];
+// let link = frm.createElement("link");
+// link.setAttribute("rel", "stylesheet");
+// link.setAttribute("type", "text/css");
+// link.setAttribute("href", "style.css");
+//otherhead.appendChild(link);
+
+/*
+console.log("QWERTTYYYYYYYYY222Y");
+
+const cssLink = document.createElement("link");
+
+cssLink.href = "/index.css";
+cssLink.rel = "stylesheet";
+cssLink.type = "text/css";
+
+const app = document.createElement('iframe');
+
+app.id = "my-extension-root";
+
+document.body.appendChild(app);
+
+let www = document.getElementById("my-extension-root");
+ */
+
 
 //app.style.display = "none";
 

@@ -2,7 +2,7 @@ const validJSONObject = (s) => {
     try {
         JSON.parse(s);
         return true;
-    } catch {
+    } catch (error){
         return false;
     }
 };
