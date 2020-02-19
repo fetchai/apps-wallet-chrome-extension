@@ -110,7 +110,7 @@ export default class Settings extends Component {
     };
 
     /**
-     * Main controlling logic for updating one's password. If the password form is valid we call update method, else we
+     * Main controlling logic for updating one's password. determines if password form is valid and calls update method if true, else we
      * display error message(s)
      *
      * @param event
