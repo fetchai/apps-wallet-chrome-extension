@@ -8,7 +8,7 @@ import Initial from "./views/initial";
 import Authentication from "./services/authentication";
 import Login from "./views/login";
 import Create from "./views/create";
-
+import Frame, { FrameContextConsumer }from 'react-frame-component';
 
 
 class Main extends React.Component {
@@ -25,19 +25,19 @@ class Main extends React.Component {
             opening_page = <Initial/>
         }
 
-        // return (
-        //     <Frame head={[<link type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
-        //        <FrameContextConsumer>
-        //        {
-        //            ({document, window}) => {
-        //              return(<Router>{opening_page}</Router>)
-        //             }
-        //         }
-        //         </FrameContextConsumer>
-        //     </Frame>
-        // )
-
-        return (<Router>{opening_page}</Router>)
+        return (
+            <Frame head={[<link key={1} type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
+               <FrameContextConsumer>
+               {
+                   ({document, window}) => {
+                     return(<Router>{opening_page}</Router>)
+                    }
+                }
+                </FrameContextConsumer>
+            </Frame>
+        )
+        //
+        // return (<Router>{opening_page}</Router>)
 
     }
 }

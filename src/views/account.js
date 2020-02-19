@@ -199,7 +199,7 @@ export default class Account extends Component {
     const transitions = ['height', 'opacity', 'background']
 
     return (
-      <div className="OverlayMain">
+      <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <div className="settings_title">
             <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className="account"/>

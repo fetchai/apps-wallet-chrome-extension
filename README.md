@@ -4,7 +4,6 @@ This extension allows one to send and receive funds on the Fetch.ai Blockchain, 
 safely and check one's accounts balance. 
 
 ## Installation
-
 ### Instructions to run locally
 ### To install this browser extension see the installation section below
 

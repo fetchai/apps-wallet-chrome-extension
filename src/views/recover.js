@@ -62,7 +62,7 @@ export default class Recover extends Component {
   };
 
   /**
-   * Checks is password is "valid" (not whether correct) ie is not empty, and is "strong"; as per javascript SDK.
+   * Check is password is "valid" (not whether correct) ie is not empty, and is "strong" as per javascript SDK.
    *
    * @returns {boolean}
    */
@@ -78,7 +78,7 @@ export default class Recover extends Component {
   }
 
   /**
-   * Checks if file exists in state, and if it is valid JSON and returns Promise<boolean>. Side-effect is setting appropriate
+   * Check if file exists in state, and if it is valid JSON and returns Promise<boolean>. Side-effect is setting appropriate
    * form error message.
    *
    * @returns {Promise<boolean>}
@@ -104,7 +104,7 @@ export default class Recover extends Component {
   }
 
   /**
-   * Checks if Address is valid (ie correct format + length + valid checksum) and returns according boolean.
+   * Checks if Address is valid (ie correct bs58 ejcoding + format + length + valid checksum) and returns according boolean.
    * Side-effect is setting error message on address field if false.
    *
    * @returns {boolean}
@@ -119,7 +119,7 @@ export default class Recover extends Component {
 
   /**
    * Main logic processing of page. Checks if password is correct and file is of correct form and decrypts if true,
-   * setting error message(s) otherwise. If an Address is not provided it does not then log user in but shows dialog
+   * Setting error message(s) otherwise. If an Address is not provided it does not then log user in but shows dialog
    * to confirm issue regarding decryption without providing an address. If address is provided it checks if file decrypts
    * create private key corresponding to the given address. If this is the case it sets encrypted key_file and address in storage,
    * sets the logged_in flag and then redirects to the account page. If this is not the case then it displays an error message to that effect.
@@ -190,7 +190,7 @@ export default class Recover extends Component {
     const transitions = ['height', 'opacity', 'background']
 
     return (
-      <div className="OverlayMain">
+      <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <h2>Recover</h2>
           <hr></hr>

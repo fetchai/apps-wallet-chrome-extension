@@ -166,7 +166,7 @@ export default class Settings extends Component {
     const transitions = ['height', 'opacity', 'background']
 
     return (
-      <div className="OverlayMain">
+      <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <div className='address_title'>
             <h1>Settings</h1>

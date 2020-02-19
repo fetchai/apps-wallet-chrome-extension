@@ -56,7 +56,7 @@ export default class Create extends Component {
 
   render () {
     return (
-      <div className="OverlayMain">
+      <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <h1>Create account</h1>
           <hr></hr>

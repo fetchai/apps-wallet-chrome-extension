@@ -14,7 +14,7 @@ export default class Initial extends Component {
 
   render () {
     return (
-      <div>
+      <div id="my-extension-root-inner">
         <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
           <source src={getAssetURI('welcome.mp4')} type="video/mp4"/>
         </video>
