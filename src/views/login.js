@@ -16,7 +16,7 @@ export default class Login extends Component {
 
   constructor (props) {
     super(props)
-    this.state = { password: '' }
+    this.state = { user_password: '' }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -28,15 +28,15 @@ export default class Login extends Component {
   }
 
   /**
-   * Processes login form submission. If the password is correct we set logged-in to true in local storage and redirect to account page.
+   * Processes login form submission. If the user_password is correct we set logged-in to true in local storage and redirect to account page.
    *
    */
 
   async handleSubmit (event) {
     event.preventDefault()
 
-    if (!(await Authentication.correctPassword(this.state.password))) {
-      formErrorMessage('password', 'Incorrect Password')
+    if (!(await Authentication.correctPassword(this.state.user_password))) {
+      formErrorMessage('user_password', 'Incorrect Password')
       return
     }
 
@@ -56,11 +56,11 @@ export default class Login extends Component {
         <div className="overlay2">
           <div className="overlay3">
             <form id="form">
-              <input type="password" className="button-free-standing " placeholder="Password"
-                     id="password" name="password" value={this.state.password}
+              <input type="user_password" className="button-free-standing " placeholder="Password"
+                     id="user_password" name="user_password" value={this.state.user_password}
                      onChange={this.handleChange.bind(this)} required></input>
               <button type="submit" className="button-free-standing"
-                      disabled={!this.state.password.length} onClick={this.handleSubmit}>Login
+                      disabled={!this.state.user_password.length} onClick={this.handleSubmit}>Login
               </button>
             </form>
           </div>

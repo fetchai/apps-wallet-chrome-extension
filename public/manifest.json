@@ -27,7 +27,10 @@
   "permissions": [
           "storage",
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/",
-    "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*"
+    "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*",
+          "*://use.typekit.net/*",
+        "webRequest",
+        "webRequestBlocking"
         ],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'"
 }

@@ -49,18 +49,36 @@ export default class Account extends Component {
       hover_1: false,
       hover_2: false,
       history: null,
+      bootstrap_error: false
     }
   }
 
+
+  // async bootstrap(){
+  //   if(!this.bootstrap_error) clearInterval(this.balance_request_loop)
+  //    const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME).catch(()=>{
+  //
+  //      return;
+  //   })
+  //
+  //
+  // }
+
   async componentDidMount () {
-    const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME)
-    this.api = new LedgerApi(host, port)
-    this.balance()
-    this.fetchDollarPrice()
+       const BOOTSRAP_URL = "https://bootstrap.fetch.ai/endpoints/?network=devnet"
+        fetchResource(BOOTSRAP_URL).then((response) => {
+         if (response.status !== 200) return
+         response.json().then((data) => {
+          [this.host, this.port] = Bootstrap.split_address(data[0].address)
+           this.balance()
+        //   this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
+        })
+        })
+  //  this.fetchDollarPrice()
     this.fetchHistory()
 
-    this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
-    this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
+
+  //  this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
     this.history_request_loop = setInterval(this.fetchHistory.bind(null), TRANSACTION_HISTORY_CHECK_INTERVAL_MS)
   }
 
@@ -79,8 +97,9 @@ export default class Account extends Component {
     if (EXTENSION) {
       // contentScript.js
       fetchResource(ACCOUNT_HISTORY_URI).then((response) => {
-        // debugger;
         this.processHistory(response)
+      }).catch((error) => {
+          debugger;
       })
     } else {
       fetch(ACCOUNT_HISTORY_URI)
@@ -172,9 +191,41 @@ export default class Account extends Component {
    */
 
   async balance () {
-    let balance
+    let balance, protocol
+
+     if (this.host.includes('://')) {
+            [protocol, host] = host.split('://')
+        } else {
+            protocol = 'http'
+        }
+
+     let request = {address: this.state.address}
+
+     const d = {
+    method: 'post',
+    body: JSON.stringify(request)
+  }
+
+      const url =  `${protocol}://${this.host}:${this.port}/api/contract/fetch/token/balance`
+
+
     try {
-      balance = await this.api.tokens.balance(this.state.address)
+       // balance = await this.api.tokens.balance(this.state.address)
+      http://127.0.0.1:8000/api/contract/fetch/token/balance
+
+fetchResource(url, d).then((response) => {
+        debugger
+        debugger
+        debugger
+        debugger
+        debugger
+        debugger
+        debugger
+      }).catch((error) => {
+          debugger;
+      })
+
+
     } catch (error) {
       console.log(error)
       return
@@ -230,6 +281,15 @@ export default class Account extends Component {
               <img className="plus" alt="fetch circular logo"
                    src={getAssetURI('fetch_circular_icon.svg')}/>
               <br/>
+              {this.state.bootstrap_error ?
+                <span className="bootstrap-error">
+                   Failed to connect to network
+                    {' '}
+                    FET
+                  </span> : ""
+              }
+
+
               {this.state.balance !== null
                 ? (
                   <span className="fet-balance">

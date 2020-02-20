@@ -7,9 +7,7 @@ import Router from './services/router';
 import Initial from "./views/initial";
 import Authentication from "./services/authentication";
 import Login from "./views/login";
-import Create from "./views/create";
 import Frame, { FrameContextConsumer }from 'react-frame-component';
-
 
 class Main extends React.Component {
     render() {
@@ -26,7 +24,8 @@ class Main extends React.Component {
         }
 
         return (
-            <Frame head={[<link key={1} type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}>
+            <Frame head={[<link key={1} type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}
+            initialContent = '<!DOCTYPE html><html><head></head><body style="margin:0px"><div class="frame-root"></div></body></html>'>
                <FrameContextConsumer>
                {
                    ({document, window}) => {
@@ -36,9 +35,6 @@ class Main extends React.Component {
                 </FrameContextConsumer>
             </Frame>
         )
-        //
-        // return (<Router>{opening_page}</Router>)
-
     }
 }
 
@@ -48,6 +44,12 @@ app.id = "my-extension-root";
 
 document.body.appendChild(app);
 ReactDOM.render(<Main/>, app);
+
+const x = document.getElementById("my-extension-root")
+
+// we give our iframe an ID
+const iframe = x.children[0];
+iframe.id = "my-frame";
 
 app.style.display = "none";
 

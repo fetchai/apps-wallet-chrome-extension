@@ -44,11 +44,12 @@ export default class Send extends Component {
   }
 
   async componentDidMount () {
-    const [HOST, PORT] = await Bootstrap.server_from_name(NETWORK_NAME)
-    // const HOST = '127.0.0.1'
-    // const PORT = 8000
-    this.api = new LedgerApi(HOST, PORT)
+    // const [HOST, PORT] = await Bootstrap.server_from_name(NETWORK_NAME)
+    // // const HOST = '127.0.0.1'
+    // // const PORT = 8000
+    // this.api = new LedgerApi(HOST, PORT)
     this.fetchDollarPrice()
+    debugger;
     this.balance_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
 
   }
@@ -61,10 +62,10 @@ export default class Send extends Component {
    * Fetches current dollar price of FET.
    */
   fetchDollarPrice () {
-
     if (EXTENSION) {
       fetchResource(DOLLAR_PRICE_URI).then((response) => this.handleDollarResponse(response))
         .catch((err) => {
+          debugger
           console.log('Fetch Error :-S', err)
         })
     } else {

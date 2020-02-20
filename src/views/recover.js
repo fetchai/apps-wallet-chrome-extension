@@ -55,6 +55,9 @@ export default class Recover extends Component {
   }
 
   handleFileChange (event) {
+
+    debugger;
+
     this.setState({
       file: event.target.files[0],
       file_name: event.target.value
@@ -84,10 +87,13 @@ export default class Recover extends Component {
    * @returns {Promise<boolean>}
    */
   async validFile () {
-    if (!(this.state.file instanceof Blob)) {
-      formErrorMessage('file', 'File required')
-      return false
-    }
+    debugger;
+
+    // if (!(this.state.file instanceof Blob) && !(this.state.file instanceof File)) {
+    //   formErrorMessage('file', 'File required')
+    //   return false
+    // }
+
     const file_str = await this.read_file(this.state.file)
 
     if (file_str === null) {
@@ -127,8 +133,10 @@ export default class Recover extends Component {
    * @param event
    * @returns {Promise<void>}
    */
-  async handleSubmit (event) {
-    event.preventDefault()
+  async handleSubmit () {
+
+     console.log("store new qqqqqqqqqq")
+    // event.preventDefault()
     // validate
     let error_flag = false
     let entity
@@ -138,13 +146,12 @@ export default class Recover extends Component {
     if (!(await this.validFile())) error_flag = true
     else {
       file_str = await this.read_file(this.state.file)
-      debugger;
       entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password).catch(() => {
         formErrorMessage('password', 'Unable to decrypt')
         error_flag = true
       })
     }
-
+ console.log("store new user11")
     if (this.state.address && entity instanceof Entity) {
       if (new Address(entity).toString() !== this.state.address) {
         formErrorMessage('address', 'Incorrect Password or Address')
@@ -152,11 +159,16 @@ export default class Recover extends Component {
       }
 
       if (!error_flag) {
+         debugger
+        console.log("store new user")
         Authentication.storeNewUser(entity, file_str)
         goTo(Account)
       }
 
     } else if (!error_flag) {
+       debugger
+              console.log("store new usedddsdsdsdsddsr")
+
       // show the confirmation dialog. //
       this.setState({ collapsible_1: false, collapsible_2: true })
 
@@ -196,7 +208,7 @@ export default class Recover extends Component {
           <hr></hr>
           <Expand
             open={this.state.collapsible_1}
-            duration={TRANSITION_DURATION_MS}
+            duration={TRANSITION_DURATION_MS/2}
             styles={styles}
             transitions={transitions}
           >
@@ -218,14 +230,17 @@ export default class Recover extends Component {
                 }}>Back
                 </button>
                 <button type="submit" className="small-button recover-small-button"
-                        onClick={this.handleSubmit}>Upload
+                        onClick={event => {
+                  event.preventDefault()
+                  this.handleSubmit()
+                }}>Upload
                 </button>
               </div>
             </form>
           </Expand>
           <Expand
             open={this.state.collapsible_2}
-            duration={TRANSITION_DURATION_MS}
+            duration={TRANSITION_DURATION_MS/2}
             styles={styles}
             transitions={transitions}
           >
