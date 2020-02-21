@@ -6,6 +6,7 @@ import Account from './account'
 import { Storage } from '../services/storage'
 import { format } from '../utils/format'
 import { getAssetURI } from '../utils/getAsset'
+import Authentication from '../services/authentication'
 
 /**
  * component corresponds to download view.
@@ -25,6 +26,7 @@ export default class Download extends Component {
   }
 
   componentDidMount () {
+    Authentication.Authenticate()
     this.make_QR()
   }
 

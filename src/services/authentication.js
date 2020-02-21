@@ -1,10 +1,14 @@
+import React, { Component } from 'react'
 import {Entity} from "fetchai-ledger-api/src/fetchai/ledger/crypto/entity";
 import {Address} from "fetchai-ledger-api/src/fetchai/ledger/crypto/address";
 import {Storage} from "./storage"
+import { goTo } from '../services/router'
+import Initial from '../views/initial'
+import Login from '../views/login'
 
 export default class Authentication {
 
-    static isLoggedIn() {
+    static isLoggedIn () {
         const logged_in = Storage.getLocalStorage('logged_in');
         return Boolean(JSON.parse(logged_in))
     }
@@ -17,17 +21,17 @@ export default class Authentication {
      * @param entity
      * @param file_str
      */
-    static storeNewUser(entity, file_str){
+    static storeNewUser (entity, file_str) {
         Storage.setLocalStorage("key_file", file_str);
         Storage.setLocalStorage("address", new Address(entity).toString());
         Storage.setLocalStorage('logged_in', "true");
     }
 
-    static hasSavedKey() {
+    static hasSavedKey () {
         return Storage.getLocalStorage('key_file') !== null
     }
 
-    static logOut() {
+    static logOut () {
         Storage.setLocalStorage('logged_in', "false");
     }
 
@@ -38,7 +42,7 @@ export default class Authentication {
      * @param password
      * @returns {Promise<boolean>}
      */
-    static async correctPassword(password) {
+    static async correctPassword (password) {
         const key_file = Storage.getLocalStorage('key_file');
         const address = Storage.getLocalStorage('address');
         let valid_flag = true;
@@ -47,11 +51,29 @@ export default class Authentication {
         entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false);
 
         // check it creates correct address from decryption.
-        debugger;
         if (valid_flag && new Address(entity).toString() !== address) valid_flag = false;
         return valid_flag;
     }
 
-}
+    /**
+     * This is used to check if they are still logged in when new component is mounted.
+     * If you clear history app open in a different tab will stay open, but when you switch to new view then it will detect you logged out as onmount checks
+     * logged in status on logged in pages.
+     *
+     * @constructor
+     */
+    static Authenticate () {
+        debugger
+        const we = Storage.getLocalStorage('key_file')
+        debugger
+        if (!Authentication.hasSavedKey()) {
+            debugger
+            goTo(Download)
+        } else if (!Authentication.isLoggedIn()) {
+            debugger
+            goTo(Login)
+        }
 
-export {Authentication}
+    }
+}
+export { Authentication }

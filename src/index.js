@@ -19,7 +19,7 @@ class Main extends React.Component {
 // browser uses this.
         //if(Authentication.isLoggedIn()) {
         if (true) {
-            opening_page = <Initial/>
+            opening_page = <Account/>
         } else if (Authentication.hasSavedKey()) {
             opening_page = <Login/>
         } else {

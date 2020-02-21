@@ -8,15 +8,15 @@ import Initial from "./views/initial";
 import Authentication from "./services/authentication";
 import Login from "./views/login";
 import Frame, { FrameContextConsumer }from 'react-frame-component';
+import Account from './views/account'
 
 class Main extends React.Component {
     render() {
 
         let opening_page;
 // browser uses this.
-        //if(Authentication.isLoggedIn()) {
-        if (true) {
-            opening_page = <Initial/>
+        if(Authentication.isLoggedIn()) {
+            opening_page = <Account/>
         } else if (Authentication.hasSavedKey()) {
             opening_page = <Login/>
         } else {

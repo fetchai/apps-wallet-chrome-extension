@@ -44,12 +44,13 @@ export default class Send extends Component {
   }
 
   async componentDidMount () {
+
     // const [HOST, PORT] = await Bootstrap.server_from_name(NETWORK_NAME)
     // // const HOST = '127.0.0.1'
     // // const PORT = 8000
     // this.api = new LedgerApi(HOST, PORT)
     this.fetchDollarPrice()
-    debugger;
+    Authentication.Authenticate()
     this.balance_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
 
   }

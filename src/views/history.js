@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { ACCOUNT_HISTORY_URI, EXTENSION } from '../constants'
-import { format } from '../utils/format'
-import { toLocaleDateString } from '../utils/toLocaleDateString'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
+import RegularHistoryItem from '../dumb_components/regularHistoryItem'
+import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -28,6 +28,7 @@ export default class History extends Component {
   }
 
   async componentDidMount () {
+     // Authentication.Authenticate()
     // start with one page of history.
     await this.fetchAnotherPageOfHistory(true)
   }
@@ -42,29 +43,6 @@ export default class History extends Component {
     const results = this.state.results
     results[index].clicked = !this.state.results[index].clicked
     this.setState({ results: results })
-  }
-
-  createLargeHistoryItem ({ digest, status, fee, created_date, clicked, index }) {
-    return (<div className={`history_item large_history_item ${clicked ? '' : 'hide'}`}
-                 onClick={this.toggleClicked.bind(null, index)}>
-      <ul className={'large-history-item-list'}>
-        <li>Digest: {digest.substring(0, 23)} <br></br>{digest.substring(23)}</li>
-        <li><span>Status: </span>{status}</li>
-        <li><span>Fee: </span>{fee}</li>
-        <li><span>Time: </span>{toLocaleDateString(created_date)}</li>
-        <li><span>Amount: </span>-80</li>
-      </ul>
-    </div>)
-  }
-
-  createRegularHistoryItem ({ digest, status, created_date, index, clicked }) {
-    return (
-      <div className={`history_item ${clicked ? 'hide' : ''}`} onClick={this.toggleClicked.bind(null, index)}><span
-        className="history_left_value">{format(digest, 13)}</span><span
-        className="history_right_value">-80</span><br></br>
-        <span className="history_left_value light">{status}</span><span
-          className="history_right_value light">{toLocaleDateString(created_date)}</span>
-      </div>)
   }
 
   /**
@@ -132,22 +110,22 @@ export default class History extends Component {
     for (let i = 0; i < this.state.results.length; i++) {
       //Both large and regular history items are appended to list, but when we click on them we toggle between displaying regular and large.
       // note: This is because setting inner html is injection vunerability.
-      items.push(this.createRegularHistoryItem({
-        clicked: this.state.results[i].clicked,
-        digest: this.state.results[i].digest,
-        status: this.state.results[i].status,
-        fee: this.state.results[i].fee,
-        created_date: this.state.results[i].created_date,
-        index: i
-      }))
-      items.push(this.createLargeHistoryItem({
-        clicked: this.state.results[i].clicked,
-        digest: this.state.results[i].digest,
-        status: this.state.results[i].status,
-        fee: this.state.results[i].fee,
-        created_date: this.state.results[i].created_date,
-        index: i
-      }))
+
+
+      items.push(<RegularHistoryItem clicked = {this.state.results[i].clicked}
+        digest =  {this.state.results[i].digest}
+        status =  {this.state.results[i].status}
+        created_date =  {this.state.results[i].created_date}
+         toggle_clicked = {this.toggleClicked}
+        index = {i}/>)
+
+       items.push(<ExpandedHistoryItem clicked = {this.state.results[i].clicked}
+        digest =  {this.state.results[i].digest}
+        status =  {this.state.results[i].status}
+        fee =  {this.state.results[i].fee}
+        created_date =  {this.state.results[i].created_date}
+         toggle_clicked = {this.toggleClicked}
+        index = {i}/>)
     }
     return items
   }

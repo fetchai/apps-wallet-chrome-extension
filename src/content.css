@@ -17,6 +17,19 @@
     outline: none !important;
 }
 
+
+
+@keyframes my-extension-root-inner {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
 /** make autofill background color correct **
  */
 
@@ -44,6 +57,14 @@ input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+#my-extension-root-inner button {
+     cursor: pointer;
+}
+
+#my-extension-root-inner  ::-webkit-scrollbar {
+    display: none;
 }
 
 #my-extension-root-inner  input[type=number] {
@@ -272,6 +293,7 @@ input::-webkit-inner-spin-button {
     width: 125px;
 }
 
+
 #my-extension-root-inner .plain_button {
     border: none;
     padding: 0px;
@@ -308,6 +330,10 @@ input::-webkit-inner-spin-button {
     border-width: 2px;
     padding-bottom: 5px;
     padding-top: 5px;
+}
+
+#my-extension-root-inner .history-pointer {
+      cursor: pointer;
 }
 
 #my-extension-root-inner .large_history_item {
@@ -445,6 +471,7 @@ word-wrap: break-word;
 }
 
 
+
 ::placeholder {
     color: white;
 }
@@ -547,6 +574,13 @@ word-wrap: break-word;
     background-repeat: no-repeat;
     background-position: left;
     padding-right: 5px;
+
+}
+
+
+#my-extension-root-inner .test99 * {
+   opacity: 1;
+    min-height: 50px;
 
 }
 

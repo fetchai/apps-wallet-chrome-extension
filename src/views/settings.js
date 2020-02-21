@@ -37,6 +37,10 @@ export default class Settings extends Component {
 
   }
 
+    async componentDidMount () {
+      Authentication.Authenticate()
+    }
+
   handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value

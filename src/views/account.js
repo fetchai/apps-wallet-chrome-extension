@@ -2,7 +2,8 @@
 import React, { Component } from 'react'
 import { Bootstrap, LedgerApi } from 'fetchai-ledger-api'
 import { BN } from 'bn.js'
-import Expand from 'react-expand-animated'
+import Expand from '../react-expand-animated-2/build/Expand'
+// import Expand from 'react-expand-animated'
 import {
     ACCOUNT_HISTORY_URI,
     BALANCE_CHECK_INTERVAL_MS,
@@ -23,6 +24,9 @@ import History from './history'
 import { toLocaleDateString } from '../utils/toLocaleDateString'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
+import Authentication from '../services/authentication'
+import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
+import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
@@ -33,19 +37,17 @@ export default class Account extends Component {
     super(props)
     this.balance = this.balance.bind(this)
     this.fetchHistory = this.fetchHistory.bind(this)
-    this.viewAll = this.viewAll.bind(this)
-    this.hide = this.hide.bind(this)
     this.toggleHover = this.toggleHover.bind(this)
     this.copyAddressToClipboard = this.copyAddressToClipboard.bind(this)
+    this.toggleClicked = this.toggleClicked.bind(this)
+    this.toggleHistory = this.toggleHistory.bind(this)
 
     this.state = {
       balance: null,
       percentage: null,
       dollar_balance: null,
       address: Storage.getLocalStorage('address'),
-      collapsible_1: true,
-      collapsible_2: true,
-      collapsible_3: false,
+      show_history: false,
       hover_1: false,
       hover_2: false,
       history: null,
@@ -65,20 +67,34 @@ export default class Account extends Component {
   // }
 
   async componentDidMount () {
-       const BOOTSRAP_URL = "https://bootstrap.fetch.ai/endpoints/?network=devnet"
-        fetchResource(BOOTSRAP_URL).then((response) => {
-         if (response.status !== 200) return
-         response.json().then((data) => {
+  Authentication.Authenticate()
+
+  const BOOTSRAP_URL = "https://bootstrap.fetch.ai/endpoints/?network=devnet"
+    if(EXTENSION) {
+
+      fetchResource(BOOTSRAP_URL).then((response) => {
+        if (response.status !== 200) return
+        response.json().then((data) => {
           [this.host, this.port] = Bootstrap.split_address(data[0].address)
-           this.balance()
-        //   this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
+          this.balance()
+          this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
         })
+      })
+    } else {
+      fetch(BOOTSRAP_URL).then((response) => {
+        if (response.status !== 200) return
+        response.json().then((data) => {
+          [this.host, this.port] = Bootstrap.split_address(data[0].address)
+          this.balance()
+          this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
         })
-  //  this.fetchDollarPrice()
+      })
+    }
+    this.fetchDollarPrice()
     this.fetchHistory()
 
 
-  //  this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
+    this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
     this.history_request_loop = setInterval(this.fetchHistory.bind(null), TRANSACTION_HISTORY_CHECK_INTERVAL_MS)
   }
 
@@ -99,12 +115,11 @@ export default class Account extends Component {
       fetchResource(ACCOUNT_HISTORY_URI).then((response) => {
         this.processHistory(response)
       }).catch((error) => {
-          debugger;
+
       })
     } else {
       fetch(ACCOUNT_HISTORY_URI)
         .then((response) => {
-          // debugger;
           this.processHistory(response)
         })
     }
@@ -124,7 +139,11 @@ export default class Account extends Component {
         return
       }
 
-      this.setState({ history: data.results })
+
+      this.setState({ history: data.results.map(el => {
+        el['clicked'] = false
+        return el;
+        }) })
     })
   }
 
@@ -133,12 +152,22 @@ export default class Account extends Component {
    *
    */
   fetchDollarPrice () {
-    fetch(DOLLAR_PRICE_URI)
-      .then((data) => {
-        if (typeof data.percentage === 'number') {
-          this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
-        }
-      })
+
+    if(EXTENSION) {
+      fetchResource(DOLLAR_PRICE_URI)
+        .then((data) => {
+          if (typeof data.percentage === 'number') {
+            this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
+          }
+        })
+    } else {
+       fetch(DOLLAR_PRICE_URI)
+        .then((data) => {
+          if (typeof data.percentage === 'number') {
+            this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
+          }
+        })
+    }
   }
 
   toggleHover (index) {
@@ -148,22 +177,6 @@ export default class Account extends Component {
     this.setState((prevState) => ({ [hover]: !prevState[hover] }))
     // we also toggle visibility of the plus icon
     this.setState((prevState) => ({ [hover_2]: !prevState[hover_2] }))
-  }
-
-  viewAll () {
-    this.setState({
-      collapsible_1: false,
-      collapsible_2: false,
-      collapsible_3: true,
-    })
-  }
-
-  hide () {
-    this.setState({
-      collapsible_1: true,
-      collapsible_2: true,
-      collapsible_3: false,
-    })
   }
 
   calculateDollarBalance () {
@@ -184,6 +197,23 @@ export default class Account extends Component {
       dollar_balance = balance.mul(percentage)
     }
     this.setState({ dollar_balance: dollar_balance.toString(16) })
+  }
+
+    /**
+   * This is specific to our list of history items and at the index of the clicked history item it changes the clicked property,
+   * of the history item at the given index in the state. This is used to show large history when clicked, and small item when not clicked.
+   *
+   * @param index
+   */
+  toggleClicked (index) {
+    const results = this.state.history
+    results[index].clicked = !this.state.history[index].clicked
+    this.setState({ results: results })
+  }
+
+  toggleHistory(){
+    const t = this.state.show_history
+    this.setState({show_history: !t})
   }
 
   /**
@@ -209,28 +239,28 @@ export default class Account extends Component {
       const url =  `${protocol}://${this.host}:${this.port}/api/contract/fetch/token/balance`
 
 
-    try {
-       // balance = await this.api.tokens.balance(this.state.address)
-      http://127.0.0.1:8000/api/contract/fetch/token/balance
+    // try {
+    //    balance = await this.api.tokens.balance(this.state.address)
+    //   http://127.0.0.1:8000/api/contract/fetch/token/balance
 
-fetchResource(url, d).then((response) => {
-        debugger
-        debugger
-        debugger
-        debugger
-        debugger
-        debugger
-        debugger
-      }).catch((error) => {
-          debugger;
-      })
+// fetchResource(url, d).then((response) => {
+//
+//
+//
+//
+//
+//
+//
+//       }).catch((error) => {
+//
+//       })
 
-
-    } catch (error) {
-      console.log(error)
-      return
-    }
-    this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
+    //
+    // } catch (error) {
+    //   console.log(error)
+    //   return
+    // }
+    // this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
   }
 
   copyAddressToClipboard () {
@@ -240,6 +270,21 @@ fetchResource(url, d).then((response) => {
     }, (err) => {
       console.error('Async: Could not copy text: ', err)
     })
+  }
+
+   createRegularHistoryItem ({ digest, status, created_date, index, clicked }) {
+
+    debugger;
+    debugger;
+    debugger;
+
+    return (
+      <div className={`history_item history-pointer ${clicked ? 'hide' : ''}`}><span
+        className="history_left_value">{format(digest, 13)}</span><span
+        className="history_right_value">-90</span><br></br>
+        <span className="history_left_value light">{status}</span><span
+          className="history_right_value light">{toLocaleDateString(created_date)}</span>
+      </div>)
   }
 
   render () {
@@ -272,7 +317,7 @@ fetchResource(url, d).then((response) => {
           </div>
           <hr/>
           <Expand
-            open={this.state.collapsible_1}
+            open={!this.state.show_history}
             duration={TRANSITION_DURATION_MS}
             styles={styles}
             transitions={transitions}
@@ -320,89 +365,27 @@ fetchResource(url, d).then((response) => {
           {(this.state.history !== null && Object.keys(this.state.history).length > 0)
             ? (
               <Expand
-                open={this.state.collapsible_2}
+                open={this.state.show_history}
                 duration={TRANSITION_DURATION_MS}
                 styles={styles}
                 transitions={transitions}
+                partial={true}
               >
 
                 <h1 className="account_address history-header">History</h1>
                 <hr className="history-hr"/>
-                <div>
-                  {/* Display either one or two */}
-                  <div className="history_item">
-                    <span
-                      className="history_left_value"
-                    >
-                      {format(this.state.history[0].digest, 13)}
-                    </span>
-                    <span
-                      className="history_right_value"
-                    >
-                      -80
-                    </span>
-                    <br/>
-                    <span
-                      className="history_left_value light"
-                    >
-                      {this.state.history[0].status}
-                    </span>
-                    <span
-                      className="history_right_value light"
-                    >
-                      {toLocaleDateString(this.state.history[0].created_date)}
-                    </span>
-                  </div>
+                 <History/>
 
-                  {Object.keys(this.state.history).length > 1 ? (
-                    <div className="history_item">
-                      <span
-                        className="history_left_value"
-                      >
-                        {format(this.state.history[1].digest, 13)}
-                      </span>
-                      <span
-                        className="history_right_value"
-                      >
-                        -80
-                      </span>
-                      <br/>
-                      <span
-                        className="history_left_value light"
-                      >
-                        {this.state.history[1].status}
-                      </span>
-                      <span
-                        className="history_right_value light"
-                      >
-                        {toLocaleDateString(this.state.history[1].created_date)}
-                      </span>
-                    </div>
-                  ) : ''}
-                </div>
-                {Object.keys(this.state.history).length > 2
-                  ? (
-                    <button className="button-large-thin account-button" onClick={this.viewAll}>
-                      View All
-                    </button>
-                  ) : ''}
 
               </Expand>
             )
             : ''}
-
-          <Expand
-            open={this.state.collapsible_3}
-            duration={TRANSITION_DURATION_MS}
-            styles={styles}
-            transitions={transitions}
-          >
-            <History/>
-            <button className="button-large-thin account-button" onClick={this.hide}>
-              Hide
-            </button>
-          </Expand>
-
+            {(this.state.history !== null && Object.keys(this.state.history).length > 2)
+                  ?
+                    <button className="button-large-thin account-button" onClick={this.toggleHistory}>
+                      {(this.state.show_history) ? "Hide" : "View All"}
+                    </button>
+                  : ''}
         </div>
       </div>
     )
