@@ -49,7 +49,7 @@ export default class Account extends Component {
       show_history: false,
       hover_1: false,
       hover_2: false,
-      history_first_page_count: false,
+      history_first_page_count: 1,
       bootstrap_error: false
     }
   }
@@ -353,7 +353,7 @@ export default class Account extends Component {
               </button>
             </div>
           </Expand>
-          {(this.state.history !== null && Object.keys(this.state.history).length > 0)
+          {(this.state.history_first_page_count > 0)
             ? (
               <Expand
                 open={this.state.show_history}
@@ -381,7 +381,7 @@ export default class Account extends Component {
               </Expand>
             )
             : ''}
-            {(this.state.history !== null && Object.keys(this.state.history).length > 2)
+            {(this.state.history_first_page_count  > 2)
                   ?
                     <button className="button-large-thin account-button toggle-history-button" onClick={this.toggleHistory}>
                       {(this.state.show_history) ? "Hide" : "View All"}
