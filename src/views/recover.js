@@ -138,9 +138,7 @@ export default class Recover extends Component {
      console.log("store new qqqqqqqqqq")
     // event.preventDefault()
     // validate
-    let error_flag = false
-    let entity
-    let file_str
+    let error_flag = false, entity, file_str
 
     if (!this.validPassword()) error_flag = true
     if (!(await this.validFile())) error_flag = true

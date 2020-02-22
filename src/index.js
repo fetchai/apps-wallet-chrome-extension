@@ -9,6 +9,7 @@ import Initial from "./views/initial";
 import Authentication from "./services/authentication";
 import Login from "./views/login";
 import Account from "./views/account";
+import Create from './views/create'
 
 
 
@@ -19,7 +20,7 @@ class Main extends React.Component {
 // browser uses this.
         //if(Authentication.isLoggedIn()) {
         if (true) {
-            opening_page = <Account/>
+            opening_page = <Create/>
         } else if (Authentication.hasSavedKey()) {
             opening_page = <Login/>
         } else {

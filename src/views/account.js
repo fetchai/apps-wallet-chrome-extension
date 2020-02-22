@@ -21,12 +21,10 @@ import Settings from './settings'
 import { Storage } from '../services/storage'
 import { format } from '../utils/format'
 import History from './history'
-import { toLocaleDateString } from '../utils/toLocaleDateString'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import Authentication from '../services/authentication'
-import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
-import RegularHistoryItem from '../dumb_components/regularHistoryItem'
+import { getElementById } from '../services/getElementById'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
@@ -43,6 +41,7 @@ export default class Account extends Component {
     this.toggleHistory = this.toggleHistory.bind(this)
 
     this.state = {
+       show_self: false,
       balance: null,
       percentage: null,
       dollar_balance: null,
@@ -68,6 +67,7 @@ export default class Account extends Component {
 
   async componentDidMount () {
   Authentication.Authenticate()
+     this.setState({show_self: true})
 
   const BOOTSRAP_URL = "https://bootstrap.fetch.ai/endpoints/?network=devnet"
     if(EXTENSION) {
@@ -92,8 +92,6 @@ export default class Account extends Component {
     }
     this.fetchDollarPrice()
     this.fetchHistory()
-
-
     this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
     this.history_request_loop = setInterval(this.fetchHistory.bind(null), TRANSACTION_HISTORY_CHECK_INTERVAL_MS)
   }
@@ -214,6 +212,13 @@ export default class Account extends Component {
   toggleHistory(){
     const t = this.state.show_history
     this.setState({show_history: !t})
+
+    setTimeout(this.scrollHistoryTop,TRANSITION_DURATION_MS)
+  }
+
+  // scroll history item to the top
+  scrollHistoryTop(){
+    getElementById('history-container').scrollTop = 0;
   }
 
   /**
@@ -271,22 +276,6 @@ export default class Account extends Component {
       console.error('Async: Could not copy text: ', err)
     })
   }
-
-   createRegularHistoryItem ({ digest, status, created_date, index, clicked }) {
-
-    debugger;
-    debugger;
-    debugger;
-
-    return (
-      <div className={`history_item history-pointer ${clicked ? 'hide' : ''}`}><span
-        className="history_left_value">{format(digest, 13)}</span><span
-        className="history_right_value">-90</span><br></br>
-        <span className="history_left_value light">{status}</span><span
-          className="history_right_value light">{toLocaleDateString(created_date)}</span>
-      </div>)
-  }
-
   render () {
     const styles = {
       open: { background: ' #1c2846' },
@@ -295,6 +284,12 @@ export default class Account extends Component {
     const transitions = ['height', 'opacity', 'background']
 
     return (
+        <Expand
+            open={this.state.show_self}
+            duration={TRANSITION_DURATION_MS}
+            styles={styles}
+            transitions={transitions}
+          >
       <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <div className="settings_title">
@@ -371,23 +366,34 @@ export default class Account extends Component {
                 transitions={transitions}
                 partial={true}
               >
+ <Expand
+                open={!this.state.show_history}
+                duration={TRANSITION_DURATION_MS}
+                styles={styles}
+                transitions={transitions}
 
+              >
                 <h1 className="account_address history-header">History</h1>
                 <hr className="history-hr"/>
-                 <History/>
-
+                       </Expand>
+                {/*{`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`}*/}
+                 <div id="history-container" className= {`${this.state.show_history ? 'history-container' : 'history-container-collapsed'}`}>
+                {/*<div style={` height: '400px', ${this.state.show_history ? 'overflow: \'auto\' : 'overflow: \'auto\''}`}>*/}
+                 <History/>{' '}
+                 </div>
 
               </Expand>
             )
             : ''}
             {(this.state.history !== null && Object.keys(this.state.history).length > 2)
                   ?
-                    <button className="button-large-thin account-button" onClick={this.toggleHistory}>
+                    <button className="button-large-thin account-button toggle-history-button" onClick={this.toggleHistory}>
                       {(this.state.show_history) ? "Hide" : "View All"}
                     </button>
                   : ''}
         </div>
       </div>
+        </Expand>
     )
   }
 }

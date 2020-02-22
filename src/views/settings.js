@@ -251,7 +251,7 @@ export default class Settings extends Component {
             <p className="settings_about">Developed and Designed by Fetch.ai Cambridge</p>
           </Expand>
 
-          <button className="large-button logout_button" onClick={this.HandleLogOut}>
+          <button className="logout_button" onClick={this.HandleLogOut}>
             Log out
           </button>
         </div>

@@ -195,7 +195,22 @@ input::-webkit-inner-spin-button {
 #my-extension-root-inner .logout_button {
     position: absolute;
     bottom: 10px;
+    font-size: 23px;
+    line-height: 30px;
+    padding-bottom: 3px;
+    padding-top: 0px;
+    font-weight: 700;
+    width:300px;
+    margin: 15px 0;
 }
+
+#my-extension-root-inner .toggle-history-button {
+    position: absolute;
+    bottom: 10px;
+    width: 300px !important;
+}
+
+
 
 #my-extension-root-inner .input_container label {
     padding-left: 10px;
@@ -259,7 +274,7 @@ input::-webkit-inner-spin-button {
 #my-extension-root-inner .large-button {
     width: 98%;
     margin: 15px 0;
-    width: 300px;
+
 }
 
 #my-extension-root-inner .balance_container {
@@ -267,6 +282,7 @@ input::-webkit-inner-spin-button {
 }
 
 #my-extension-root-inner input.large-button {
+    max-width: 100%;
     text-indent: 44px;
     font-size: 16px;
 }
@@ -307,11 +323,20 @@ input::-webkit-inner-spin-button {
 }
 
 #my-extension-root-inner .history-header {
-    font-weight: 700
+    font-weight: 700;
+}
+
+#my-extension-root-inner .fixed-history {
+overflow: hidden;
+}
+
+#my-extension-root-inner .fixed-history {
+overflow: auto;
 }
 
 #my-extension-root-inner .history-hr {
-    margin-top: 5px
+    margin-top: 5px;
+        margin-bottom: 0;
 }
 
 #my-extension-root-inner .account-button {
@@ -351,8 +376,19 @@ word-wrap: break-word;
 }
 
 #my-extension-root-inner .history-container {
-
+height: 425px;
+    overflow: auto;
 }
+
+
+#my-extension-root-inner .history-container-collapsed {
+height: 400px;
+overflow: hidden;
+    pointer-events: none;
+            cursor: default;
+}
+
+
 
 #my-extension-root-inner .loader {
     margin-left: 45px;
@@ -373,6 +409,8 @@ word-wrap: break-word;
 
 #my-extension-root-inner .hide {
     display:none;
+    transition: opacity 5s ease-out;
+    opacity: 0;
 }
 
 

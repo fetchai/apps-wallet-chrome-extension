@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import qrCode from 'qrcode-generator'
-import { KEY_FILE_NAME } from '../constants'
+import { KEY_FILE_NAME, TRANSITION_DURATION_MS } from '../constants'
 import { goTo } from '../services/router'
 import Account from './account'
 import { Storage } from '../services/storage'
 import { format } from '../utils/format'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
+import Expand from 'react-expand-animated'
 
 /**
  * component corresponds to download view.
@@ -16,9 +17,11 @@ export default class Download extends Component {
   constructor (props) {
     super(props)
     this.download = this.download.bind(this)
+    this.closeSelf = this.closeSelf.bind(this)
     this.make_QR = this.make_QR.bind(this)
 
     this.state = {
+      show_self: false,
       address: Storage.getLocalStorage('address'),
       QR: '',
       hover_1: false
@@ -26,6 +29,8 @@ export default class Download extends Component {
   }
 
   componentDidMount () {
+
+    this.setState({show_self: true})
     Authentication.Authenticate()
     this.make_QR()
   }
@@ -66,8 +71,28 @@ export default class Download extends Component {
     element.click()
   }
 
+  closeSelf(){
+    this.setState({show_self: false})
+    setTimeout(goTo.bind(null, Account), 500)
+  }
+
   render () {
+
+
+     const styles = {
+      open: { background: ' #1c2846' },
+    }
+
+    const transitions = ['height', 'opacity']
+
+
     return (
+       <Expand
+            open={this.state.show_self}
+            duration={TRANSITION_DURATION_MS}
+            styles={styles}
+            transitions={transitions}
+          >
       <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <div className='settings_title'>
@@ -77,7 +102,7 @@ export default class Download extends Component {
               <br></br>
               <span>{format(this.state.address)}</span>
             </div>
-            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={goTo.bind(null, Account)}/>
+            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
           </div>
           <hr></hr>
           <div className="qr_container">
@@ -94,6 +119,7 @@ export default class Download extends Component {
           </div>
         </div>
       </div>
+       </Expand>
     )
   }
 }

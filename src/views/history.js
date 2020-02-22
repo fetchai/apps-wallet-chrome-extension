@@ -18,6 +18,7 @@ export default class History extends Component {
     super(props)
     this.toggleClicked = this.toggleClicked.bind(this)
 
+
     this.state = {
       address: Storage.getLocalStorage('address'),
       items: 20,
@@ -30,6 +31,9 @@ export default class History extends Component {
   async componentDidMount () {
      // Authentication.Authenticate()
     // start with one page of history.
+
+    // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
+
     await this.fetchAnotherPageOfHistory(true)
   }
 
@@ -94,8 +98,19 @@ export default class History extends Component {
           clicked: false
         }
       })
+       let updated_results;
+      // lets cache first page on window for quicker remounts of component.
+      if( this.state.current_page === 1){
+        //todo maybe swap to iframe window from global window
+        window.fetchai_history = next;
+        updated_results = next;
+       // this.tellAccountHowMuchHistory()
+      } else {
+        updated_results = this.state.results.concat(next)
+      }
+
       const next_page = this.state.current_page + 1
-      const updated_results = this.state.results.concat(next)
+
       this.setState({ results: updated_results, current_page: next_page })
     })
   }
@@ -132,7 +147,6 @@ export default class History extends Component {
 
   render () {
     return (
-      <div style={{ height: '400px', overflow: 'auto' }}>
         <InfiniteScroll
           loadMore={this.fetchAnotherPageOfHistory.bind(this)}
           hasMore={this.state.has_more_items}
@@ -140,8 +154,7 @@ export default class History extends Component {
           useWindow={false}
         >
           {this.showItems()}{' '}
-        </InfiniteScroll>{' '}
-      </div>
+        </InfiniteScroll>
     )
   }
 
