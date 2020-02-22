@@ -37,8 +37,8 @@ export default class Account extends Component {
     this.fetchHistory = this.fetchHistory.bind(this)
     this.toggleHover = this.toggleHover.bind(this)
     this.copyAddressToClipboard = this.copyAddressToClipboard.bind(this)
-    this.toggleClicked = this.toggleClicked.bind(this)
     this.toggleHistory = this.toggleHistory.bind(this)
+    this.setHistoryFlags = this.setHistoryFlags.bind(this)
 
     this.state = {
        show_self: false,
@@ -49,11 +49,16 @@ export default class Account extends Component {
       show_history: false,
       hover_1: false,
       hover_2: false,
-      history: null,
+      has_history_over_length_one: false,
+      has_history:false,
       bootstrap_error: false
     }
   }
 
+  setHistoryFlags(history_length) {
+   this.setState has_history_over_length_one: false,
+      has_history: (history_length > 0)
+  }
 
   // async bootstrap(){
   //   if(!this.bootstrap_error) clearInterval(this.balance_request_loop)
@@ -195,18 +200,6 @@ export default class Account extends Component {
       dollar_balance = balance.mul(percentage)
     }
     this.setState({ dollar_balance: dollar_balance.toString(16) })
-  }
-
-    /**
-   * This is specific to our list of history items and at the index of the clicked history item it changes the clicked property,
-   * of the history item at the given index in the state. This is used to show large history when clicked, and small item when not clicked.
-   *
-   * @param index
-   */
-  toggleClicked (index) {
-    const results = this.state.history
-    results[index].clicked = !this.state.history[index].clicked
-    this.setState({ results: results })
   }
 
   toggleHistory(){

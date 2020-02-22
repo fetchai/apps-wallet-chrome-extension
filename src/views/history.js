@@ -31,7 +31,10 @@ export default class History extends Component {
   async componentDidMount () {
      // Authentication.Authenticate()
     // start with one page of history.
-
+ if (typeof window.fetchai_history !== "undefined"){
+   debugger
+    this.setState({ results: window.fetchai_history})
+ }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
 
     await this.fetchAnotherPageOfHistory(true)
