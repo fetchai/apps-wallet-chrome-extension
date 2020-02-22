@@ -18,6 +18,8 @@ export default class History extends Component {
     super(props)
     this.toggleClicked = this.toggleClicked.bind(this)
 
+    // eslint-disable-next-line react/prop-types
+    this.setHistoryCount = props.setHistoryCount;
 
     this.state = {
       address: Storage.getLocalStorage('address'),
@@ -29,11 +31,11 @@ export default class History extends Component {
   }
 
   async componentDidMount () {
-     // Authentication.Authenticate()
-    // start with one page of history.
+
  if (typeof window.fetchai_history !== "undefined"){
    debugger
     this.setState({ results: window.fetchai_history})
+   this.setHistoryCount(window.fetchai_history.length)
  }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
 
@@ -107,7 +109,7 @@ export default class History extends Component {
         //todo maybe swap to iframe window from global window
         window.fetchai_history = next;
         updated_results = next;
-       // this.tellAccountHowMuchHistory()
+        this.setHistoryCount(next.length)
       } else {
         updated_results = this.state.results.concat(next)
       }

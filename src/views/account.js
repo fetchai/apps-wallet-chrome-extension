@@ -38,7 +38,7 @@ export default class Account extends Component {
     this.toggleHover = this.toggleHover.bind(this)
     this.copyAddressToClipboard = this.copyAddressToClipboard.bind(this)
     this.toggleHistory = this.toggleHistory.bind(this)
-    this.setHistoryFlags = this.setHistoryFlags.bind(this)
+    this.setHistoryCount = this.setHistoryCount.bind(this)
 
     this.state = {
        show_self: false,
@@ -49,15 +49,18 @@ export default class Account extends Component {
       show_history: false,
       hover_1: false,
       hover_2: false,
-      has_history_over_length_one: false,
-      has_history:false,
+      history_first_page_count: false,
       bootstrap_error: false
     }
   }
 
-  setHistoryFlags(history_length) {
-   this.setState has_history_over_length_one: false,
-      has_history: (history_length > 0)
+  /**
+   * We want to know how many results on first page to decide whether to display "show more button"
+   * so we get this variable from passing this function to History component.
+   * @param history_first_page_count
+   */
+  setHistoryCount(history_first_page_count) {
+   this.setState({history_first_page_count: history_first_page_count })
   }
 
   // async bootstrap(){
@@ -372,7 +375,7 @@ export default class Account extends Component {
                 {/*{`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`}*/}
                  <div id="history-container" className= {`${this.state.show_history ? 'history-container' : 'history-container-collapsed'}`}>
                 {/*<div style={` height: '400px', ${this.state.show_history ? 'overflow: \'auto\' : 'overflow: \'auto\''}`}>*/}
-                 <History/>{' '}
+                 <History setHistoryCount = {this.setHistoryCount}/>{' '}
                  </div>
 
               </Expand>
