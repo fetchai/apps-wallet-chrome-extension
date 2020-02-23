@@ -34,7 +34,7 @@ export default class ExpandedHistoryItem extends Component {
        
    render ()
        {
-return (<div className={`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`} onClick={() => { this.state.toggle_clicked(this.state.index)}}>
+return (<div className={`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`} onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}>
       <ul className={'large-history-item-list'}>
         <li>Digest: {this.state.digest.substring(0, 23)} <br></br>{this.state.digest.substring(23)}</li>
         <li><span>Status: </span>{this.state.status}</li>

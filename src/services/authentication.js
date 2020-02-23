@@ -63,14 +63,10 @@ export default class Authentication {
      * @constructor
      */
     static Authenticate () {
-        debugger
         const we = Storage.getLocalStorage('key_file')
-        debugger
         if (!Authentication.hasSavedKey()) {
-            debugger
             goTo(Download)
         } else if (!Authentication.isLoggedIn()) {
-            debugger
             goTo(Login)
         }
 

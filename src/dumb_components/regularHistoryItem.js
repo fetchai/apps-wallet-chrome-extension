@@ -36,7 +36,7 @@ UNSAFE_componentWillReceiveProps(nextProps){
    render ()
        {
          return (
-           <div className={`history_item history-pointer ${this.state.clicked ? 'hide' : ''}`} onClick={() => { this.state.toggle_clicked(this.state.index)}}><span
+           <div className={`history_item history-pointer ${this.state.clicked ? 'hide' : ''}`} onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}><span
              className="history_left_value">{format(this.state.digest, 13)}</span><span
              className="history_right_value">-200</span><br></br>
              <span className="history_left_value light">{this.state.status}</span><span

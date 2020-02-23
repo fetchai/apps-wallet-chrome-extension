@@ -6,6 +6,7 @@ import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
+import { getElementById } from '../services/getElementById'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -17,6 +18,7 @@ export default class History extends Component {
   constructor (props) {
     super(props)
     this.toggleClicked = this.toggleClicked.bind(this)
+    this.hideAllLargeHistoryItems = this.hideAllLargeHistoryItems.bind(this)
 
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount;
@@ -42,16 +44,70 @@ export default class History extends Component {
     await this.fetchAnotherPageOfHistory(true)
   }
 
+  unclick(element) {
+      element.clicked = false;
+      return element;
+    }
+
+ hideAllLargeHistoryItems(callback = null){
+    this.setState( {results: this.state.results.map(this.unclick)})
+ }
+
+
   /**
    * This is specific to our list of history items and at the index of the clicked history item it changes the clicked property,
    * of the history item at the given index in the state. This is used to show large history when clicked, and small item when not clicked.
    *
    * @param index
    */
-  toggleClicked (index) {
-    const results = this.state.results
-    results[index].clicked = !this.state.results[index].clicked
+  toggleClicked (event, index) {
+
+    let results = this.state.results
+    const clicked_status = results[index].clicked
+
+    let already_open_above = false;
+
+    for (let i = 0; i < results.length; i++){
+      if(i >= index) break
+      //todo maybe pull other loops into this one from below to increase speed.
+      if(results[i].clicked) already_open_above = true
+    }
+debugger;
+    // remove clicked status from all history items (thereby showing small history item for all other items on every click so
+    // only one larger history item is shown at any time for nicer UI)
+    results = results.map(this.unclick)
+    // toggle clicked history items clicked status.
+    results[index].clicked = !clicked_status
+    if(results[index].clicked) this.scrollCorrection(event, already_open_above)
     this.setState({ results: results })
+  }
+
+  /*
+  * When we wish to click to view large history history item, if small history
+  * item is at bottom of UI then large history item will only be partially displayed in view without this.
+  * This method checks the position of the small item and if it is too low then it scrolls to put big history
+  * item in correct position (otherwise would partially be obscured by overflowing bottom of div).
+  *
+  * @param already_open_above boolean - if we have one history item already open above our clicked then we must adjust shifting
+  *                                     by scroll height since  we must factor in that it will close and adjust height further.
+   */
+  scrollCorrection(event, already_open_above){
+     const element = event.target;
+     const DESIRED_TOP = 342
+    const bounding_client_rect = element.getBoundingClientRect();
+// 171
+     const DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM = 120
+     debugger;
+    // we have  a different calculation if one above it is already open.
+    if(already_open_above && (bounding_client_rect.top > (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM))){
+       const correction = bounding_client_rect.top - (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM)
+       const scroll_top = getElementById('history-container').scrollTop
+       getElementById('history-container').scrollTop = scroll_top + correction;
+    } else if (bounding_client_rect.top > DESIRED_TOP) {
+      const correction = bounding_client_rect.top - DESIRED_TOP
+       const scroll_top = getElementById('history-container').scrollTop
+       getElementById('history-container').scrollTop = scroll_top + correction;
+    }
   }
 
   /**
