@@ -79,14 +79,12 @@ export default class Account extends Component {
      this.setState({show_self: true})
 
        let address = await this.getBootstrapAddress()
-         debugger;
-
   const [protocol, host_part, port] = Bootstrap.split_address(address);
 
     this.host = `${protocol}://${host_part}`;
     this.port = port
-          this.balance()
-          this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
+    this.balance()
+    this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
     this.fetchDollarPrice()
     this.fetchHistory()
     this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
@@ -281,7 +279,7 @@ export default class Account extends Component {
               </span>
             </div>
             {(this.state.hover_1) ? ''
-              : <img className="cross" src={getAssetURI('plus_icon.svg')}
+              : <img className="cross" src={getAssetURI('burger_icon.svg')}
                      onClick={goTo.bind(null, Settings)}/>}
           </div>
           <hr/>

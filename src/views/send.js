@@ -233,7 +233,7 @@ export default class Send extends Component {
               <br></br>
               <span>{format(this.state.address)}</span>
             </div>
-            <img className='cross' src={getAssetURI('plus_icon.svg')} onClick={goTo.bind(null, Settings)}/>
+            <img className='cross' src={getAssetURI('burger_icon.svg')} onClick={goTo.bind(null, Settings)}/>
           </div>
           <hr></hr>
           <h3 className="send-title">Send</h3>
