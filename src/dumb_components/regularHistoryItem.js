@@ -3,7 +3,7 @@ import { format } from '../utils/format'
 import { toLocaleDateString } from '../utils/toLocaleDateString'
 
 /**
- * Represents a item in history as is shown to the user in the accounts and history section.
+ * Represents a item in history as is shown to the user in the accounts and history (infinite scroll) section.
  *
  */
 export default class RegularHistoryItem extends Component {

@@ -10,21 +10,21 @@ import Authentication from "./services/authentication";
 import Login from "./views/login";
 import Account from "./views/account";
 import Create from './views/create'
-
-
+import Settings from './views/settings'
+import Send from './views/send'
+import Recover from './views/recover'
 
 class Main extends React.Component {
     render() {
-
         let opening_page;
 // browser uses this.
-        //if(Authentication.isLoggedIn()) {
-        if (true) {
-            opening_page = <Create/>
+        if(Authentication.isLoggedIn()) {
+        // if (true) {
+            opening_page = <Send/>
         } else if (Authentication.hasSavedKey()) {
             opening_page = <Login/>
-        } else {
-            opening_page = <Initial/>
+        } else  {
+            opening_page = <Recover/>
         }
         return (<Router>{opening_page}</Router>)
     }

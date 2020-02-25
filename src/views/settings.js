@@ -24,6 +24,7 @@ export default class Settings extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handlePasswordUpdate = this.handlePasswordUpdate.bind(this)
     this.update_password = this.update_password.bind(this)
+    this.wipe_form_errors = this.wipe_form_errors.bind(this)
 
     this.state = {
       collapsible_1: false,
@@ -32,32 +33,30 @@ export default class Settings extends Component {
       password: '',
       new_password_confirm: '',
       new_password: '',
-      output: ''
+      output: '',
+      // flags for errors on each of the fields.
+     password_confirm_error: false,
+     password_error: false,
+     new_password_error: false
     }
+  }
 
+
+  async wipe_form_errors(){
+    return new Promise(resolve => this.setState({     password_confirm_error: false,
+     password_error: false,
+     new_password_error: false}, resolve))
   }
 
     async componentDidMount () {
       Authentication.Authenticate()
     }
 
-  handleChange (event) {
+  async handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
     this.setState(change)
-  }
-
-  /**
-   * Checks password matches confirm password field.
-   *
-   * @returns {boolean}
-   */
-  passwordConfirmValidate () {
-    if (this.state.new_password !== this.state.new_password_confirm) {
-      formErrorMessage('new_password_confirm', 'Passwords don\'t match!')
-      return false
-    }
-    return true
+    await this.wipe_form_errors()
   }
 
   /**
@@ -66,8 +65,14 @@ export default class Settings extends Component {
    * @returns {Promise<boolean>}
    */
   async correctPassword () {
+    // for speedy UI just do quickly here just if empty.
+    if(!this.state.password.length < 1) {
+       this.setState({password_error: true, output: "Incorrect password"})
+      return false
+    }
+
     if (!(await Authentication.correctPassword(this.state.password))) {
-      formErrorMessage('password', 'Incorrect Password1')
+       this.setState({password_error: true, output: "Incorrect password"})
       return false
     }
     return true
@@ -79,19 +84,42 @@ export default class Settings extends Component {
    * @returns {Promise<boolean>}
    */
   async newPasswordValidate () {
+
+    if(this.state.new_password.length < 1) return false;
+
     if (await Authentication.correctPassword(this.state.new_password)) {
-      formErrorMessage('new_password', 'New password is the same as current password')
+             this.setState({new_password_error: true, output: "New password is the same as current password"})
       return false
     }
 
     if (!Entity._strong_password(this.state.new_password)) {
-
-      formErrorMessage('new_password', 'Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character')
-
+      this.setState({new_password_error: true,
+        output: "Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character"})
       return false
     }
     return true
   }
+
+
+  /**
+   * Checks password matches confirm password field.
+   *
+   * @returns {boolean}
+   */
+  passwordConfirmValidate () {
+
+    if(!this.state.new_password || !this.state.new_password_confirm)
+      return false
+
+    if (this.state.new_password !== this.state.new_password_confirm) {
+           this.setState({password_confirm_error: true,
+        output: "Passwords must match"})
+      return false
+    }
+    return true
+  }
+
+
 
   /**
    * Not only a toggle collapsible_${index} but sets the other collapsibles to closed
@@ -121,11 +149,15 @@ export default class Settings extends Component {
    * @returns {Promise<void>}
    */
   async handlePasswordUpdate (event) {
-    event.preventDefault()
-    if (!(await this.correctPassword())) return
-    if (!(await this.newPasswordValidate())) return
-    if (!this.passwordConfirmValidate()) return
-    this.update_password()
+        event.preventDefault()
+    await this.wipe_form_errors()
+    let error = false
+    if (!this.passwordConfirmValidate())  error = true
+    if (!(await this.newPasswordValidate()))  error = true
+    if (!(await this.correctPassword())) error = true
+
+    if(!error) this.update_password()
+
   }
 
   /**
@@ -135,8 +167,7 @@ export default class Settings extends Component {
    * @returns {Promise<void>}
    */
   async update_password () {
-    this.setState({ output: '' })
-    //IMPORTANT NOTE: assumes original password is checked for correctness before invoking this, else it will lead to key loss
+    //IMPORTANT NOTE: relies on original password being checked for correctness before invoking this, else it will lead to key loss
     const orig_key_file = Storage.getLocalStorage('key_file')
     const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
     const key_file = await entity._to_json_object(this.state.new_password)
@@ -174,7 +205,7 @@ export default class Settings extends Component {
         <div className="OverlayMainInner">
           <div className='address_title'>
             <h1>Settings</h1>
-            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={goTo.bind(null, Account)}/>
+            <img className='cross settings-close' src={getAssetURI('cross_icon.svg')} onClick={goTo.bind(null, Account)}/>
           </div>
           <hr></hr>
           <button className="plain_button" onClick={() => this.toggle(1)}>General</button>
@@ -219,24 +250,22 @@ export default class Settings extends Component {
           >
             <form id="form">
               <legend className="change_password_legend">Change Password</legend>
-              <input type="password" className="change_password_input" placeholder="Old Password"
+              <input type="password" className={`change_password_input ${this.state.password_error ? 'red_error' : ''}`} placeholder="Old Password"
                      id="password" name="password" value={this.state.password}
                      onChange={this.handleChange.bind(this)}></input>
 
-              <input type="password" className="change_password_input" placeholder="New Password"
+              <input type="password" className={`change_password_input ${this.state.new_password_error ? 'red_error' : ''}`} placeholder="New Password"
                      id="new_password" name="new_password" value={this.state.new_password}
                      onChange={this.handleChange.bind(this)}></input>
 
-
-              <input type="password" className="change_password_input" placeholder="Confirm New Password"
+              <input type="password" className={`change_password_input ${this.state.password_confirm_error ? 'red_error' : ''}`} placeholder="Confirm New Password"
                      id="new_password_confirm" name="new_password_confirm"
                      value={this.state.new_password_confirm}
                      onChange={this.handleChange.bind(this)}></input>
-
-              <output type="text" className="change_password_input"
+              <output type="text" className={`change_password_input change_password_output change_password_error red_error`}
                       id="output">{this.state.output}</output>
               <button type="submit" className="update_button"
-                      onClick={this.handlePasswordUpdate.bind(this)}>Update
+                      onClick={this.handlePasswordUpdate}>Update
               </button>
             </form>
           </Expand>
@@ -250,7 +279,6 @@ export default class Settings extends Component {
             <p className="settings_about">FET Wallet Version {VERSION}</p>
             <p className="settings_about">Developed and Designed by Fetch.ai Cambridge</p>
           </Expand>
-
           <button className="logout_button" onClick={this.HandleLogOut}>
             Log out
           </button>

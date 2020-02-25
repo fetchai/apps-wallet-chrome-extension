@@ -1,7 +1,5 @@
 /*global chrome*/
-
     import { EXTENSION } from '../constants'
-
 /**
      * Extensions cannot make CORs requests in content scripts therefore such requests are made in background script and results passed to content script.
      * This has same API as HTML5 Fetch Api https://www.chromium.org/Home/chromium-security/extension-content-script-fetches so we can easily switch to run in browser.
@@ -28,6 +26,13 @@ function proxyToBackground(input, init) {
   });
 }
 
+/**
+ * This is the switch that allows us to run in browser making requests, or background script we pass them to background.
+ *
+ * @param input
+ * @param init
+ * @returns {*}
+ */
 function fetchResource(input, init) {
   return EXTENSION ? proxyToBackground(input, init) : fetch(input, init)
 }

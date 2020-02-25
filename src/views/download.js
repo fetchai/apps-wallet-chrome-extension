@@ -8,6 +8,7 @@ import { format } from '../utils/format'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
 import Expand from 'react-expand-animated'
+import { copyToClipboard } from '../utils/copyAddressToClipboard'
 
 /**
  * component corresponds to download view.
@@ -19,14 +20,26 @@ export default class Download extends Component {
     this.download = this.download.bind(this)
     this.closeSelf = this.closeSelf.bind(this)
     this.make_QR = this.make_QR.bind(this)
+    this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
+
+
 
     this.state = {
       show_self: false,
       address: Storage.getLocalStorage('address'),
       QR: '',
-      hover_1: false
+      hover_1: false,
+      copied: false
     }
   }
+
+
+
+async handleCopyToClipboard(){
+    const copied_status = await copyToClipboard(this.state.address)
+    this.setState({copied: copied_status})
+  }
+
 
   componentDidMount () {
 
@@ -51,9 +64,11 @@ export default class Download extends Component {
   }
 
   toggleHover (index) {
+    return
     const hover = 'hover_' + index
     this.setState(prevState => ({ [hover]: !prevState[hover] }))
   }
+
 
   /**
    * Causes download of encrypted key file as json file, taking key file from storage.
@@ -77,14 +92,11 @@ export default class Download extends Component {
   }
 
   render () {
-
-
      const styles = {
       open: { background: ' #1c2846' },
     }
 
     const transitions = ['height', 'opacity']
-
 
     return (
        <Expand
@@ -100,16 +112,16 @@ export default class Download extends Component {
             <div className='address_title_inner'>
               <h1 className="account_address">Account address</h1>
               <br></br>
-              <span>{format(this.state.address)}</span>
+              <span className="hoverable-address"  onClick ={this.handleCopyToClipboard}>{format(this.state.address)}</span>
+              <span className="tooltiptext tooltiptext-header-positioning" >{this.state.copied ? "Copied!" : "Copy Address to clipboard"  }</span>
             </div>
             <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
           </div>
           <hr></hr>
           <div className="qr_container">
             {this.state.QR ? <img src={this.state.QR} className='qr'/> : ''}
-            <span className='qr_caption' onMouseOver={() => this.toggleHover(1)}
-                  onMouseOut={() => this.toggleHover(1)}>{(this.state.hover_1) ? this.state.address : format(this.state.address)}</span>
-
+            <span className='qr_caption' onClick ={this.handleCopyToClipboard}>{format(this.state.address)} </span>
+            <span className="tooltiptext tooltiptext-positioning" >{this.state.copied ? "Copied!" : "Copy text to clipboard"  }</span>
             <a className='large-button fetch_link account-button' href={'www.fetch.ai'}>
               View on Fetch.ai
             </a>

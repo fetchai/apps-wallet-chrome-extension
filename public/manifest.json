@@ -30,7 +30,8 @@
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*",
           "*://use.typekit.net/*",
         "webRequest",
-        "webRequestBlocking"
+        "webRequestBlocking",
+    "http://localhost/*"
         ],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'"
 }

@@ -25,6 +25,8 @@ import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import Authentication from '../services/authentication'
 import { getElementById } from '../services/getElementById'
+import { copyToClipboard } from '../utils/copyAddressToClipboard'
+import { API } from '../services/api'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
@@ -35,11 +37,10 @@ export default class Account extends Component {
     super(props)
     this.balance = this.balance.bind(this)
     this.fetchHistory = this.fetchHistory.bind(this)
-    this.toggleHover = this.toggleHover.bind(this)
-    this.copyAddressToClipboard = this.copyAddressToClipboard.bind(this)
     this.toggleHistory = this.toggleHistory.bind(this)
     this.setHistoryCount = this.setHistoryCount.bind(this)
     this.scrollHistoryTop = this.scrollHistoryTop.bind(this)
+    this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
 
     this.state = {
        show_self: false,
@@ -78,11 +79,14 @@ export default class Account extends Component {
   Authentication.Authenticate()
      this.setState({show_self: true})
 
-       let address = await this.getBootstrapAddress()
-  const [protocol, host_part, port] = Bootstrap.split_address(address);
+     // this.API = await API.fromBootstrap();
+        this.host = '127.0.0.1'
+        this.port = 8000
+       this.API = new API(this.host, this.port, 'http')
 
-    this.host = `${protocol}://${host_part}`;
-    this.port = port
+
+
+    debugger;
     this.balance()
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
     this.fetchDollarPrice()
@@ -92,16 +96,9 @@ export default class Account extends Component {
   }
 
 
-  async getBootstrapAddress(){
-    const promise = new Promise((resolve, reject) => {
-      fetchResource(BOOTSTRAP_REQUEST_URI).then((response) => {
-        if (response.status !== 200) reject(null);
-        response.json().then((data) => {
-          resolve(data[0].address)
-        }).catch(() => reject(null))
-      })
-    })
-    return promise
+async handleCopyToClipboard(){
+    const copied_status = await copyToClipboard(this.state.address)
+    this.setState({copied: copied_status})
   }
 
   componentWillUnmount () {
@@ -138,7 +135,6 @@ export default class Account extends Component {
         return
       }
 
-
       this.setState({ history: data.results.map(el => {
         el['clicked'] = false
         return el;
@@ -158,16 +154,6 @@ export default class Account extends Component {
           }
         })
     }
-
-
-  toggleHover(index) {
-    const hover = `hover_${index}`
-    const hover_2 = `hover_${2}`
-    // const collapse = "hover_" + 1;
-    this.setState((prevState) => ({ [hover]: !prevState[hover] }))
-    // we also toggle visibility of the plus icon
-    this.setState((prevState) => ({ [hover_2]: !prevState[hover_2] }))
-  }
 
   calculateDollarBalance () {
     // if don't have a balance and a dollar price then we do'nt calculate the dollar balance,
@@ -211,41 +197,11 @@ export default class Account extends Component {
    * Fetch the account balance for address stored in state. Upon result we also call method to recalculate the dollar display string.
    */
 
-  async balance () {
-    let protocol;
-    let host = this.host
-
-     if (this.host.includes('://')) {
-            [protocol, host] = this.host.split('://')
-        } else {
-            protocol = 'http'
-        }
-
-     let request = {address: this.state.address}
-
-     const body = {
-    method: 'post',
-    body: JSON.stringify(request)
+ async balance () {
+     const balance = await API.balance(this.state.address)
+    this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
   }
 
-      const url =  `${protocol}://${host}:${this.port}/api/contract/fetch/token/balance`
-
-     const response = await fetchResource(url, body).catch(() => {
-         return;
-      })
-
-    const balance = await response.json();
-    this.setState({ balance: new BN(balance.balance).toString(16) }, this.calculateDollarBalance)
-  }
-
-  copyAddressToClipboard () {
-    navigator.clipboard.writeText(this.state.address).then(() => {
-      console.log('Async: Copying to clipboard was successful!')
-      // todo write response to this event.
-    }, (err) => {
-      console.error('Async: Could not copy text: ', err)
-    })
-  }
 
 
   render () {
@@ -271,12 +227,11 @@ export default class Account extends Component {
               <br/>
               <span
                 className="hoverable-address"
-                onMouseOver={() => this.toggleHover(1)}
-                onMouseOut={() => this.toggleHover(1)}
-                onClick={this.copyAddressToClipboard}
+                onClick={this.handleCopyToClipboard}
               >
-                {(this.state.hover_1) ? this.state.address : format(this.state.address)}
+                {format(this.state.address)}
               </span>
+              <span className="tooltiptext tooltiptext-header-positioning" >{this.state.copied ? "Copied!" : "Copy Address to clipboard"  }</span>
             </div>
             {(this.state.hover_1) ? ''
               : <img className="cross" src={getAssetURI('burger_icon.svg')}
