@@ -8,6 +8,7 @@ import Authentication from './services/authentication'
 import Login from './views/login'
 import Send from './views/send'
 import Recover from './views/recover'
+import Account from './views/account'
 
 class Main extends React.Component {
   render () {
@@ -15,7 +16,7 @@ class Main extends React.Component {
 // browser uses this.
     if (Authentication.isLoggedIn()) {
       // if (true) {
-      opening_page = <Send/>
+      opening_page = <Account/>
     } else if (Authentication.hasSavedKey()) {
       opening_page = <Login/>
     } else {

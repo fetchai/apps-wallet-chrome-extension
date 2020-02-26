@@ -552,6 +552,10 @@ input::-webkit-inner-spin-button {
     height: 50px;
 }
 
+#my-extension-root-inner .disabled-pointer:disabled {
+    cursor: not-allowed;
+}
+
 #my-extension-root-inner .send-amount-error {
     margin-top: 5px;
     height: 15px;

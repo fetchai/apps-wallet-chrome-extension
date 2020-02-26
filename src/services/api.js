@@ -146,10 +146,10 @@ debugger
       body: JSON.stringify({
         ver: '1.2',
         data: encoded_tx.toString('base64')
-      }),
+      })
     }
 debugger
-    const url = `${this.protocol}://${this.host}:${this.port}/api/contract/transfer/fetch/token`
+    const url = `${this.protocol}://${this.host}:${this.port}/api/contract/fetch/token/transfer`
     let error = false
     const response = await fetchResource(url, body).catch(() => error = true)
 debugger

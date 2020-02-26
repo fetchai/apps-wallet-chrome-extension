@@ -222,7 +222,7 @@ export default class Account extends Component {
                 <button className="small-button account-button" onClick={goTo.bind(null, Download)}>
                   Download
                 </button>
-                <button className="small-button account-button" onClick={goTo.bind(null, Send)}>
+                <button className="small-button account-button" onClick={goTo.bind(null, Send, {api: this.api})}>
                   Send
                 </button>
               </div>
