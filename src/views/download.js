@@ -22,8 +22,6 @@ export default class Download extends Component {
     this.make_QR = this.make_QR.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
 
-
-
     this.state = {
       show_self: false,
       address: Storage.getLocalStorage('address'),
@@ -33,17 +31,14 @@ export default class Download extends Component {
     }
   }
 
-
-
-async handleCopyToClipboard(){
+  async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
-    this.setState({copied: copied_status})
+    this.setState({ copied: copied_status })
   }
-
 
   componentDidMount () {
 
-    this.setState({show_self: true})
+    this.setState({ show_self: true })
     Authentication.Authenticate()
     this.make_QR()
   }
@@ -69,7 +64,6 @@ async handleCopyToClipboard(){
     this.setState(prevState => ({ [hover]: !prevState[hover] }))
   }
 
-
   /**
    * Causes download of encrypted key file as json file, taking key file from storage.
    *
@@ -86,52 +80,55 @@ async handleCopyToClipboard(){
     element.click()
   }
 
-  closeSelf(){
-    this.setState({show_self: false})
+  closeSelf () {
+    this.setState({ show_self: false })
     setTimeout(goTo.bind(null, Account), 500)
   }
 
   render () {
-     const styles = {
+    const styles = {
       open: { background: ' #1c2846' },
     }
 
     const transitions = ['height', 'opacity']
 
     return (
-       <Expand
-            open={this.state.show_self}
-            duration={TRANSITION_DURATION_MS}
-            styles={styles}
-            transitions={transitions}
-          >
-      <div id="my-extension-root-inner" className="OverlayMain">
-        <div className="OverlayMainInner">
-          <div className='settings_title'>
-            <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className='account'/>
-            <div className='address_title_inner'>
-              <h1 className="account_address">Account address</h1>
-              <br></br>
-              <span className="hoverable-address"  onClick ={this.handleCopyToClipboard}>{format(this.state.address)}</span>
-              <span className="tooltiptext tooltiptext-header-positioning" >{this.state.copied ? "Copied!" : "Copy Address to clipboard"  }</span>
+      <Expand
+        open={this.state.show_self}
+        duration={TRANSITION_DURATION_MS}
+        styles={styles}
+        transitions={transitions}
+      >
+        <div id="my-extension-root-inner" className="OverlayMain">
+          <div className="OverlayMainInner">
+            <div className='settings_title'>
+              <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className='account'/>
+              <div className='address_title_inner'>
+                <h1 className="account_address">Account address</h1>
+                <br></br>
+                <span className="hoverable-address"
+                      onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
+                <span
+                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? 'Copied!' : 'Copy Address to clipboard'}</span>
+              </div>
+              <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
             </div>
-            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
-          </div>
-          <hr></hr>
-          <div className="qr_container">
-            {this.state.QR ? <img src={this.state.QR} className='qr'/> : ''}
-            <span className='qr_caption' onClick ={this.handleCopyToClipboard}>{format(this.state.address)} </span>
-            <span className="tooltiptext tooltiptext-positioning" >{this.state.copied ? "Copied!" : "Copy text to clipboard"  }</span>
-            <a className='large-button fetch_link account-button' href={'www.fetch.ai'}>
-              View on Fetch.ai
-            </a>
-            <button className='large-button account-button download-button' onClick={this.download}>
-              Export Private Key
-            </button>
+            <hr></hr>
+            <div className="qr_container">
+              {this.state.QR ? <img src={this.state.QR} className='qr'/> : ''}
+              <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
+              <span
+                className="tooltiptext tooltiptext-positioning">{this.state.copied ? 'Copied!' : 'Copy text to clipboard'}</span>
+              <a className='large-button fetch_link account-button' href={'www.fetch.ai'}>
+                View on Fetch.ai
+              </a>
+              <button className='large-button account-button download-button' onClick={this.download}>
+                Export Private Key
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-       </Expand>
+      </Expand>
     )
   }
 }

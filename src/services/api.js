@@ -1,9 +1,9 @@
 import { fetchResource } from '../utils/fetchRescource'
 import { BOOTSTRAP_REQUEST_URI, DEFAULT_FEE_LIMIT } from '../constants'
-import { ApiError, Transaction } from 'fetchai-ledger-api/src/fetchai/ledger'
+import { Transaction } from 'fetchai-ledger-api/src/fetchai/ledger'
 import { encode_transaction } from 'fetchai-ledger-api/src/fetchai/ledger/serialization'
 import { BN } from 'bn.js'
-import { Address, Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto'
+import { Address } from 'fetchai-ledger-api/src/fetchai/ledger/crypto'
 import { Bootstrap } from 'fetchai-ledger-api/src/fetchai/ledger/api/bootstrap'
 
 /**
@@ -35,13 +35,12 @@ export class API {
    *
    * @returns {Promise<boolean|API>}
    */
- static async fromBootstrap(){
-           let address = await API.getBootstrapAddress()
-   if(address === false) return false
-  const [protocol, host, port] = Bootstrap.split_address(address);
-     return new API(host, port, protocol);
+  static async fromBootstrap () {
+    let address = await API.getBootstrapAddress()
+    if (address === false) return false
+    const [protocol, host, port] = Bootstrap.split_address(address)
+    return new API(host, port, protocol)
   }
-
 
   static getBootstrapAddress () {
     const promise = new Promise(async (resolve, reject) => {
@@ -54,36 +53,12 @@ export class API {
   }
 
   /**
-   * Gets block number.
-   *
-   * @returns {Promise<boolean|*>}
-   */
-   async getBlockNumber () {
-    const url = `${this.protocol}://${this.host}:${this.port}/api/status/chain`
-    let error = false
-
-    const response = await fetchResource(url).catch(() => {
-      error = true
-    })
-
-    if (error) return false
-
-    if (200 < response.status || response.status > 300){
-       return false
-    }
-
-   const obj = await response.json()
-
-     return obj['chain'][0].blockNumber
-  }
-
-  /**
    * Gets FEt Balance of account, or false if error.
    *
    * @param address
    * @returns {Promise<API.balance|TokenApi.balance|Account.balance|((address: AddressLike) => Promise<>)|*|null|boolean>}
    */
-  static async balance (address) {
+  async balance (address) {
 
     const body = {
       method: 'post',
@@ -100,8 +75,32 @@ export class API {
     if (200 < response.status || response.status > 300)
       return false
 
-     const data = await response.json()
-    return data.balance;
+    const data = await response.json()
+    return data.balance
+  }
+
+  /**
+   * Gets block number.
+   *
+   * @returns {Promise<boolean|*>}
+   */
+  async getBlockNumber () {
+    const url = `${this.protocol}://${this.host}:${this.port}/api/status/chain`
+    let error = false
+
+    const response = await fetchResource(url).catch(() => {
+      error = true
+    })
+
+    if (error) return false
+
+    if (200 < response.status || response.status > 300) {
+      return false
+    }
+
+    const obj = await response.json()
+
+    return obj['chain'][0].blockNumber
   }
 
   /**
@@ -111,68 +110,64 @@ export class API {
    * @returns {Promise<string|boolean>}
    */
 
-async poll(tx_digest){
+  async poll (tx_digest) {
 
-        let error = false
+    let error = false
 
-     let url = `${this.protocol}://${this.host}:${this.port}/api/status/tx/${tx_digest}`
+    let url = `${this.protocol}://${this.host}:${this.port}/api/status/tx/${tx_digest}`
 
-        const body = {
-        method: 'get',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-        }
+    const body = {
+      method: 'get',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
     const response = await fetchResource(url, body).catch(() => {
       error = true
     })
 
-   if(error || response.status !== 200) return false
-   const data = await response.json().catch(() => error = true);
-   if(error) return false
-
-    return status
- }
-
-   async transfer (from, to, amount) {
-
-   const tx = this.buildTransferTransaction(from, to, amount)
-
-    if (tx === false) return false
-
-    const encoded_tx = await encode_transaction(tx, [from])
-
-      const body = {
-        method: 'post',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-      ver: '1.2',
-      data: encoded_tx.toString('base64')
-    }),
-      }
-
-
-    const url = `${this.protocol}://${this.host}:${this.port}/api/contract/transfer/fetch/token`
-    let error = false
-    const response = await fetchResource(url, body).catch(() => error = true )
-
+    if (error || response.status !== 200) return false
+    const data = await response.json().catch(() => error = true)
     if (error) return false
 
-    if (200 < response.status || response.status > 300)  return false
-
-    const json =  await response.json().catch(() => error = true)
-
-     if (error || typeof json.txs === "undefined") return false
-
-     return json.txs[0]
+    return data.status
   }
 
+  async transfer (from, to, amount) {
 
+    const tx = await this.buildTransferTransaction(from, to, amount)
+    if (tx === false) return false
+debugger
+    const encoded_tx = await encode_transaction(tx, [from])
 
- async buildTransferTransaction(from, to, amount){
+    const body = {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ver: '1.2',
+        data: encoded_tx.toString('base64')
+      }),
+    }
+debugger
+    const url = `${this.protocol}://${this.host}:${this.port}/api/contract/transfer/fetch/token`
+    let error = false
+    const response = await fetchResource(url, body).catch(() => error = true)
+debugger
+    if (error) return false
 
-   let current_block = await this.getBlockNumber()
-   // build up the basic transaction information
+    if (200 < response.status || response.status > 300) return false
+debugger
+    const json = await response.json().catch(() => error = true)
+debugger
+    if (error || typeof json.txs === 'undefined') return false
+
+    return json.txs[0]
+  }
+
+  async buildTransferTransaction (from, to, amount) {
+
+    let current_block = await this.getBlockNumber()
+    // build up the basic transaction information
     let tx = new Transaction()
     const DEFAULT_BLOCK_VALIDITY_PERIOD = 100
     tx.valid_until(new BN(current_block + DEFAULT_BLOCK_VALIDITY_PERIOD))
@@ -182,14 +177,14 @@ async poll(tx_digest){
     tx.from_address(from) //hex of address
     tx.add_transfer(new Address(to), new BN(amount))
     tx.add_signer(from.public_key_hex()) // hex of public key
-
-   const encoded = Buffer.from(JSON.stringify({
+    // debugger
+    const encoded = Buffer.from(JSON.stringify({
       address: from.public_key(), //base64 encoded public key
       amount: amount
     }), 'ascii')
 
     tx.data(encoded)
 
-    return tx;
+    return tx
   }
 }

@@ -1,5 +1,5 @@
 /*global chrome*/
-import {EXTENSION} from "../constants";
+import { EXTENSION } from '../constants'
 
 /**
  * Different is returned URI for asset stored in assets folder
@@ -9,6 +9,6 @@ import {EXTENSION} from "../constants";
  * @param name
  * @returns {string}
  */
-const getAssetURI = name => EXTENSION ? chrome.runtime.getURL("/assets/" + name) :  `./assets/${name}`
+const getAssetURI = name => EXTENSION ? chrome.runtime.getURL('/assets/' + name) : `./assets/${name}`
 
-export {getAssetURI}
+export { getAssetURI }

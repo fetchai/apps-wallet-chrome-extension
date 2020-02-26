@@ -26,7 +26,6 @@ export default class Login extends Component {
   }
 
   handleChange (event) {
-
     let change = {}
     change[event.target.name] = event.target.value
     change.login_error = false
@@ -41,8 +40,7 @@ export default class Login extends Component {
     event.preventDefault()
 
     if (!(await Authentication.correctPassword(this.state.user_password))) {
-      // formErrorMessage('user_password', 'Incorrect Password')
-      this.setState({output: `Incorrect Password`, login_error: true })
+      this.setState({ output: `Incorrect Password`, login_error: true })
       return
     }
     Storage.setLocalStorage('logged_in', 'true')
@@ -61,12 +59,15 @@ export default class Login extends Component {
         <div className="overlay2">
           <div className="overlay3">
             <form id="form">
-              <input type="user_password" className={`button-free-standing login-password-field ${this.state.login_error ? 'red_error red-lock-icon' : ''}`} placeholder="Password"
+              <input type="user_password"
+                     className={`button-free-standing login-password-field ${this.state.login_error ? 'red_error red-lock-icon' : ''}`}
+                     placeholder="Password"
                      id="user_password" name="user_password" value={this.state.user_password}
                      onChange={this.handleChange.bind(this)} required></input>
               <output type="text" className={`login-output ${this.state.login_error ? 'red_error' : ''}`}
                       id="output">{this.state.output}</output>
-              <button type="submit" className="button-free-standing login-submit-field" onClick={this.handleSubmit}>Login
+              <button type="submit" className="button-free-standing login-submit-field"
+                      onClick={this.handleSubmit}>Login
               </button>
             </form>
           </div>

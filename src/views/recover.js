@@ -4,8 +4,7 @@ import { goBack, goTo } from '../services/router'
 import { Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto/entity'
 import { Address } from 'fetchai-ledger-api/src/fetchai/ledger/crypto/address'
 import Account from './account'
-import { formErrorMessage } from '../services/formErrorMessage'
-import { validJSONObject } from '../utils/json'
+import { validJSONstring } from '../utils/json'
 import { validAddress } from '../utils/validAddress'
 import Expand from 'react-expand-animated'
 import { TRANSITION_DURATION_MS } from '../constants'
@@ -31,7 +30,7 @@ export default class Recover extends Component {
       file_name: '',
       collapsible_1: true,
       collapsible_2: false,
-      error_message: "",
+      error_message: '',
       password_error: false,
       file_error: false,
       address_error: false,
@@ -54,7 +53,7 @@ export default class Recover extends Component {
   handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
-    change.recover_error = false;
+    change.recover_error = false
     this.setState(change)
   }
 
@@ -73,12 +72,16 @@ export default class Recover extends Component {
    */
   validPassword () {
     if (this.state.password === null || typeof this.state.password !== 'string' || this.state.password.length === 0) {
-      this.setState({ error_message: "Password required",
-      password_error: true})
+      this.setState({
+        error_message: 'Password required',
+        password_error: true
+      })
       return false
     } else if (!Entity._strong_password(this.state.password)) {
-       this.setState({ error_message: "Incorrect Password: Password too weak",
-      password_error: true})
+      this.setState({
+        error_message: 'Incorrect Password: Password too weak',
+        password_error: true
+      })
       return false
     }
     return true
@@ -94,14 +97,18 @@ export default class Recover extends Component {
     const file_str = await this.read_file(this.state.file)
 
     if (file_str === null) {
-       this.setState({ error_message: "Unable to read file",
-      file_error: true})
+      this.setState({
+        error_message: 'Unable to read file',
+        file_error: true
+      })
       return false
     }
 
-    if (!validJSONObject(file_str)) {
-             this.setState({ error_message: "Incorrect file type",
-      file_error: true})
+    if (!validJSONstring(file_str)) {
+      this.setState({
+        error_message: 'Incorrect file type',
+        file_error: true
+      })
       return false
     }
 
@@ -116,8 +123,10 @@ export default class Recover extends Component {
    */
   validAddress () {
     if (!validAddress(this.state.address)) {
-                   this.setState({ error_message: "Invalid address",
-      address_error: true})
+      this.setState({
+        error_message: 'Invalid address',
+        address_error: true
+      })
       return false
     }
     return true
@@ -142,17 +151,21 @@ export default class Recover extends Component {
     else {
       file_str = await this.read_file(this.state.file)
       entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password).catch(() => {
-         this.setState({ error_message: "Unable to decrypt",
-      file_error: true})
+        this.setState({
+          error_message: 'Unable to decrypt',
+          file_error: true
+        })
         error_flag = true
       })
     }
 
-  //todo refactor this block for readbility,
+    //todo refactor this block for readbility,
     if (this.state.address && entity instanceof Entity) {
       if (new Address(entity).toString() !== this.state.address) {
-         this.setState({ error_message: "Incorrect Password or Address",
-      address_error: true, password_error: true})
+        this.setState({
+          error_message: 'Incorrect Password or Address',
+          address_error: true, password_error: true
+        })
         error_flag = true
       }
 
@@ -201,19 +214,24 @@ export default class Recover extends Component {
           <hr></hr>
           <Expand
             open={this.state.collapsible_1}
-            duration={TRANSITION_DURATION_MS/2}
+            duration={TRANSITION_DURATION_MS / 2}
             styles={styles}
             transitions={transitions}
           >
 
-            <form id="form" className={"recover-form"}>
+            <form id="form" className={'recover-form'}>
               <legend className="recover-legend">Upload File with Password</legend>
-              <input label='file' className={`recover-input ${this.state.file_error ? 'red_error red-lock-icon' : ''}`} id="file" type="file"
+              <input label='file' className={`recover-input ${this.state.file_error ? 'red_error red-lock-icon' : ''}`}
+                     id="file" type="file"
                      value={this.state.file_name} onChange={this.handleFileChange.bind(this)}></input>
-              <input type="text" className={`recover-input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`} placeholder="Password" id="password"
+              <input type="text"
+                     className={`recover-input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`}
+                     placeholder="Password" id="password"
                      name="password" value={this.state.password}
                      onChange={this.handleChange.bind(this)} required></input>
-              <input label='address' className={`recover-input recover-address ${this.state.address_error ? 'red_error red-lock-icon' : ''}`}  id="address" type="text"
+              <input label='address'
+                     className={`recover-input recover-address ${this.state.address_error ? 'red_error red-lock-icon' : ''}`}
+                     id="address" type="text"
                      name="address" placeholder="Address (optional)"
                      value={this.state.address} onChange={this.handleChange.bind(this)}></input>
               <output type="text" className={`recover-output ${this.state.recover_error ? 'red_error' : ''}`}
@@ -227,22 +245,30 @@ export default class Recover extends Component {
                 </button>
                 <button type="submit" className="small-button recover-small-button"
                         onClick={event => {
-                  event.preventDefault()
-                  this.handleSubmit()
-                }}>Upload
+                          event.preventDefault()
+                          this.handleSubmit()
+                        }}>Upload
                 </button>
               </div>
             </form>
           </Expand>
           <Expand
             open={this.state.collapsible_2}
-            duration={TRANSITION_DURATION_MS/2}
+            duration={TRANSITION_DURATION_MS}
             styles={styles}
             transitions={transitions}
           >
-            <p>Decrypting without providing an Address means that if the password is wrong it will decrypt
-              to the wrong address rather than throw an error. Click yes to proceed or cancel and provide
-              an address </p>
+            <p>Warning! Not providing your public address means that recovery won&apos;t error if your password is
+              incorrect. </p>
+
+            <p>It will instead
+              decrypt to a random incorrect address (probably without funds).</p>
+
+            <p>If this happens don&apos;t panic but clear your local storage and try again.</p>
+
+            <p>Click &quot;Next&quot; to proceed
+              anyway or &quot;Back&quot; to return to the upload form.</p>
+
             <div className="small-button-container">
               <button type="button" className="small-button recover-small-button"
                       onClick={this.hideConfirmation}>Back

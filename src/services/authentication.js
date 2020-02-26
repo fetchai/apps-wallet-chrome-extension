@@ -59,7 +59,6 @@ export default class Authentication {
    * If you clear history whilst app open in a different tab when you switch
    * to new view then it will detect you logged and redirect to correct logged out area,
    *
-   *
    */
   static Authenticate () {
     if (!Authentication.hasSavedKey()) {

@@ -6,7 +6,8 @@ import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
-import { getElementById } from '../services/getElementById'
+import { getElementById } from '../utils/getElementById'
+import { Address, Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -21,7 +22,7 @@ export default class History extends Component {
     this.hideAllLargeHistoryItems = this.hideAllLargeHistoryItems.bind(this)
 
     // eslint-disable-next-line react/prop-types
-    this.setHistoryCount = props.setHistoryCount;
+    this.setHistoryCount = props.setHistoryCount
 
     this.state = {
       address: Storage.getLocalStorage('address'),
@@ -34,25 +35,24 @@ export default class History extends Component {
 
   async componentDidMount () {
 
- if (typeof window.fetchai_history !== "undefined"){
-   debugger
-    this.setState({ results: window.fetchai_history})
-   this.setHistoryCount(window.fetchai_history.length)
- }
+    if (typeof window.fetchai_history !== 'undefined') {
+      debugger
+      this.setState({ results: window.fetchai_history })
+      this.setHistoryCount(window.fetchai_history.length)
+    }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
 
     await this.fetchAnotherPageOfHistory(true)
   }
 
-  unclick(element) {
-      element.clicked = false;
-      return element;
-    }
+  unclick (element) {
+    element.clicked = false
+    return element
+  }
 
- hideAllLargeHistoryItems(callback = null){
-    this.setState( {results: this.state.results.map(this.unclick)})
- }
-
+  hideAllLargeHistoryItems () {
+    this.setState({ results: this.state.results.map(this.unclick) })
+  }
 
   /**
    * This is specific to our list of history items and at the index of the clicked history item it changes the clicked property,
@@ -65,20 +65,19 @@ export default class History extends Component {
     let results = this.state.results
     const clicked_status = results[index].clicked
 
-    let already_open_above = false;
+    let already_open_above = false
 
-    for (let i = 0; i < results.length; i++){
-      if(i >= index) break
+    for (let i = 0; i < results.length; i++) {
+      if (i >= index) break
       //todo maybe pull other loops into this one from below to increase speed.
-      if(results[i].clicked) already_open_above = true
+      if (results[i].clicked) already_open_above = true
     }
-debugger;
     // remove clicked status from all history items (thereby showing small history item for all other items on every click so
     // only one larger history item is shown at any time for nicer UI)
     results = results.map(this.unclick)
     // toggle clicked history items clicked status.
     results[index].clicked = !clicked_status
-    if(results[index].clicked) this.scrollCorrection(event, already_open_above)
+    if (results[index].clicked) this.scrollCorrection(event, already_open_above)
     this.setState({ results: results })
   }
 
@@ -91,22 +90,21 @@ debugger;
   * @param already_open_above boolean - if we have one history item already open above our clicked then we must adjust shifting
   *                                     by scroll height since  we must factor in that it will close and adjust height further.
    */
-  scrollCorrection(event, already_open_above){
-     const element = event.target;
-     const DESIRED_TOP = 342
-    const bounding_client_rect = element.getBoundingClientRect();
+  scrollCorrection (event, already_open_above) {
+    const element = event.target
+    const DESIRED_TOP = 342
+    const bounding_client_rect = element.getBoundingClientRect()
 // 171
-     const DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM = 120
-     debugger;
+    const DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM = 120
     // we have  a different calculation if one above it is already open.
-    if(already_open_above && (bounding_client_rect.top > (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM))){
-       const correction = bounding_client_rect.top - (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM)
-       const scroll_top = getElementById('history-container').scrollTop
-       getElementById('history-container').scrollTop = scroll_top + correction;
+    if (already_open_above && (bounding_client_rect.top > (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM))) {
+      const correction = bounding_client_rect.top - (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM)
+      const scroll_top = getElementById('history-container').scrollTop
+      getElementById('history-container').scrollTop = scroll_top + correction
     } else if (bounding_client_rect.top > DESIRED_TOP) {
       const correction = bounding_client_rect.top - DESIRED_TOP
-       const scroll_top = getElementById('history-container').scrollTop
-       getElementById('history-container').scrollTop = scroll_top + correction;
+      const scroll_top = getElementById('history-container').scrollTop
+      getElementById('history-container').scrollTop = scroll_top + correction
     }
   }
 
@@ -118,13 +116,10 @@ debugger;
    * @returns {Promise<void>}
    */
   async fetchAnotherPageOfHistory (retry = false) {
-
-    if (EXTENSION) {
-      fetchResource(ACCOUNT_HISTORY_URI + '&page=' + this.state.current_page).then((response) => this.handlePageFetchResponse(response, retry))
-    } else {
-      fetch(ACCOUNT_HISTORY_URI + '&page=' + this.state.current_page).then((response) => this.handlePageFetchResponse(response, retry))
-    }
-
+   const address =  new Address(new Entity()).toString()
+    console.log("address is : " + address)
+    const url = ACCOUNT_HISTORY_URI + address + '&page=' + this.state.current_page;
+    fetchResource(url).then((response) => this.handlePageFetchResponse(response, retry))
   }
 
   /**
@@ -134,6 +129,7 @@ debugger;
    * @param retry
    */
   handlePageFetchResponse (response, retry) {
+    debugger;
     if (response.status !== 200) {
       if (retry === true) {
         // recursive set_timeout loop if we want to keep retrying. This is used on initialization to try get some data if network dodgy.
@@ -159,12 +155,12 @@ debugger;
           clicked: false
         }
       })
-       let updated_results;
+      let updated_results
       // lets cache first page on window for quicker remounts of component.
-      if( this.state.current_page === 1){
+      if (this.state.current_page === 1) {
         //todo maybe swap to iframe window from global window
-        window.fetchai_history = next;
-        updated_results = next;
+        window.fetchai_history = next
+        updated_results = next
         this.setHistoryCount(next.length)
       } else {
         updated_results = this.state.results.concat(next)
@@ -187,35 +183,34 @@ debugger;
       //Both large and regular history items are appended to list, but when we click on them we toggle between displaying regular and large.
       // note: This is because setting inner html is injection vunerability.
 
+      items.push(<RegularHistoryItem clicked={this.state.results[i].clicked}
+                                     digest={this.state.results[i].digest}
+                                     status={this.state.results[i].status}
+                                     created_date={this.state.results[i].created_date}
+                                     toggle_clicked={this.toggleClicked}
+                                     index={i}/>)
 
-      items.push(<RegularHistoryItem clicked = {this.state.results[i].clicked}
-        digest =  {this.state.results[i].digest}
-        status =  {this.state.results[i].status}
-        created_date =  {this.state.results[i].created_date}
-         toggle_clicked = {this.toggleClicked}
-        index = {i}/>)
-
-       items.push(<ExpandedHistoryItem clicked = {this.state.results[i].clicked}
-        digest =  {this.state.results[i].digest}
-        status =  {this.state.results[i].status}
-        fee =  {this.state.results[i].fee}
-        created_date =  {this.state.results[i].created_date}
-         toggle_clicked = {this.toggleClicked}
-        index = {i}/>)
+      items.push(<ExpandedHistoryItem clicked={this.state.results[i].clicked}
+                                      digest={this.state.results[i].digest}
+                                      status={this.state.results[i].status}
+                                      fee={this.state.results[i].fee}
+                                      created_date={this.state.results[i].created_date}
+                                      toggle_clicked={this.toggleClicked}
+                                      index={i}/>)
     }
     return items
   }
 
   render () {
     return (
-        <InfiniteScroll
-          loadMore={this.fetchAnotherPageOfHistory.bind(this)}
-          hasMore={this.state.has_more_items}
-          loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon" className='loader'/>}
-          useWindow={false}
-        >
-          {this.showItems()}{' '}
-        </InfiniteScroll>
+      <InfiniteScroll
+        loadMore={this.fetchAnotherPageOfHistory.bind(this)}
+        hasMore={this.state.has_more_items}
+        loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon" className='loader'/>}
+        useWindow={false}
+      >
+        {this.showItems()}{' '}
+      </InfiniteScroll>
     )
   }
 

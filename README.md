@@ -15,7 +15,12 @@ must be changed from 2 to 3 after running npm install,
 then cd into node_modules and run npm run build. This
 is temp until I update which version of sdk it is running
 on. When I started it the sdk on npm has since been updated
-so i need to update which methods I am using. 
+so i need to update which methods I am using.
+
+It runs first index.js in browser or content.js in 
+extension
+
+all css is content.css
 
 
 

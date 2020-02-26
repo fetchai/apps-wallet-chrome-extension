@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 // In firefox, setTimeout with duration 0 too short for browser notice the changes in dom
-const initialTransitDuration = 20;
+const initialTransitDuration = 20
 
 const PHASE = {
   CLOSE: 'close',
@@ -11,7 +11,7 @@ const PHASE = {
   OPEN: 'open',
   OPENING: 'opening',
   OPENED: 'opened',
-};
+}
 
 const GROUP = {
   [PHASE.CLOSE]: PHASE.CLOSE,
@@ -20,117 +20,117 @@ const GROUP = {
   [PHASE.CLOSING]: PHASE.OPEN,
   [PHASE.OPEN]: PHASE.OPEN,
   [PHASE.OPENED]: PHASE.OPEN,
-};
+}
 
 class Expand extends Component {
-  constructor(props) {
-    super(props);
+  constructor (props) {
+    super(props)
     this.state = {
       status: this.props.open ? PHASE.OPEN : PHASE.CLOSE,
-    };
-  }
-
-  componentDidUpdate(prevProps /* prevState */) {
-    if (prevProps.open !== this.props.open) {
-      this.toggle(this.props.open);
     }
   }
 
-  componentWillUnmount() {
-    this.clearDelay();
+  componentDidUpdate (prevProps /* prevState */) {
+    if (prevProps.open !== this.props.open) {
+      this.toggle(this.props.open)
+    }
   }
 
-  getClientHeight = () => this.refWrapper.scrollHeight;
+  componentWillUnmount () {
+    this.clearDelay()
+  }
+
+  getClientHeight = () => this.refWrapper.scrollHeight
 
   getClosedHeight = () => {
-    return this.props.partial ?  { height: '210px', opacity: 1, overflow: 'hidden' } :
-       { height: 0, opacity: 0, overflow: 'hidden' } ;
+    return this.props.partial ? { height: '210px', opacity: 1, overflow: 'hidden' } :
+      { height: 0, opacity: 0, overflow: 'hidden' }
   }
 
   getDefaultExpandStyle = () => {
-    const { status } = this.state;
+    const { status } = this.state
 
     switch (status) {
       case PHASE.OPENING:
       case PHASE.CLOSE:
       case PHASE.CLOSED:
-        return this.getClosedHeight();
+        return this.getClosedHeight()
       case PHASE.OPENED:
       case PHASE.CLOSING:
-        return { height: this.getClientHeight(), opacity: 1, overflow: 'hidden' };
+        return { height: this.getClientHeight(), opacity: 1, overflow: 'hidden' }
       default:
-        return { height: 'auto', opacity: 1, overflow: 'unset' };
+        return { height: 'auto', opacity: 1, overflow: 'unset' }
     }
-  };
+  }
 
   getExpandStyle = () => ({
     ...this.getDefaultExpandStyle(),
     ...this.props.styles[GROUP[this.state.status]],
-  });
+  })
 
-  getTransition = (attribute) => `${attribute} ${this.props.duration}ms ${this.props.easing}`;
+  getTransition = (attribute) => `${attribute} ${this.props.duration}ms ${this.props.easing}`
 
-  getStyle() {
-    const transition = this.props.transitions.map(this.getTransition).join(',');
+  getStyle () {
+    const transition = this.props.transitions.map(this.getTransition).join(',')
 
     return {
       ...this.getExpandStyle(),
       transition,
-    };
+    }
   }
 
-  updateStatus = (status) => this.setState({ status });
+  updateStatus = (status) => this.setState({ status })
 
   delay = (fn, time) => {
-    this.timeout = setTimeout(fn, time);
-  };
+    this.timeout = setTimeout(fn, time)
+  }
 
   clearDelay = () => {
     if (this.timeout) {
-      clearTimeout(this.timeout);
+      clearTimeout(this.timeout)
     }
-  };
+  }
 
   transit = (entering, entered, enter) => {
-    const { duration } = this.props;
+    const { duration } = this.props
 
-    this.updateStatus(entering);
+    this.updateStatus(entering)
 
     this.delay(() => {
-      this.updateStatus(entered);
+      this.updateStatus(entered)
 
       this.delay(() => {
-        this.updateStatus(enter);
-      }, duration);
-    }, initialTransitDuration);
-  };
+        this.updateStatus(enter)
+      }, duration)
+    }, initialTransitDuration)
+  }
 
   toggle = (open) => {
-    this.clearDelay();
+    this.clearDelay()
 
     if (open) {
-      this.transit(PHASE.OPENING, PHASE.OPENED, PHASE.OPEN);
+      this.transit(PHASE.OPENING, PHASE.OPENED, PHASE.OPEN)
     } else {
-      this.transit(PHASE.CLOSING, PHASE.CLOSED, PHASE.CLOSE);
+      this.transit(PHASE.CLOSING, PHASE.CLOSED, PHASE.CLOSE)
     }
-  };
+  }
 
-  setRef = (ref) => { this.refWrapper = ref; };
+  setRef = (ref) => { this.refWrapper = ref }
 
-  render() {
-    const { className, children, tag: Tag } = this.props;
+  render () {
+    const { className, children, tag: Tag } = this.props
 
     const childProps = {
       className,
       style: this.getStyle(),
       ref: this.setRef,
-    };
+    }
 
     return (
       <Tag {...childProps}>
         {children}
       </Tag>
-    );
+    )
   }
 }
 
@@ -146,7 +146,7 @@ Expand.propTypes = {
     [PHASE.OPEN]: PropTypes.object,
     [PHASE.CLOSE]: PropTypes.object,
   }),
-};
+}
 
 Expand.defaultProps = {
   open: false,
@@ -156,6 +156,6 @@ Expand.defaultProps = {
   tag: 'div',
   transitions: ['height', 'opacity'],
   styles: {},
-};
+}
 
-export default Expand;
+export default Expand

@@ -1,73 +1,72 @@
 /*global chrome*/
 /* src/content.js */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import "./content.css";
-import Router from './services/router';
-import Initial from "./views/initial";
-import Authentication from "./services/authentication";
-import Login from "./views/login";
-import Frame, { FrameContextConsumer }from 'react-frame-component';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './content.css'
+import Router from './services/router'
+import Initial from './views/initial'
+import Authentication from './services/authentication'
+import Login from './views/login'
+import Frame, { FrameContextConsumer } from 'react-frame-component'
 import Account from './views/account'
-import Create from './views/create'
-import Send from './views/send'
 
 class Main extends React.Component {
-    render() {
+  render () {
 
-        let opening_page;
+    let opening_page
 // browser uses this.
 //         if(Authentication.isLoggedIn()) {
-         if(true) {
-            opening_page = <Account/>
-        } else if (Authentication.hasSavedKey()) {
-            opening_page = <Login/>
-        } else {
-            opening_page = <Initial/>
-        }
-
-        return (
-            <Frame head={[<link key={1} type="text/css" rel="stylesheet" href={chrome.runtime.getURL("/static/css/content.css")} ></link>]}
-            initialContent = '<!DOCTYPE html><html><head></head><body style="margin:0px"><div class="frame-root"></div></body></html>'>
-               <FrameContextConsumer>
-               {
-                   ({document, window}) => {
-                     return(<Router>{opening_page}</Router>)
-                    }
-                }
-                </FrameContextConsumer>
-            </Frame>
-        )
+    if (true) {
+      opening_page = <Account/>
+    } else if (Authentication.hasSavedKey()) {
+      opening_page = <Login/>
+    } else {
+      opening_page = <Initial/>
     }
+
+    return (
+      <Frame head={[<link key={1} type="text/css" rel="stylesheet"
+                          href={chrome.runtime.getURL('/static/css/content.css')}></link>]}
+             initialContent='<!DOCTYPE html><html><head></head><body style="margin:0px"><div class="frame-root"></div></body></html>'>
+        <FrameContextConsumer>
+          {
+            ({ document, window }) => {
+              return (<Router>{opening_page}</Router>)
+            }
+          }
+        </FrameContextConsumer>
+      </Frame>
+    )
+  }
 }
 
-console.log("QWERTTYYYYYYYYYY99999999999999999");
-const app = document.createElement('div');
-app.id = "my-extension-root";
+console.log('QWERTTYYYYYYYYYY99999999999999999')
+const app = document.createElement('div')
+app.id = 'my-extension-root'
 
-document.body.appendChild(app);
-ReactDOM.render(<Main/>, app);
+document.body.appendChild(app)
+ReactDOM.render(<Main/>, app)
 
-const x = document.getElementById("my-extension-root")
+const x = document.getElementById('my-extension-root')
 
 // we give our iframe an ID
-const iframe = x.children[0];
-iframe.id = "my-frame";
+const iframe = x.children[0]
+iframe.id = 'my-frame'
 
-app.style.display = "none";
+app.style.display = 'none'
 
 chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.message === "clicked_browser_action") {
-            toggle();
-        }
+  function (request, sender, sendResponse) {
+    if (request.message === 'clicked_browser_action') {
+      toggle()
     }
-);
+  }
+)
 
-function toggle() {
-    if (app.style.display === "none") {
-        app.style.display = "block";
-    } else {
-        app.style.display = "none";
-    }
+function toggle () {
+  if (app.style.display === 'none') {
+    app.style.display = 'block'
+  } else {
+    app.style.display = 'none'
+  }
 }

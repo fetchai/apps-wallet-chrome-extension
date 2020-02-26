@@ -5,6 +5,6 @@
  * @param last
  * @returns {string}
  */
-const format = (val, last = 12) => val.substring(0, last) + "...";
+const format = (val, last = 12) => val.substring(0, last) + '...'
 
-export {format}
+export { format }

@@ -1,9 +1,5 @@
 import React, { Component } from 'react'
-import {
-  DEFAULT_FEE_LIMIT,
-  DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI
-} from '../constants'
+import { DOLLAR_PRICE_CHECK_INTERVAL_MS, DOLLAR_PRICE_URI } from '../constants'
 import { Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
@@ -26,7 +22,7 @@ export default class Send extends Component {
     super(props)
     this.address = Storage.getLocalStorage('address')
     this.sufficientFunds = this.sufficientFunds.bind(this)
-    this.transfer = this.transfer.bind(this)
+    this.transferController = this.transferController.bind(this)
     this.handleTransfer = this.handleTransfer.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleAmountChange = this.handleAmountChange.bind(this)
@@ -47,59 +43,57 @@ export default class Send extends Component {
       amount_error: false,
       password_error: false,
       address_error: false,
-      amount_error_message: "",
+      amount_error_message: '',
       transfer_error: true,
-      transfer_message: "",
+      transfer_message: '',
       host: null,
       port: null
     }
   }
 
-  async reset_form_errors(){
+  async reset_form_errors () {
     return new Promise(resolve => {
-      this.setState({amount_error: false,
-      password_error: false,
-      amount_error_message: "",
+      this.setState({
+        amount_error: false,
+        password_error: false,
+        amount_error_message: '',
         transfer_error: true,
-        transfer_message: "",
-      address_error: false}, resolve)
+        transfer_message: '',
+        address_error: false
+      }, resolve)
     })
   }
 
   async componentDidMount () {
     Authentication.Authenticate()
 
+    // this.api = await API.fromBootstrap();
+    this.host = '127.0.0.1'
+    this.port = 8000
 
-     // this.api = await API.fromBootstrap();
-        this.host = '127.0.0.1'
-        this.port = 8000
-
-       this.API = new API(this.host, this.port, 'http')
-       this.fetchDollarPrice()
+    this.api = new API(this.host, this.port, 'http')
+    this.fetchDollarPrice()
     this.balance_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
-
   }
 
   componentWillUnmount () {
     clearInterval(this.balance_request_loop)
   }
 
-
-
-async handleCopyToClipboard(){
+  async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
-    this.setState({copied: copied_status})
+    this.setState({ copied: copied_status })
   }
 
   /**
    * Fetches current dollar price of FET.
    */
   fetchDollarPrice () {
-      fetchResource(DOLLAR_PRICE_URI).then((response) => this.handleDollarResponse(response))
-        .catch((err) => {
-          debugger
-          console.log('Fetch Error :-S', err)
-        })
+    fetchResource(DOLLAR_PRICE_URI).then((response) => this.handleDollarPriceResponse(response))
+      .catch((err) => {
+        debugger
+        console.log('Fetch Error :-S', err)
+      })
   }
 
   /**
@@ -108,7 +102,7 @@ async handleCopyToClipboard(){
    *
    * @param response
    */
-  handleDollarResponse (response) {
+  handleDollarPriceResponse (response) {
     if (response.status !== 200) {
       console.log('Looks like there was a problem. Status Code: ' +
         response.status)
@@ -151,6 +145,7 @@ async handleCopyToClipboard(){
     const total = amount * percentage
     const dollar = Number.parseFloat(total)
 
+    //todo decide if to round to dollar (not cents) if high dollar amount egg > 1000
     // if(dollar > 1000){
     //   return Number.parseInt(total)
     // }
@@ -191,26 +186,28 @@ async handleCopyToClipboard(){
   async handleTransfer (event) {
     event.preventDefault()
     await this.reset_form_errors()
+    // we set this flag which we use to see if we'll make transaction.
+    // error flags in state within individual validation methods are for display only.
+    // this flag is the actual one.
     let error = false
 
     if (!validAddress(this.state.to_address)) {
-      this.setState({address_error: true})
+      this.setState({ address_error: true })
       error = true
-    } else if (!(await this.sufficientFunds())) {
-       this.setState({amount_error: true})
-      error = true
-    }
+   } // else if (!(await this.sufficientFunds())) {
+    //   this.setState({ amount_error: true })
+    //   error = true
+    // }
 
-    if (!(await Authentication.correctPassword(this.state.password))) {
-      this.setState({password_error: true})
-      error = true
-    }
+    // if (!(await Authentication.correctPassword(this.state.password))) {
+    //   this.setState({ password_error: true })
+    //   error = true
+    // }
 
     if (error) return
+    // now we send the transfer as no errors that cause us to not make transfer have occured.
+     await this.transferController()
 
-    // now we send the transfer as no errors that cause us to not make transfer.
-    const txs = await this.transfer()
-    await this.sync(txs).catch(() =>  this.setState({transfer_error: true, transfer_message: "Transfer failed"}))
   }
 
   /*
@@ -220,39 +217,39 @@ async handleCopyToClipboard(){
 * Similar more genereic method in js SDK buts sets state as we poll.
  */
 
-async sync(tx_digest) {
-   const start = Date.now()
-   const limit = 60 * 1000
-   return new Promise((resolve, reject) => {
-     const loop = setInterval(async () => {
-       let status;
-       try {
-         status = await this.API.poll(tx_digest)
-       } catch (e) {
-         clearInterval(loop)
-            await this.setTransferMessage(`API Error `, true)
-         reject("API Error")
-       }
-
-        await this.setTransferMessage( `Transfer status: ${status} `)
-
-       if (/Executed|Submitted/.test(status)) {
+  async sync (tx_digest) {
+    const start = Date.now()
+    const limit = 60 * 1000
+    return new Promise((resolve, reject) => {
+      const loop = setInterval(async () => {
+        let status
+        try {
+          status = await this.api.poll(tx_digest)
+        } catch (e) {
           clearInterval(loop)
-            await this.setTransferMessage(`Success! Transaction status: ${status} `, true)
-          resolve(status);
-       }
+          await this.setTransferMessage(`API Error `, true)
+          reject('API Error')
+        }
 
-       let elapsed_time = Date.now() - start
+        await this.setTransferMessage(`Transfer status: ${status} `)
 
-       if (elapsed_time > limit) {
+        if (/Executed|Submitted/.test(status)) {
           clearInterval(loop)
-         await this.setTransferMessage( `Transaction timed out wth status: ${status} `, true)
+          await this.setTransferMessage(`Success! Transaction status: ${status} `, true)
+          resolve(status)
+        }
+
+        let elapsed_time = Date.now() - start
+
+        if (elapsed_time > limit) {
+          clearInterval(loop)
+          await this.setTransferMessage(`Transaction timed out wth status: ${status} `, true)
           reject(status)
-       }
+        }
 
-     }, 2000)
-   })
- }
+      }, 2000)
+    })
+  }
 
   /**
    * awaits set state change of transfer error status
@@ -261,59 +258,62 @@ async sync(tx_digest) {
    * @param transfer_error
    * @returns {Promise<unknown>}
    */
- async setTransferMessage(transfer_message, transfer_error = false){
+  async setTransferMessage (transfer_message, transfer_error = false) {
     return new Promise(resolve => {
-      this.setState({transfer_message: transfer_message, transfer_error: transfer_error}, resolve)
+      this.setState({ transfer_message: transfer_message, transfer_error: transfer_error }, resolve)
     })
   }
 
-
   /**
-   * Actual logic performing a transfer.
+   * Actual logic performing a transfer, including calling the syncs.
    *
-   * @returns {Promise<void>}
+   * @returns {false|Promise<string>}
    */
-  async transfer () {
+  async transferController () {
     const json_str = Storage.getLocalStorage('key_file')
-    const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
-    let error;
-    const txs = await this.API.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
-    if(error){
-      this.setState({transfer_error: true, transfer_message: "Transfer failed"})
+    // const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
+    const entity = Entity.from_hex('6e8339a0c6d51fc58b4365bf2ce18ff2698d2b8c40bb13fcef7e1ba05df18e4b')
+    let error
+    debugger
+    const txs = await this.api.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
+    if (error | txs === false) {
+      this.setState({ transfer_error: true, transfer_message: 'Transfer failed' })
       return;
     }
-   return txs
+          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: 'Transfer failed' }))
   }
 
   /**
    * Checks if we have sufficient funds to transfer transfer_amount + DEFAULT_FEE_LIMIT.
    *
-   * @param event
    * @returns {Promise<boolean>}
    */
   async sufficientFunds () {
 
-    if(this.API === false){
-        this.setState({amount_error_message: "Network error"})
+    if (this.api === false) {
+      this.setState({ amount_error_message: 'Network error' })
       return false
     }
 
-    const balance =  await API.balance(this.address).catch(() => {
-      this.setState({amount_error_message: "Network error"})
+    const balance = await this.api.balance(this.address).catch(() => {
+      this.setState({ amount_error_message: 'Network error' })
       return false
     })
-    
-    if(balance === false){
-       this.setState({amount_error_message: "Network error"})
+
+    if (balance === false) {
+      this.setState({ amount_error_message: 'Network error' })
       return false
     }
-    
-debugger
-    // is balance as much as desired transaction amount + fee limit.
-    //todo : check if this should include fee limit or just be without since easer to understand for user without, and many transactions less than fee limit.
-    //todo BN support and comparison.
-    if (balance < (this.state.amount + DEFAULT_FEE_LIMIT)) {
-      this.setState({amount_error_message: `Insufficient funds ( Balance: ${balance})`})
+
+    /**
+     * We check if a transaction is possible ie amount less than min fee (1) plus amount. The transacation still may fail
+     * if fee for transaction hits (fee limit (DEFAULT_FEE_LIMT + amount > balance) but we still allow them to try at this stage
+     * since we cannot tell how close actual fees on network are to fee limit so we just use value of 1 since there will always be a
+     * fee
+     *
+     */
+    if (balance < (this.state.amount + 1)) {
+      this.setState({ amount_error_message: `Insufficient funds ( Balance: ${balance})` })
       return false
     }
 
@@ -329,24 +329,28 @@ debugger
             <div className='address_title_inner'>
               <h1 className="account_address">Account address</h1>
               <br></br>
-              <span  className="hoverable-address"
-                onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
-              <span className="tooltiptext tooltiptext-header-positioning" >{this.state.copied ? "Copied!" : "Copy Address to clipboard"  }</span>
+              <span className="hoverable-address"
+                    onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
+              <span
+                className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? 'Copied!' : 'Copy Address to clipboard'}</span>
             </div>
             <img className='cross' src={getAssetURI('burger_icon.svg')} onClick={goTo.bind(null, Settings)}/>
           </div>
           <hr></hr>
           <h3 className="send-title">Send</h3>
-          <form onSubmit={this.handleTransfer} className="send-form" >
+          <form onSubmit={this.handleTransfer} className="send-form">
             <div className="send_form_row">
               <label htmlFor="to_address">Account<br></br> Number: </label>
-              <input className={`send_form_input ${this.state.address_error ? 'red_error' : ''}`} type="text" name="to_address" id="to_address"
+              <input className={`send_form_input ${this.state.address_error ? 'red_error' : ''}`} type="text"
+                     name="to_address" id="to_address"
                      onChange={this.handleChange.bind(this)} value={this.state.to_address}></input>
             </div>
-            <output type="text" className={`red_error account-number-error`}>{this.state.address_error ? "Invalid address" : ""}</output>
+            <output type="text"
+                    className={`red_error account-number-error`}>{this.state.address_error ? 'Invalid address' : ''}</output>
             <div className="send_form_row">
               <label htmlFor="amount">Amount: </label>
-              <div className={`send_form_row_output_wrapper send_form_input ${this.state.amount_error ? 'red_error' : ''}`}>
+              <div
+                className={`send_form_row_output_wrapper send_form_input ${this.state.amount_error ? 'red_error' : ''}`}>
                 <div className="amount_stack_wrapper">
                   <input className="amount_input" type="number" placeholder="0 FET" name="amount"
                          id="amount" onChange={this.handleAmountChange.bind(this)}
@@ -357,16 +361,20 @@ debugger
               </div>
 
             </div>
-            <output type="text" className={`red_error send-amount-error`}>{this.state.amount_error ? "Insufficient funds" : ""}</output>
+            <output type="text"
+                    className={`red_error send-amount-error`}>{this.state.amount_error ? 'Insufficient funds' : ''}</output>
             <div className="send_form_row send_form_row_password">
               <label htmlFor="password">Password: </label>
-              <input className={`send_form_input ${this.state.password_error ? 'red_error' : ''}`} type="password" name="password"
+              <input className={`send_form_input ${this.state.password_error ? 'red_error' : ''}`} type="password"
+                     name="password"
                      onChange={this.handleChange.bind(this)} value={this.state.password}
                      id="password"></input>
             </div>
-            <output type="text" className='red_error password-error'>{this.state.password_error ? "Incorrect password" : ""}</output>
+            <output type="text"
+                    className='red_error password-error'>{this.state.password_error ? 'Incorrect password' : ''}</output>
             {/*<span id="send_error"></span>*/}
-            <output type="text" className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ""}`}>{this.state.transfer_message}</output>
+            <output type="text"
+                    className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">
               <button className="small-button send_buttons" onClick={goTo.bind(null, Account)}>
                 Cancel

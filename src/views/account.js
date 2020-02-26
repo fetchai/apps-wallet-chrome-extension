@@ -1,16 +1,11 @@
 /* global chrome */
 import React, { Component } from 'react'
-import { Bootstrap, LedgerApi } from 'fetchai-ledger-api'
 import { BN } from 'bn.js'
-import Expand from '../react-expand-animated-2/build/Expand'
-// import Expand from 'react-expand-animated'
+import Expand from '../other_imported_modules/react-expand-animated/build/Expand'
 import {
-  ACCOUNT_HISTORY_URI,
-  BALANCE_CHECK_INTERVAL_MS, BOOTSTRAP_REQUEST_URI,
+  BALANCE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_URI,
-  EXTENSION,
-  NETWORK_NAME,
   TRANSACTION_HISTORY_CHECK_INTERVAL_MS,
   TRANSITION_DURATION_MS,
 } from '../constants'
@@ -24,7 +19,7 @@ import History from './history'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import Authentication from '../services/authentication'
-import { getElementById } from '../services/getElementById'
+import { getElementById } from '../utils/getElementById'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
 
@@ -36,14 +31,13 @@ export default class Account extends Component {
   constructor (props) {
     super(props)
     this.balance = this.balance.bind(this)
-    this.fetchHistory = this.fetchHistory.bind(this)
     this.toggleHistory = this.toggleHistory.bind(this)
     this.setHistoryCount = this.setHistoryCount.bind(this)
     this.scrollHistoryTop = this.scrollHistoryTop.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
 
     this.state = {
-       show_self: false,
+      show_self: false,
       balance: null,
       percentage: null,
       dollar_balance: null,
@@ -61,85 +55,34 @@ export default class Account extends Component {
    * so we get this variable from passing this function to History component.
    * @param history_first_page_count
    */
-  setHistoryCount(history_first_page_count) {
-   this.setState({history_first_page_count: history_first_page_count })
+  setHistoryCount (history_first_page_count) {
+    this.setState({ history_first_page_count: history_first_page_count })
   }
 
-  // async bootstrap(){
-  //   if(!this.bootstrap_error) clearInterval(this.balance_request_loop)
-  //    const [host, port] = await Bootstrap.server_from_name(NETWORK_NAME).catch(()=>{
-  //
-  //      return;
-  //   })
-  //
-  //
-  // }
-
   async componentDidMount () {
-  Authentication.Authenticate()
-     this.setState({show_self: true})
+    Authentication.Authenticate()
+    this.setState({ show_self: true })
 
-     // this.API = await API.fromBootstrap();
-        this.host = '127.0.0.1'
-        this.port = 8000
-       this.API = new API(this.host, this.port, 'http')
-
-
+    // this.api = await API.fromBootstrap();
+    this.host = '127.0.0.1'
+    this.port = 8000
+    this.api = new API(this.host, this.port, 'http')
 
     debugger;
     this.balance()
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
     this.fetchDollarPrice()
-    this.fetchHistory()
     this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
-    this.history_request_loop = setInterval(this.fetchHistory.bind(null), TRANSACTION_HISTORY_CHECK_INTERVAL_MS)
   }
 
-
-async handleCopyToClipboard(){
+  async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
-    this.setState({copied: copied_status})
+    this.setState({ copied: copied_status })
   }
 
   componentWillUnmount () {
     clearInterval(this.balance_request_loop)
     clearInterval(this.dollar_request_loop)
-    clearInterval(this.history_request_loop)
-  }
-
-  /**
-   * Fetch first page of history which is shown on account page.
-   *
-   * @param page_number
-   */
-  fetchHistory (page_number) {
-      // contentScript.js
-      fetchResource(ACCOUNT_HISTORY_URI).then((response) => {
-        this.processHistory(response)
-      }).catch((error) => {
-
-      })
-  }
-
-  /**
-   * result of transaction history API call for account is processed here. We check if
-   * the status code is 200, and the data exists, and save in state if true.
-   *
-   */
-  processHistory (response) {
-    if (response.status !== 200) {
-      return
-    }
-    response.json().then((data) => {
-      if (typeof data === 'undefined' || data.results.length === 0) {
-        return
-      }
-
-      this.setState({ history: data.results.map(el => {
-        el['clicked'] = false
-        return el;
-        }) })
-    })
   }
 
   /**
@@ -147,13 +90,13 @@ async handleCopyToClipboard(){
    *
    */
   fetchDollarPrice () {
-      fetchResource(DOLLAR_PRICE_URI)
-        .then((data) => {
-          if (typeof data.percentage === 'number') {
-            this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
-          }
-        })
-    }
+    fetchResource(DOLLAR_PRICE_URI)
+      .then((data) => {
+        if (typeof data.percentage === 'number') {
+          this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
+        }
+      })
+  }
 
   calculateDollarBalance () {
     // if don't have a balance and a dollar price then we do'nt calculate the dollar balance,
@@ -178,31 +121,30 @@ async handleCopyToClipboard(){
   /**
    * toggle showing history infinite scrolling section
    */
-  toggleHistory(){
-    const t = this.state.show_history
-    this.setState({show_history: !t})
-
+  toggleHistory () {
+    this.setState({ show_history: !this.state.show_history })
     // after we finish transition to close infinite scrolling we also reset scroll to top of history.
-    setTimeout(this.scrollHistoryTop,TRANSITION_DURATION_MS)
-  }
-
-  // scroll history item to the top when we show it or hide it.
-  scrollHistoryTop(){
-    getElementById('history-container').scrollTop = 0;
-    // eslint-disable-next-line react/no-string-refs
-     this.refs.history.hideAllLargeHistoryItems();
+    setTimeout(this.scrollHistoryTop, TRANSITION_DURATION_MS)
   }
 
   /**
-   * Fetch the account balance for address stored in state. Upon result we also call method to recalculate the dollar display string.
+   * scroll history item to the top when we show it or hide it.
    */
-
- async balance () {
-     const balance = await API.balance(this.state.address)
-    this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
+  scrollHistoryTop () {
+    getElementById('history-container').scrollTop = 0
+    // eslint-disable-next-line react/no-string-refs
+    this.refs.history.hideAllLargeHistoryItems()
   }
 
+  /**
+   * Fetch the account balance for address
+   * stored in state. Upon result we also call method to recalculate the dollar display string.
+   */
 
+  async balance () {
+    const balance = await this.api.balance(this.state.address)
+    this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
+  }
 
   render () {
     const styles = {
@@ -212,116 +154,118 @@ async handleCopyToClipboard(){
     const transitions = ['height', 'opacity', 'background']
 
     return (
-        <Expand
-            open={this.state.show_self}
-            duration={TRANSITION_DURATION_MS}
-            styles={styles}
-            transitions={transitions}
-          >
-      <div id="my-extension-root-inner" className="OverlayMain">
-        <div className="OverlayMainInner">
-          <div className="settings_title">
-            <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className="account"/>
-            <div className="address_title_inner">
-              <h1 className="account_address">Account address</h1>
-              <br/>
-              <span
-                className="hoverable-address"
-                onClick={this.handleCopyToClipboard}
-              >
+      <Expand
+        open={this.state.show_self}
+        duration={TRANSITION_DURATION_MS}
+        styles={styles}
+        transitions={transitions}
+      >
+        <div id="my-extension-root-inner" className="OverlayMain">
+          <div className="OverlayMainInner">
+            <div className="settings_title">
+              <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className="account"/>
+              <div className="address_title_inner">
+                <h1 className="account_address">Account address</h1>
+                <br/>
+                <span
+                  className="hoverable-address"
+                  onClick={this.handleCopyToClipboard}
+                >
                 {format(this.state.address)}
               </span>
-              <span className="tooltiptext tooltiptext-header-positioning" >{this.state.copied ? "Copied!" : "Copy Address to clipboard"  }</span>
+                <span
+                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? 'Copied!' : 'Copy Address to clipboard'}</span>
+              </div>
+              {(this.state.hover_1) ? ''
+                : <img className="cross" src={getAssetURI('burger_icon.svg')}
+                       onClick={goTo.bind(null, Settings)}/>}
             </div>
-            {(this.state.hover_1) ? ''
-              : <img className="cross" src={getAssetURI('burger_icon.svg')}
-                     onClick={goTo.bind(null, Settings)}/>}
-          </div>
-          <hr/>
-          <Expand
-            open={!this.state.show_history}
-            duration={TRANSITION_DURATION_MS}
-            styles={styles}
-            transitions={transitions}
-          >
-            <div className="balance_container">
-              <img className="plus" alt="fetch circular logo"
-                   src={getAssetURI('fetch_circular_icon.svg')}/>
-              <br/>
-              {this.state.bootstrap_error ?
-                <span className="bootstrap-error">
+            <hr/>
+            <Expand
+              open={!this.state.show_history}
+              duration={TRANSITION_DURATION_MS}
+              styles={styles}
+              transitions={transitions}
+            >
+              <div className="balance_container">
+                <img className="plus" alt="fetch circular logo"
+                     src={getAssetURI('fetch_circular_icon.svg')}/>
+                <br/>
+                {this.state.bootstrap_error ?
+                  <span className="bootstrap-error">
                    Failed to connect to network
                     {' '}
                     FET
-                  </span> : ""
-              }
+                  </span> : ''
+                }
 
 
-              {this.state.balance !== null
-                ? (
-                  <span className="fet-balance">
+                {this.state.balance !== null
+                  ? (
+                    <span className="fet-balance">
                     {this.state.balance}
-                    {' '}
-                    FET
+                      {' '}
+                      FET
                   </span>
-                ) : ''}
-              {' '}
-              <br/>
-              {this.state.dollar_balance > 0 ? (
-                <span>
+                  ) : ''}
+                {' '}
+                <br/>
+                {this.state.dollar_balance > 0 ? (
+                  <span>
                   {this.state.dollar_balance}
-                  {' '}
-                  USD
+                    {' '}
+                    USD
                 </span>
-              ) : ''}
-            </div>
-            <div className="small-button-container">
-              <button className="small-button account-button" onClick={goTo.bind(null, Download)}>
-                Download
-              </button>
-              <button className="small-button account-button" onClick={goTo.bind(null, Send)}>
-                Send
-              </button>
-            </div>
-          </Expand>
-          {(this.state.history_first_page_count > 0)
-            ? (
-              <Expand
-                open={this.state.show_history}
-                duration={TRANSITION_DURATION_MS}
-                styles={styles}
-                transitions={transitions}
-                partial={true}
-              >
- <Expand
-                open={!this.state.show_history}
-                duration={TRANSITION_DURATION_MS}
-                styles={styles}
-                transitions={transitions}
+                ) : ''}
+              </div>
+              <div className="small-button-container">
+                <button className="small-button account-button" onClick={goTo.bind(null, Download)}>
+                  Download
+                </button>
+                <button className="small-button account-button" onClick={goTo.bind(null, Send)}>
+                  Send
+                </button>
+              </div>
+            </Expand>
+            {(this.state.history_first_page_count > 0)
+              ? (
+                <Expand
+                  open={this.state.show_history}
+                  duration={TRANSITION_DURATION_MS}
+                  styles={styles}
+                  transitions={transitions}
+                  partial={true}
+                >
+                  <Expand
+                    open={!this.state.show_history}
+                    duration={TRANSITION_DURATION_MS}
+                    styles={styles}
+                    transitions={transitions}
 
-              >
-                <h1 className="account_address history-header">History</h1>
-                <hr className="history-hr"/>
-                       </Expand>
-                {/*{`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`}*/}
-                 <div id="history-container" className= {`${this.state.show_history ? 'history-container' : 'history-container-collapsed'}`}>
-                {/*<div style={` height: '400px', ${this.state.show_history ? 'overflow: \'auto\' : 'overflow: \'auto\''}`}>*/}
-                   {/* eslint-disable-next-line react/no-string-refs */}
-                 <History ref= "history" setHistoryCount = {this.setHistoryCount}/>{' '}
-                 </div>
+                  >
+                    <h1 className="account_address history-header">History</h1>
+                    <hr className="history-hr"/>
+                  </Expand>
+                  {/*{`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`}*/}
+                  <div id="history-container"
+                       className={`${this.state.show_history ? 'history-container' : 'history-container-collapsed'}`}>
+                    {/*<div style={` height: '400px', ${this.state.show_history ? 'overflow: \'auto\' : 'overflow: \'auto\''}`}>*/}
+                    {/* eslint-disable-next-line react/no-string-refs */}
+                    <History ref="history" setHistoryCount={this.setHistoryCount}/>{' '}
+                  </div>
 
-              </Expand>
-            )
-            : ''}
-            {(this.state.history_first_page_count  > 2)
-                  ?
-                    <button className="button-large-thin account-button toggle-history-button" onClick={this.toggleHistory}>
-                      {(this.state.show_history) ? "Hide" : "View All"}
-                    </button>
-                  : ''}
+                </Expand>
+              )
+              : '<p> No History to show </p>'}
+            {(this.state.history_first_page_count > 2)
+              ?
+              <button className="button-large-thin account-button toggle-history-button" onClick={this.toggleHistory}>
+                {(this.state.show_history) ? 'Hide' : 'View All'}
+              </button>
+              : ''}
+          </div>
         </div>
-      </div>
-        </Expand>
+      </Expand>
     )
   }
 }
