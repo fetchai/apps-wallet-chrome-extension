@@ -1,3 +1,24 @@
+
+Each file in views folder represents one  of 
+8 original wireframes + history ( the infinite scroll )
+
+utils, views, services and dumb_components 
+are main folders
+
+react-expanded-animated is a public module I changed a bit
+and  must rename hence moving from node-modules
+
+TO INSTALL
+
+in serialization/transaction version flag in node modules
+must be changed from 2 to 3 after running npm install, 
+then cd into node_modules and run npm run build. This
+is temp until I update which version of sdk it is running
+on. When I started it the sdk on npm has since been updated
+so i need to update which methods I am using. 
+
+
+
 # Fetch.ai <todo name> Browser Extension
 
 This extension allows one to send and receive funds on the Fetch.ai Blockchain, create a Wallet, store funds 
