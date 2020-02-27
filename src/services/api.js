@@ -1,10 +1,10 @@
 import { fetchResource } from '../utils/fetchRescource'
 import { BOOTSTRAP_REQUEST_URI, DEFAULT_FEE_LIMIT } from '../constants'
-import { Transaction } from 'fetchai-ledger-api/src/fetchai/ledger'
-import { encode_transaction } from 'fetchai-ledger-api/src/fetchai/ledger/serialization'
+import { Transaction } from 'fetchai-ledger-api/dist/fetchai/ledger'
+import { encode_transaction } from 'fetchai-ledger-api/dist/fetchai/ledger/serialization'
 import { BN } from 'bn.js'
-import { Address } from 'fetchai-ledger-api/src/fetchai/ledger/crypto'
-import { Bootstrap } from 'fetchai-ledger-api/src/fetchai/ledger/api/bootstrap'
+import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
+import { Bootstrap } from 'fetchai-ledger-api/dist/fetchai/ledger/api/bootstrap'
 
 /**
  *

@@ -5,7 +5,7 @@
 const KEY_FILE_NAME = 'private_key.json'
 const VERSION = '1.0.0'
 // flag to change when running as extension or in browser.
-const EXTENSION = true
+const EXTENSION = false
 
 const DEFAULT_FEE_LIMIT = 20
 const DOLLAR_PRICE_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/'

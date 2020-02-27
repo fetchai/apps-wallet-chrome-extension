@@ -7,7 +7,7 @@ import { fetchResource } from '../utils/fetchRescource'
 import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
 import { getElementById } from '../utils/getElementById'
-import { Address, Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto'
+import { Address, Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which

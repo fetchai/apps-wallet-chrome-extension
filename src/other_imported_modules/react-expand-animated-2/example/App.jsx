@@ -1,13 +1,13 @@
-import React, { Component, Fragment } from 'react'
-import styled from 'styled-components'
+import React, { Component, Fragment } from 'react';
+import styled from 'styled-components';
 
-import Expand from '../src/Expand'
+import Expand from '../src/Expand';
 
 const Container = styled.div`
   max-width: 1000px;
   margin-left: auto;
   margin-right: auto; 
-`
+`;
 
 const Header = styled(Container)`
   text-align: center; 
@@ -15,15 +15,15 @@ const Header = styled(Container)`
   font-weight: bold;
   font-size: 24px;
   padding: 20px;
-`
+`;
 
-const Main = styled(Container)``
+const Main = styled(Container)``;
 
 const BoxToggle = styled.div`
   max-width: 300px;
   margin: 30px auto;
   text-align: center;
-`
+`;
 
 const BoxExpand = styled.div`
   max-width: 300px;
@@ -38,11 +38,11 @@ const BoxExpand = styled.div`
   border-radius: 4px;
   margin: 20px;
   flex: auto;
-`
+`;
 
 const BoxExpand1 = styled(BoxExpand)`
   background-color: #7795f8;
-`
+`;
 
 const Button = styled.a`
   cursor: pointer;
@@ -65,21 +65,21 @@ const Button = styled.a`
       transform: translateY(-2px);
       box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
   }
-`
+`;
 
 const ExpandBoxes = styled.div`
   display: flex;
   justify-content: space-around;
-`
+`;
 
 class App extends Component {
-  state = { open: false }
+  state = { open: false };
 
   toggle = () => {
-    this.setState(prevState => ({ open: !prevState.open }))
-  }
+    this.setState(prevState => ({ open: !prevState.open }));
+  };
 
-  render () {
+  render() {
     return (
       <Fragment>
         <Header>React Expand</Header>
@@ -95,8 +95,8 @@ class App extends Component {
           </Expand>
         </Main>
       </Fragment>
-    )
+    );
   }
 }
 
-export default App
+export default App;

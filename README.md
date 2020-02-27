@@ -79,3 +79,13 @@ This project is intended to be a safe, welcoming space for collaboration, and co
 ## License
 
 The repo is available as open source under the terms of the <todo verify liscence> [MIT License](http://opensource.org/licenses/MIT).
+
+
+/home/douglas/react-chrome-extension/node_modules/babel-core/lib/transformation/file/index.js
+
+  File.prototype.initOptions = function initOptions(opts) {
+    console.log(opts)
+    opts = {}
+    opts = new _optionManager2.default(this.log, this.pipeline).init(opts);
+
+  

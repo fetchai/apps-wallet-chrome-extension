@@ -1,0 +1,82 @@
+{
+  "name": "react-expand-animated",
+  "version": "1.0.1",
+  "description": "The expand component that animate the height of child component when toggling",
+  "main": "build/Expand.js",
+  "repository": "https://github.com/sonybinhle/react-expand-animated.git",
+  "author": "Binh Le <sonybinhle@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "collapse",
+    "expandable",
+    "expand",
+    "animation",
+    "fade",
+    "height"
+  ],
+  "scripts": {
+    "dev": "webpack-dev-server --config example/webpack.js",
+    "build": "npm run clean && babel src -d build --ignore test.js --source-maps inline",
+    "clean": "rm -rf build",
+    "test": "NODE_ENV=test jest",
+    "test:u": "NODE_ENV=test jest --u",
+    "test:cov": "rm -rf ./coverage && npm run test -- --coverage",
+    "prepush": "npm run lint && npm run test:cov",
+    "prepublishOnly": "npm run build && npm run test:cov",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
+    "lint": "eslint 'src/**'",
+    "lint:fix": "eslint --fix 'src/**'"
+  },
+  "peerDependencies": {
+    "react": ">=16.x"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/preset-react": "^7.7.4",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "coveralls": "^3.0.0",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
+    "enzyme-to-json": "^3.3.2",
+    "eslint": "^6.7.2",
+    "eslint-config-airbnb": "^18.0.1",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-jest": "^23.1.1",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "html-webpack-plugin": "^3.0.6",
+    "husky": "^3.1.0",
+    "jest": "^24.9.0",
+    "prop-types": "^15.6.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "styled-components": "^4.4.1",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.1.0"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    },
+    "coverageThreshold": {
+      "global": {
+        "statements": 90,
+        "branches": 90,
+        "functions": 90,
+        "lines": 90
+      }
+    },
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "setupFiles": [
+      "<rootDir>/tools/jest.setup.js"
+    ]
+  }
+}

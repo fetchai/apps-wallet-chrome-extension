@@ -1,4 +1,4 @@
-import { Address } from 'fetchai-ledger-api/src/fetchai/ledger/crypto'
+import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 
 /**
  * Determine if Address is valid fetch address ie a bs-58 string of correct length with correct checksum, using Fetch.ai's Javascript SDK

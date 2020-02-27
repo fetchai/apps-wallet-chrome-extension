@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { BALANCE_CHECK_INTERVAL_MS, DOLLAR_PRICE_CHECK_INTERVAL_MS, DOLLAR_PRICE_URI, NETWORK_NAME } from '../constants'
-import { Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto/entity'
+import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
 import Storage from '../services/storage'

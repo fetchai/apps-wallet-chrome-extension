@@ -2,9 +2,17 @@ import React, { Component } from 'react'
 import logo from './logo.svg'
 import './App.css'
 
+//jest-environment-jsdom-global
+//       "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/fetchai-ledger-api",
+
 class App extends Component {
 
+
+
   render () {
+
+     window.hello = 9;
+
     return (
       <div className="App">
         <header className="App-header">

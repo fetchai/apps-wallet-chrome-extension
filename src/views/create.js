@@ -1,7 +1,7 @@
 /*global chrome*/
 import React, { Component } from 'react'
 import { goBack, goTo } from '../services/router'
-import { Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto/entity'
+import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import Account from './account'
 import Authentication from '../services/authentication'
 

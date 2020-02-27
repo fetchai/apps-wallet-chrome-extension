@@ -1,12 +1,11 @@
 /* global chrome */
 import React, { Component } from 'react'
 import { BN } from 'bn.js'
-import Expand from '../other_imported_modules/react-expand-animated/build/Expand'
+import Expand from '../other_imported_modules/react-expand-animated-2/build/Expand'
 import {
   BALANCE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_URI, NETWORK_NAME,
-  TRANSACTION_HISTORY_CHECK_INTERVAL_MS,
   TRANSITION_DURATION_MS,
 } from '../constants'
 import { goTo } from '../services/router'
