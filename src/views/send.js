@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { BALANCE_CHECK_INTERVAL_MS, DOLLAR_PRICE_CHECK_INTERVAL_MS, DOLLAR_PRICE_URI } from '../constants'
+import { BALANCE_CHECK_INTERVAL_MS, DOLLAR_PRICE_CHECK_INTERVAL_MS, DOLLAR_PRICE_URI, NETWORK_NAME } from '../constants'
 import { Entity } from 'fetchai-ledger-api/src/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
-import { Storage } from '../services/storage'
+import Storage from '../services/storage'
 import { format } from '../utils/format'
 import { goTo } from '../services/router'
 import Settings from './settings'
@@ -23,7 +23,6 @@ export default class Send extends Component {
     super(props)
     // eslint-disable-next-line react/prop-types
     this.api = props.api;
-    debugger;
     this.address = Storage.getLocalStorage('address')
     this.sufficientFunds = this.sufficientFunds.bind(this)
     this.transferController = this.transferController.bind(this)
@@ -41,7 +40,7 @@ export default class Send extends Component {
       balance: null,
       password: '',
       to_address: '',
-      percentage: null,
+      percentage: Storage.getLocalStorage("dollar_price"),
       amount: null,
       address: Storage.getLocalStorage('address'),
       copied: false,
@@ -75,12 +74,17 @@ export default class Send extends Component {
   async componentDidMount () {
     Authentication.Authenticate()
 
-    // this.api = await API.fromBootstrap();
-    this.host = '127.0.0.1'
+  if(NETWORK_NAME === 'localhost'){
+        this.host = '127.0.0.1'
     this.port = 8000
+    this.api = new API(this.host, this.port, 'http')
+    } else {
+      this.api = await API.fromBootstrap();
+    }
 
     this.api = new API(this.host, this.port, 'http')
     this.fetchDollarPrice()
+    this.balance()
     this.dollar_price_fet_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
   }
@@ -132,10 +136,6 @@ export default class Send extends Component {
     response.json().then((data) => {
       console.log(data)
 
-      // this indicates bad api call so rather then set to null we just leave pre-existing value in state.
-      //todo check if this can ever occur, and remove if not.
-      if (typeof data.percentage !== 'number') return
-
       // Dollar variable (and therefore state.dollar) represents the display dollar amount to show the user when typing in a FET amount.
       let dollar
 
@@ -162,6 +162,9 @@ export default class Send extends Component {
    * @returns {number | string}
    */
   calculateDollarDisplayAmount (amount, percentage) {
+
+    if(amount === "")  return "";
+
     const total = amount * percentage
     const dollar = Number.parseFloat(total)
 
@@ -185,7 +188,7 @@ export default class Send extends Component {
     if(this.state.balance !== null) this.sufficientFunds()
 
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
-    if (event.target.value == 0) return this.setState({ dollar: 0 })
+    if (event.target.value == 0) return this.setState({ dollar: 0, amount: 0 })
 
     this.setState({
       dollar: this.calculateDollarDisplayAmount(event.target.value, this.state.percentage),
@@ -200,7 +203,6 @@ export default class Send extends Component {
    * @returns {Promise<void>}
    */
   async handleChange (event) {
-    debugger
     let change = {}
     change[event.target.name] = event.target.value
     this.setState(change)
@@ -225,15 +227,14 @@ export default class Send extends Component {
     if (!validAddress(this.state.to_address)) {
       this.setState({ address_error: true })
       error = true
-   } // else if (!(await this.sufficientFunds())) {
-    //   this.setState({ amount_error: true })
-    //   error = true
-    // }
+   } else if (!(await this.sufficientFunds())) {
+      error = true
+    }
 
-    // if (!(await Authentication.correctPassword(this.state.password))) {
-    //   this.setState({ password_error: true })
-    //   error = true
-    // }
+    if (!(await Authentication.correctPassword(this.state.password))) {
+      this.setState({ password_error: true })
+      error = true
+    }
 
     if (error) return
     // now we send the transfer as no errors that cause us to not make transfer have occured.
@@ -241,7 +242,7 @@ export default class Send extends Component {
 
   }
 
-  /*
+  /**
 *checks status of transaction by polling tx digest and sets the transfer state.status to display to user accordingly,
 * so they can see when it is waiting, an then get quick response when it is done.
 *
@@ -307,10 +308,9 @@ export default class Send extends Component {
     // we only disabled this button after click until result shown. to stop somebody accidentally clicking twice quickly.
     this.setState({transfer_disabled: true})
     const json_str = Storage.getLocalStorage('key_file')
-    // const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
-    const entity = Entity.from_hex('6e8339a0c6d51fc58b4365bf2ce18ff2698d2b8c40bb13fcef7e1ba05df18e4b')
+     const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
+   // const entity = Entity.from_hex('6e8339a0c6d51fc58b4365bf2ce18ff2698d2b8c40bb13fcef7e1ba05df18e4b')
     let error = false
-    debugger
     const txs = await this.api.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
     if (error | txs === false) {
       this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: 'Transfer failed' })
@@ -326,9 +326,9 @@ export default class Send extends Component {
    * @returns {Promise<boolean>}
    */
   async sufficientFunds () {
-debugger
+
     if (this.state.balance === false) {
-      this.setState({ amount_error_message: 'Network error' })
+      this.setState({ amount_error_message: 'Network error', amount_error: true })
       return false
     }
 
@@ -340,7 +340,7 @@ debugger
      *
      */
     if (this.state.balance !== false && new BN(this.state.balance, 16).lt(new BN(new BN(this.state.amount).add(new BN(1))))) {
-      this.setState({ amount_error_message: `Insufficient funds ( Balance: ${this.state.balance})` })
+      this.setState({ amount_error_message: `Insufficient funds ( Balance: ${this.state.balance})` , amount_error: true})
       return false
     }
 
@@ -352,7 +352,6 @@ debugger
       <div id="my-extension-root-inner" className="OverlayMain">
         <div className="OverlayMainInner">
           <div className='settings_title'>
-            <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className='account'/>
             <div className='address_title_inner'>
               <h1 className="account_address">Account address</h1>
               <br></br>
@@ -379,11 +378,11 @@ debugger
               <div
                 className={`send_form_row_output_wrapper send_form_input ${this.state.amount_error ? 'red_error' : ''}`}>
                 <div className="amount_stack_wrapper">
-                  <input className="amount_input" type="number" placeholder="0 FET" name="amount"
+                  <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number" placeholder="0 FET" name="amount"
                          id="amount" onChange={(event) => { debugger; this.handleAmountChange(event, this.sufficientFunds.bind(null, true));}}
                          value={this.state.amount}></input>
                   <br></br>
-                  <output>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
+                  <output className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
                 </div>
               </div>
 
@@ -399,7 +398,6 @@ debugger
             </div>
             <output type="text"
                     className='red_error password-error'>{this.state.password_error ? 'Incorrect password' : ''}</output>
-            {/*<span id="send_error"></span>*/}
             <output type="text"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">

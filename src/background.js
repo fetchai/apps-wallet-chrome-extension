@@ -1,20 +1,20 @@
 /*global chrome*/
 /**
- * The background script.
- *
  * This is used to make Cors requests, and is called by fetchResource method in content scripts.
+ *
+ *
  */
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function (request, sender, send_response) {
   fetch(request.input, request.init).then(function (response) {
     return response.text().then(function (text) {
-      sendResponse([{
+      send_response([{
         body: text,
         status: response.status,
         statusText: response.statusText,
       }, null])
     })
   }, function (error) {
-    sendResponse([null, error])
+    send_response([null, error])
   })
   return true
 })

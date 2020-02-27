@@ -24,7 +24,7 @@ export default class Recover extends Component {
     this.hideConfirmation = this.hideConfirmation.bind(this)
 
     this.state = {
-      file: '',
+      file: null,
       password: '',
       address: '',
       file_name: '',
@@ -53,15 +53,13 @@ export default class Recover extends Component {
   handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
-    change.recover_error = false
     this.setState(change)
   }
 
   handleFileChange (event) {
     this.setState({
       file: event.target.files[0],
-      file_name: event.target.value,
-      recover_error: false
+      file_name: event.target.value
     })
   };
 
@@ -94,6 +92,15 @@ export default class Recover extends Component {
    * @returns {Promise<boolean>}
    */
   async validFile () {
+
+    if(this.state.file === "" || this.state.file === null){
+      this.setState({
+        error_message: 'File required',
+        file_error: true
+      })
+      return
+    }
+
     const file_str = await this.read_file(this.state.file)
 
     if (file_str === null) {
@@ -222,9 +229,8 @@ export default class Recover extends Component {
             <form id="form" className={'recover-form'}>
               <legend className="recover-legend">Upload File with Password</legend>
               <input label='file' className={`recover-input ${this.state.file_error ? 'red_error red-lock-icon' : ''}`}
-                     id="file" type="file"
-                     value={this.state.file_name} onChange={this.handleFileChange.bind(this)}></input>
-              <input type="text"
+                     id="file" type="file" onChange={this.handleFileChange.bind(this)}></input>
+              <input type="password"
                      className={`recover-input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`}
                      placeholder="Password" id="password"
                      name="password" value={this.state.password}
@@ -234,7 +240,7 @@ export default class Recover extends Component {
                      id="address" type="text"
                      name="address" placeholder="Address (optional)"
                      value={this.state.address} onChange={this.handleChange.bind(this)}></input>
-              <output type="text" className={`recover-output ${this.state.recover_error ? 'red_error' : ''}`}
+              <output type="text" className={`recover-output red_error`}
                       id="output">{this.state.error_message}</output>
 
               <div className="small-button-container">
@@ -258,6 +264,7 @@ export default class Recover extends Component {
             styles={styles}
             transitions={transitions}
           >
+            <div className={"recover-warning-container"}>
             <p>Warning! Not providing your public address means that recovery won&apos;t error if your password is
               incorrect. </p>
 
@@ -268,7 +275,7 @@ export default class Recover extends Component {
 
             <p>Click &quot;Next&quot; to proceed
               anyway or &quot;Back&quot; to return to the upload form.</p>
-
+            </div>
             <div className="small-button-container">
               <button type="button" className="small-button recover-small-button"
                       onClick={this.hideConfirmation}>Back

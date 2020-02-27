@@ -5,7 +5,7 @@ import Expand from '../other_imported_modules/react-expand-animated/build/Expand
 import {
   BALANCE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI,
+  DOLLAR_PRICE_URI, NETWORK_NAME,
   TRANSACTION_HISTORY_CHECK_INTERVAL_MS,
   TRANSITION_DURATION_MS,
 } from '../constants'
@@ -13,7 +13,6 @@ import { goTo } from '../services/router'
 import Download from './download'
 import Send from './send'
 import Settings from './settings'
-import { Storage } from '../services/storage'
 import { format } from '../utils/format'
 import History from './history'
 import { getAssetURI } from '../utils/getAsset'
@@ -22,6 +21,7 @@ import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
+import Storage from '../services/storage'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
@@ -35,13 +35,15 @@ export default class Account extends Component {
     this.setHistoryCount = this.setHistoryCount.bind(this)
     this.scrollHistoryTop = this.scrollHistoryTop.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
+    this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
 
     this.state = {
       show_self: false,
       balance: null,
-      percentage: null,
+      percentage: Storage.getLocalStorage("dollar_price"),
       dollar_balance: null,
-      address: Storage.getLocalStorage('address'),
+       address: Storage.getLocalStorage('address'),
+      //address: "2H7Csuaom7BUrC5YcUgJUExGPnApL8vQ5Wr9yGyzGWpRNqgWiJ",
       show_history: false,
       hover_1: false,
       hover_2: false,
@@ -63,15 +65,17 @@ export default class Account extends Component {
     Authentication.Authenticate()
     this.setState({ show_self: true })
 
-    // this.api = await API.fromBootstrap();
-    this.host = '127.0.0.1'
+    if(NETWORK_NAME === 'localhost'){
+        this.host = '127.0.0.1'
     this.port = 8000
     this.api = new API(this.host, this.port, 'http')
+    } else {
+      this.api = await API.fromBootstrap();
+    }
 
-    debugger;
-    this.balance()
+     // this.balance()
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
-    this.fetchDollarPrice()
+     // this.fetchDollarPrice()
     this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
   }
 
@@ -89,33 +93,42 @@ export default class Account extends Component {
    * Fetch the current dollar price of FET and save in state.
    *
    */
-  fetchDollarPrice () {
-    fetchResource(DOLLAR_PRICE_URI)
-      .then((data) => {
-        if (typeof data.percentage === 'number') {
-          this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
-        }
-      })
+  async fetchDollarPrice () {
+   const response = await fetchResource(DOLLAR_PRICE_URI)
+
+    if (response.status !== 200) return
+
+    let error = false;
+
+   const data = await response.json().catch(() => error = true)
+
+   if(error || !data.percentage) return;
+
+debugger
+   this.setState({ percentage: data.percentage*100 }, this.calculateDollarBalance)
+
+    Storage.setLocalStorage("dollar_price", data.percentage)
   }
 
   calculateDollarBalance () {
     // if don't have a balance and a dollar price then we do'nt calculate the dollar balance,
-    if (this.state.balance === 'null' || this.state.percentage === 'null') {
+    if (this.state.balance === null || this.state.percentage === null) {
       return
     }
 
-    const percentage = new BN(this.state.percentage)
-    const balance = new BN(this.state.balance, 16)
+    // do it at ten times percentage and then convert back since BN only deals with integers to reduce rounding imprecision.
+    const percentage_times_ten = new BN(this.state.percentage*10)
+    const balance = this.state.balance
 
     let dollar_balance
 
     // if either is zero then we set it to 0 manually as the BN.js library doesn't allow multiplication by zero
-    if (percentage.isZero() || balance.isZero()) {
-      dollar_balance = 0
+    if (percentage_times_ten.isZero() || balance.isZero()) {
+      dollar_balance = new BN(0)
     } else {
-      dollar_balance = balance.mul(percentage)
+      dollar_balance = balance.mul(percentage_times_ten).div(new BN(1000))
     }
-    this.setState({ dollar_balance: dollar_balance.toString(16) })
+    this.setState({ dollar_balance: dollar_balance })
   }
 
   /**
@@ -143,7 +156,7 @@ export default class Account extends Component {
 
   async balance () {
     const balance = await this.api.balance(this.state.address)
-    this.setState({ balance: new BN(balance).toString(16) }, this.calculateDollarBalance)
+    this.setState({ balance: new BN(balance) }, this.calculateDollarBalance)
   }
 
   render () {
@@ -163,7 +176,6 @@ export default class Account extends Component {
         <div id="my-extension-root-inner" className="OverlayMain">
           <div className="OverlayMainInner">
             <div className="settings_title">
-              <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className="account"/>
               <div className="address_title_inner">
                 <h1 className="account_address">Account address</h1>
                 <br/>
@@ -200,19 +212,20 @@ export default class Account extends Component {
                 }
 
 
-                {this.state.balance !== null
+                {BN.isBN(this.state.balance)
                   ? (
                     <span className="fet-balance">
-                    {this.state.balance}
+                    {this.state.balance.toNumber().toLocaleString()}
                       {' '}
-                      FET
+
+                      {this.state.balance.toNumber().toLocaleString().length < 14 ? "FET" : ""}
                   </span>
                   ) : ''}
                 {' '}
                 <br/>
-                {this.state.dollar_balance > 0 ? (
+                {BN.isBN(this.state.dollar_balance)  &&  !this.state.dollar_balance.isZero()? (
                   <span>
-                  {this.state.dollar_balance}
+                  {this.state.dollar_balance.toNumber().toLocaleString()}
                     {' '}
                     USD
                 </span>

@@ -1,10 +1,11 @@
 // name of network to connect to.
-const NETWORK_NAME = 'devnet'
+//const NETWORK_NAME = 'localhost'
+ const NETWORK_NAME = 'devnet'
 // name to assign to download key file.
 const KEY_FILE_NAME = 'private_key.json'
 const VERSION = '1.0.0'
 // flag to change when running as extension or in browser.
-const EXTENSION = false
+const EXTENSION = true
 
 const DEFAULT_FEE_LIMIT = 20
 const DOLLAR_PRICE_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/'

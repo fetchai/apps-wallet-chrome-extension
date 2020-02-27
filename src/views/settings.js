@@ -60,14 +60,14 @@ export default class Settings extends Component {
   }
 
   /**
-   * Checks if password decrypts stored key file to the correct address, otherwise sets error message.
+   * Checks if password decrypts stored key file to the correct address, otherwise sets error message as side-effect and returns false.
    *
    * @returns {Promise<boolean>}
    */
   async correctPassword () {
     // for speedy UI just do quickly here just if empty.
-    if (!this.state.password.length < 1) {
-      this.setState({ password_error: true, output: 'Incorrect password' })
+    if (!this.state.password.length) {
+      this.setState({ password_error: true, output: 'Password required' })
       return false
     }
 
@@ -85,17 +85,20 @@ export default class Settings extends Component {
    */
   async newPasswordValidate () {
 
-    if (this.state.new_password.length < 1) return false
+    if (!this.state.new_password){
+      this.setState({ new_password_error: true, output: 'New password required' })
+      return false
+    }
 
     if (await Authentication.correctPassword(this.state.new_password)) {
-      this.setState({ new_password_error: true, output: 'New password is the same as current password' })
+      this.setState({ new_password_error: true, output: 'New password equals current password' })
       return false
     }
 
     if (!Entity._strong_password(this.state.new_password)) {
       this.setState({
         new_password_error: true,
-        output: 'Weak Password: choose password of at least 14 characters containing at least 1 uppercase, lowercase, number and special character'
+        output: 'Weak Password: choose password containing at least 14 characters containing at least 1 uppercase, lowercase, number and special character.'
       })
       return false
     }
@@ -152,14 +155,12 @@ export default class Settings extends Component {
   async handlePasswordUpdate (event) {
     event.preventDefault()
     await this.wipe_form_errors()
-    let error = false
-    if (!this.passwordConfirmValidate()) error = true
-    if (!(await this.newPasswordValidate())) error = true
-    if (!(await this.correctPassword())) error = true
+    debugger;
+     if (!(await this.correctPassword())) return
+     if (!(await this.newPasswordValidate())) return
+     if (!this.passwordConfirmValidate()) return
 
-
-
-    if (!error) this.update_password()
+     this.update_password()
 
   }
 
@@ -212,7 +213,7 @@ export default class Settings extends Component {
                  onClick={goTo.bind(null, Account)}/>
           </div>
           <hr></hr>
-          <button className="plain_button" onClick={() => this.toggle(1)}>General</button>
+          <button className="settings_button" onClick={() => this.toggle(1)}>General</button>
           <Expand
             open={this.state.collapsible_1}
             duration={TRANSITION_DURATION_MS}
@@ -245,7 +246,7 @@ export default class Settings extends Component {
               </div>
             </form>
           </Expand>
-          <button className="plain_button" onClick={() => this.toggle(2)}>Security & Privacy</button>
+          <button className="settings_button" onClick={() => this.toggle(2)}>Security & Privacy</button>
           <Expand
             open={this.state.collapsible_2}
             duration={TRANSITION_DURATION_MS}
@@ -279,7 +280,7 @@ export default class Settings extends Component {
               </button>
             </form>
           </Expand>
-          <button className="plain_button clear" onClick={() => this.toggle(3)}>About</button>
+          <button className="settings_button clear" onClick={() => this.toggle(3)}>About</button>
           <Expand
             open={this.state.collapsible_3}
             duration={TRANSITION_DURATION_MS}

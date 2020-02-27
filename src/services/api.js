@@ -137,7 +137,7 @@ export class API {
 
     const tx = await this.buildTransferTransaction(from, to, amount)
     if (tx === false) return false
-debugger
+
     const encoded_tx = await encode_transaction(tx, [from])
 
     const body = {
@@ -148,17 +148,17 @@ debugger
         data: encoded_tx.toString('base64')
       })
     }
-debugger
+
     const url = `${this.protocol}://${this.host}:${this.port}/api/contract/fetch/token/transfer`
     let error = false
     const response = await fetchResource(url, body).catch(() => error = true)
-debugger
+
     if (error) return false
 
     if (200 < response.status || response.status > 300) return false
-debugger
+
     const json = await response.json().catch(() => error = true)
-debugger
+
     if (error || typeof json.txs === 'undefined') return false
 
     return json.txs[0]
@@ -177,7 +177,7 @@ debugger
     tx.from_address(from) //hex of address
     tx.add_transfer(new Address(to), new BN(amount))
     tx.add_signer(from.public_key_hex()) // hex of public key
-    // debugger
+    //
     const encoded = Buffer.from(JSON.stringify({
       address: from.public_key(), //base64 encoded public key
       amount: amount

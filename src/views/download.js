@@ -102,7 +102,6 @@ export default class Download extends Component {
         <div id="my-extension-root-inner" className="OverlayMain">
           <div className="OverlayMainInner">
             <div className='settings_title'>
-              <img src={getAssetURI('account_icon.svg')} alt="Fetch.ai Account (ALT)" className='account'/>
               <div className='address_title_inner'>
                 <h1 className="account_address">Account address</h1>
                 <br></br>
@@ -119,7 +118,7 @@ export default class Download extends Component {
               <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
               <span
                 className="tooltiptext tooltiptext-positioning">{this.state.copied ? 'Copied!' : 'Copy text to clipboard'}</span>
-              <a className='large-button fetch_link account-button' href={'www.fetch.ai'}>
+              <a className='large-button fetch_link account-button'  target="_blank" rel="noopener noreferrer" href={`https://explore-testnet.fetch.ai/accounts/${this.state.address}`}>
                 View on Fetch.ai
               </a>
               <button className='large-button account-button download-button' onClick={this.download}>
