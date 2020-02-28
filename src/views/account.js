@@ -103,7 +103,6 @@ export default class Account extends Component {
 
    if(error || !data.percentage) return;
 
-debugger
    this.setState({ percentage: data.percentage*100 }, this.calculateDollarBalance)
 
     Storage.setLocalStorage("dollar_price", data.percentage)
@@ -172,7 +171,7 @@ debugger
         styles={styles}
         transitions={transitions}
       >
-        <div id="my-extension-root-inner" className="OverlayMain">
+        <div id="my-extension-root-inner" className="OverlayMain"  data-testid="account">
           <div className="OverlayMainInner">
             <div className="settings_title">
               <div className="address_title_inner">

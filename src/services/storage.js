@@ -14,6 +14,7 @@ export default class Storage {
     // if (!EXTENSION) {
     //     chrome.storage.sync.set({k, v})
     // } else {
+    debugger;
     localStorage.setItem(k, v)
     // }
   }

@@ -3,6 +3,8 @@ import { goTo } from '../services/router'
 import Create from './create'
 import Recover from './recover'
 import { getAssetURI } from '../utils/getAsset'
+import Authentication from '../services/authentication'
+import Login from './login'
 
 /**
  * Each stage corresponds to a page as per the original 8 pages of the wireframes, and this corresponds to the initial view.
@@ -12,9 +14,24 @@ import { getAssetURI } from '../utils/getAsset'
 
 export default class Initial extends Component {
 
+    constructor (props) {
+    super(props)
+    }
+
+  componentDidMount () {
+
+debugger;
+    // if they have a saved key they should not be here so redirect them to Login.
+   if(!Authentication.hasSavedKey()) {
+     debugger;
+     goTo(Login)
+     debugger;
+   }
+  }
+
   render () {
     return (
-      <div id="my-extension-root-inner">
+      <div id="my-extension-root-inner"  data-testid="initial">
         <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
           <source src={getAssetURI('welcome.mp4')} type="video/mp4"/>
         </video>
@@ -22,10 +39,10 @@ export default class Initial extends Component {
                                        className="logo"></img></div>
         <div className="overlay2">
           <div className="overlay3">
-            <button className='button-free-standing' onClick={goTo.bind(null, Recover)}>
-              Recover
+            <button className='button-free-standing' data-testid="recover_button99" onClick={goTo.bind(null, Recover)}>
+              Recover22211111
             </button>
-            <button className='button-free-standing' onClick={goTo.bind(null, Create)}>
+            <button className='button-free-standing' data-testid="create_button" onClick={goTo.bind(null, Create)}>
               Create
             </button>
           </div>

@@ -99,7 +99,7 @@ export default class Download extends Component {
         styles={styles}
         transitions={transitions}
       >
-        <div id="my-extension-root-inner" className="OverlayMain">
+        <div id="my-extension-root-inner" className="OverlayMain"  data-testid="download">
           <div className="OverlayMainInner">
             <div className='settings_title'>
               <div className='address_title_inner'>

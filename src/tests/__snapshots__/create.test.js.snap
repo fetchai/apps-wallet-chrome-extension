@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`:Initial initial snapshot test 1`] = `
+<div
+  className="OverlayMain"
+  data-testid="create"
+  id="my-extension-root-inner"
+>
+  <div
+    className="OverlayMainInner"
+  >
+    <h1>
+      Create account
+    </h1>
+    <hr />
+    <form
+      id="form"
+    >
+      <input
+        className="large-button "
+        data-testid="create_password"
+        id="user_password"
+        name="user_password"
+        onChange={[Function]}
+        placeholder="Password"
+        required={true}
+        type="password"
+        value=""
+      />
+      <input
+        className=" large-button create-confirm-password "
+        data-testid="create_password_confirm"
+        id="user_password_confirm"
+        name="user_password_confirm"
+        onChange={[Function]}
+        placeholder="Confirm Password"
+        required={true}
+        type="password"
+        value=""
+      />
+      <output
+        className="create-output "
+        data-testid="create_output"
+        id="output"
+        type="text"
+      >
+        
+      </output>
+      <div
+        className="small-button-container"
+      >
+        <button
+          className="small-button create-button"
+          data-testid="create_back_button"
+          onClick={[Function]}
+          type="button"
+        >
+          Back
+        </button>
+        <button
+          className="small-button create-button"
+          data-testid="create_submit"
+          onClick={[Function]}
+          type="submit"
+        >
+          Next
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;

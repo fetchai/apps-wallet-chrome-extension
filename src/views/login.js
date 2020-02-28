@@ -15,6 +15,8 @@ export default class Login extends Component {
 
   constructor (props) {
     super(props)
+    debugger;
+
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
 
@@ -53,7 +55,7 @@ export default class Login extends Component {
 
   render () {
     return (
-      <div id="my-extension-root-inner">
+      <div id="my-extension-root-inner"  data-testid="login">
         {/*Video is not background but attached to top div with other elements placed over it via absolute positioning*/}
         <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
           <source src={getAssetURI('welcome.mp4')} type="video/mp4"></source>

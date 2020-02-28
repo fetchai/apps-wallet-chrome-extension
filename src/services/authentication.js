@@ -4,6 +4,8 @@ import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/address'
 import { Storage } from './storage'
 import { goTo } from '../services/router'
 import Login from '../views/login'
+import { initial } from 'lodash'
+import Initial from '../views/initial'
 
 export default class Authentication {
 
@@ -46,7 +48,6 @@ export default class Authentication {
     const address = Storage.getLocalStorage('address')
     let valid_flag = true
     let entity
-
     entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
 
     // check it creates correct address from decryption.
@@ -62,11 +63,11 @@ export default class Authentication {
    */
   static Authenticate () {
     if (!Authentication.hasSavedKey()) {
-      goTo(Download)
+      goTo(Initial)
     } else if (!Authentication.isLoggedIn()) {
       goTo(Login)
     }
-
   }
+
 }
 export { Authentication }

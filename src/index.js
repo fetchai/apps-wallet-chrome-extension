@@ -6,8 +6,6 @@ import './index.css'
 import Router from './services/router'
 import Authentication from './services/authentication'
 import Login from './views/login'
-import Send from './views/send'
-import Recover from './views/recover'
 import Account from './views/account'
 import Initial from './views/initial'
 

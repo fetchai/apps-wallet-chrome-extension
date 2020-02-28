@@ -1,9 +1,14 @@
 /*global chrome*/
 import React, { Component } from 'react'
-import { goBack, goTo } from '../services/router'
+import { goTo } from '../services/router'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import Account from './account'
 import Authentication from '../services/authentication'
+import Initial from './initial'
+
+const WEAK_PASSWORD_ERROR_MESSAGE = "Weak password: password requires 14 characters including a number and an uppercase, lowercase and special character"
+const PASSWORDS_DONT_MATCH_ERROR_MESSAGE = "Passwords Don't Match"
+const PASSWORD_REQUIRED_ERROR_MESSAGE = "Password required"
 
 /**
  * corresponds to the create view of initial wireframes (v4) and handles view + associated logic for new account creation.
@@ -41,51 +46,63 @@ export default class Create extends Component {
   async handleSubmit (event) {
     event.preventDefault()
 
+
+    if(!this.state.user_password){
+       this.setState({
+        error: true,
+        output: PASSWORD_REQUIRED_ERROR_MESSAGE
+      })
+      return
+    }
+
     if (!Entity._strong_password(this.state.user_password)) {
       this.setState({
         error: true,
-        output: 'Weak password: password requires 14 characters including a number and an uppercase, lowercase and special character'
+        output: WEAK_PASSWORD_ERROR_MESSAGE
       })
       return
     }
 
     if (this.state.user_password !== this.state.user_password_confirm) {
-      this.setState({ error: true, output: 'Passwords Don\'t Match' })
+      this.setState({ error: true, output: PASSWORDS_DONT_MATCH_ERROR_MESSAGE })
       return
     }
 
     let entity = new Entity()
+    debugger;
     const json_obj = await entity._to_json_object(this.state.user_password)
+        debugger;
+
     Authentication.storeNewUser(entity, JSON.stringify(json_obj))
     goTo(Account)
   }
 
   render () {
     return (
-      <div id="my-extension-root-inner" className="OverlayMain">
+      <div id="my-extension-root-inner" className="OverlayMain"  data-testid="create">
         <div className="OverlayMainInner">
           <h1>Create account</h1>
           <hr></hr>
           <form id="form">
-            <input type="password" className={`large-button ${this.state.error ? 'red_error red-lock-icon' : ''}`}
+            <input type="password"  data-testid="create_password" className={`large-button ${this.state.error ? 'red_error red-lock-icon' : ''}`}
                    placeholder="Password" id="user_password"
                    name="user_password" value={this.state.user_password}
                    onChange={this.handleChange} required></input>
-            <input type="password"
+            <input type="password" data-testid="create_password_confirm"
                    className={` large-button create-confirm-password ${this.state.error ? 'red_error red-lock-icon' : ''}`}
                    placeholder="Confirm Password"
                    id="user_password_confirm" name="user_password_confirm" value={this.state.user_password_confirm}
                    onChange={this.handleChange} required></input>
-            <output type="text"
+            <output type="text"  data-testid="create_output"
                     className={`create-output ${this.state.error ? 'red_error' : ''}`}
                     id="output">{this.state.output}</output>
             <div className="small-button-container">
-              <button type="button" className="small-button create-button" onClick={event => {
+              <button type="button" className="small-button create-button" data-testid="create_back_button"  onClick={event => {
                 event.preventDefault()
-                goBack()
+                goTo(Initial)
               }}>Back
               </button>
-              <button type="submit" className="small-button create-button" onClick={this.handleSubmit}>Next</button>
+              <button type="submit" className="small-button create-button" data-testid="create_submit" onClick={this.handleSubmit}>Next</button>
             </div>
           </form>
         </div>

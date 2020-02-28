@@ -1,5 +1,7 @@
 /**
- * Note: Adapted from elsewhere, and did not write.
+ * Note: copied but then changed a bit and adapted from elsewhere.
+ *
+ * stores a stack of components in a closure, keeps one mounted at any one time.
  */
 
 import React from 'react'
@@ -13,6 +15,11 @@ class StackItem {
 
 let stack = []
 let component
+
+
+function clear() {
+  stack = []
+}
 
 function goTo (comp, props = {}) {
   stack.push(new StackItem(comp, props))
@@ -84,11 +91,11 @@ export default class Router extends React.Component {
     const { component: Component = ({ children }) => children, props } =
     stack[stack.length - 1] || {}
     return (
-      <Component {...props}>
+      <Component data-testid="router" {...props}>
         {stack.length == 0 && this.props.children}
       </Component>
     )
   }
 }
 
-export { goTo, goBack }
+export { goTo, goBack, clear }

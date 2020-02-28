@@ -215,7 +215,8 @@ export default class Recover extends Component {
     const transitions = ['height', 'opacity', 'background']
 
     return (
-      <div id="my-extension-root-inner" className="OverlayMain">
+      // eslint-disable-next-line react/prop-types
+      <div id="my-extension-root-inner" className="OverlayMain" data-testid="recover">
         <div className="OverlayMainInner">
           <h2>Recover</h2>
           <hr></hr>

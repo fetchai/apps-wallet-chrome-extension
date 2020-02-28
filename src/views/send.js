@@ -349,7 +349,7 @@ export default class Send extends Component {
 
   render () {
     return (
-      <div id="my-extension-root-inner" className="OverlayMain">
+      <div id="my-extension-root-inner" className="OverlayMain"  data-testid="send">
         <div className="OverlayMainInner">
           <div className='settings_title'>
             <div className='address_title_inner'>
