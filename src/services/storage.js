@@ -15,7 +15,9 @@ export default class Storage {
     //     chrome.storage.sync.set({k, v})
     // } else {
     debugger;
-    localStorage.setItem(k, v)
+     localStorage.setItem('abc');
+
+   // localStorage.setItem(k, v)
     // }
   }
 

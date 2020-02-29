@@ -23,7 +23,10 @@ export default class Authentication {
    * @param file_str
    */
   static storeNewUser (entity, file_str) {
+    debugger;
     Storage.setLocalStorage('key_file', file_str)
+        debugger;
+
     Storage.setLocalStorage('address', new Address(entity).toString())
     Storage.setLocalStorage('logged_in', 'true')
   }

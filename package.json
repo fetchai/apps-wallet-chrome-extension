@@ -15,6 +15,7 @@
     "case-sensitive-paths-webpack-plugin": "2.1.1",
     "chalk": "1.1.3",
     "css-loader": "0.28.7",
+    "dom-storage": "^2.1.0",
     "dotenv": "4.0.0",
     "dotenv-expand": "4.2.0",
     "enzyme": "^3.11.0",
@@ -31,7 +32,6 @@
     "jest-environment-jsdom": "^25.1.0",
     "jest-environment-jsdom-global": "^1.2.1",
     "jest-jasmine2": "^25.1.0",
-    "jest-localstorage-mock": "^2.4.0",
     "object-assign": "4.1.1",
     "postcss-flexbugs-fixes": "3.2.0",
     "postcss-loader": "2.0.8",
@@ -63,7 +63,7 @@
     "test": "node scripts/test.js --env=jsdom",
     "update-snapshots": "jest --updateSnapshot",
     "test2": "jest src/test",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand src/test",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand src/test  --env=jsdom",
     "lint": "eslint ."
   },
   "jest": {
@@ -75,14 +75,14 @@
     ],
     "setupFiles": [
       "<rootDir>/config/polyfills.js",
-      "<rootDir>/src/tests/utils/helper.js",
-      "jest-localstorage-mock"
+      "<rootDir>/src/tests/utils/helper.js"
     ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
       "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}"
     ],
     "testEnvironment": "jsdom",
+    "verbose": true,
     "testURL": "http://localhost:/",
     "transform": {
       "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/babel-jest",
@@ -130,7 +130,6 @@
     "eslint-plugin-react": "^7.18.3",
     "eslint-plugin-react-hooks": "^1.7.0",
     "mini-css-extract-plugin": "^0.8.0",
-    "sinon-chrome": "^3.0.1",
     "webpack": "4.16.5",
     "webpack-cli": "3.1.0"
   }

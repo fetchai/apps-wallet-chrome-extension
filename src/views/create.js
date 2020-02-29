@@ -46,7 +46,6 @@ export default class Create extends Component {
   async handleSubmit (event) {
     event.preventDefault()
 
-
     if(!this.state.user_password){
        this.setState({
         error: true,
@@ -69,10 +68,7 @@ export default class Create extends Component {
     }
 
     let entity = new Entity()
-    debugger;
     const json_obj = await entity._to_json_object(this.state.user_password)
-        debugger;
-
     Authentication.storeNewUser(entity, JSON.stringify(json_obj))
     goTo(Account)
   }

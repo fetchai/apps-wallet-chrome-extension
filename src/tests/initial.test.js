@@ -1,7 +1,7 @@
 import React from 'react'
 import  ReactDOM  from 'react-dom'
 import Initial from '../views/initial'
-import chrome from 'sinon-chrome';
+// import chrome from 'sinon-chrome';
 import renderer from 'react-test-renderer'
 import {render, cleanup, fireEvent, within} from '@testing-library/react'
 import '@testing-library/jest-dom'
