@@ -50,9 +50,10 @@ export default class Authentication {
 
     let valid_flag = true
     let entity
+    debugger
     entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
 
-
+debugger
     const a = new Address(entity)
 
     const b = a.toString()

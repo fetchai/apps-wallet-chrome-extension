@@ -24,6 +24,7 @@
     "eslint-plugin-flowtype": "3.x",
     "fetchai-ledger-api": "0.0.1-alpha.7",
     "file-loader": "4.2.0",
+    "flush-promises": "^1.0.2",
     "fs-extra": "3.0.1",
     "html-webpack-plugin": "^4.0.0-beta.8",
     "infinite-scroll": "^3.0.6",

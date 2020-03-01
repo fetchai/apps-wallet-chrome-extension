@@ -9,7 +9,7 @@ import Router, { clear } from '../services/router'
 import Settings from '../views/settings'
 import {
   click_button, ENCRYPTED_KEY_FILE,
-  EXAMPLE_ADDRESS,
+  EXAMPLE_ADDRESS, EXAMPLE_ADDRESS_2,
   EXAMPLE_VALID_ADDRESS,
   form_write_value,
   STRONG_PASSWORD,
@@ -22,6 +22,9 @@ jest.mock('fetchai-ledger-api/dist/fetchai/ledger/crypto/address');
 import { digest } from '../utils/digest'
 import Create from '../views/create'
 import { ADDRESS, KEY_FILE } from '../constants'
+
+import flushPromises from 'flush-promises';
+
 
 const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required';
 const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required';
@@ -38,17 +41,14 @@ function mockBasicChangePasswordEventHandlerMethods() {
 
   const mock_from_json_object = jest.fn();
   Entity._from_json_object = mock_from_json_object;
-  mock_from_json_object.mockReturnValue(Promise.resolve(null));
+  mock_from_json_object.mockReturnValue(Promise.resolve(undefined));
 
   const mock_constructor = jest.fn();
   Address.constructor = mock_to_string;
 
-
   const mock_to_string = jest.fn();
   Address.prototype.toString = mock_to_string;
   mock_to_string.mockReturnValue(EXAMPLE_ADDRESS);
-
-
 
 
   jest.spyOn(Settings.prototype, 'wipe_form_errors').mockImplementation(() => {});
@@ -88,13 +88,17 @@ describe(':Settings', () => {
   })
 
 
-  test('test empty new password field outputs new password required error message', async () => {
+  test.skip('test empty new password field outputs new password required error message', async () => {
 
     localStorage.setItem(KEY_FILE, ENCRYPTED_KEY_FILE)
     localStorage.setItem(ADDRESS, EXAMPLE_ADDRESS)
 
     mockBasicChangePasswordEventHandlerMethods()
      const { getByTestId } = render(<Settings/>);
+
+
+//todo get all error messages or most refactored to same test, but with different
+
        form_write_value(getByTestId, 'settings_password', STRONG_PASSWORD)
        const submit_button = getByTestId("settings_submit")
     debugger
@@ -104,8 +108,56 @@ describe(':Settings', () => {
         bubbles: true,
         cancelable: true,
       }))
-debugger
+   // you have to flush promises to ensure we wait, since some mocks still async.
+    await flushPromises();
+
     expect(getByTestId('settings_output')).toHaveTextContent(NEW_PASSWORD_REQUIRED_ERROR_MESSAGE)
+  })
+
+
+  test('test wrong password outputs wrong error message', async () => {
+
+    localStorage.setItem(KEY_FILE, ENCRYPTED_KEY_FILE)
+    localStorage.setItem(ADDRESS, EXAMPLE_ADDRESS_2)
+
+    mockBasicChangePasswordEventHandlerMethods()
+     const { getByTestId } = render(<Settings/>);
+       form_write_value(getByTestId, 'settings_password', STRONG_PASSWORD)
+       const submit_button = getByTestId("settings_submit")
+    await fireEvent(
+      submit_button,
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      }))
+   // you have to flush promises to ensure we wait, since some mocks still async.
+    await flushPromises();
+
+    expect(getByTestId('settings_output')).toHaveTextContent(INCORRECT_PASSWORD_ERROR_MESSAGE)
+  })
+
+
+  test('test weak new  password outputs weak password error message', async () => {
+
+    localStorage.setItem(KEY_FILE, ENCRYPTED_KEY_FILE)
+    localStorage.setItem(ADDRESS, EXAMPLE_ADDRESS)
+
+    mockBasicChangePasswordEventHandlerMethods()
+     const { getByTestId } = render(<Settings/>);
+       form_write_value(getByTestId, 'settings_password', STRONG_PASSWORD)
+       form_write_value(getByTestId, 'settings_new_password', WEAK_PASSWORD)
+       form_write_value(getByTestId, 'settings_new_password_confirm', WEAK_PASSWORD)
+       const submit_button = getByTestId("settings_submit")
+    await fireEvent(
+      submit_button,
+      new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      }))
+   // you have to flush promises to ensure we wait, since some mocks still async.
+    await flushPromises();
+
+    expect(getByTestId('settings_output')).toHaveTextContent(WEAK_PASSWORD_ERROR_MESSAGE)
   })
 
 
