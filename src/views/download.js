@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import qrCode from 'qrcode-generator'
-import { KEY_FILE_NAME, TRANSITION_DURATION_MS } from '../constants'
+import { KEY_FILE, KEY_FILE_NAME, TRANSITION_DURATION_MS } from '../constants'
 import { goTo } from '../services/router'
 import Account from './account'
 import { Storage } from '../services/storage'
@@ -24,7 +24,7 @@ export default class Download extends Component {
 
     this.state = {
       show_self: false,
-      address: Storage.getLocalStorage('address'),
+      address: Storage.getLocalStorage(ADDRESS),
       QR: '',
       hover_1: false,
       copied: false
@@ -71,7 +71,7 @@ export default class Download extends Component {
    */
 
   async download () {
-    const json_str = Storage.getLocalStorage('key_file')
+    const json_str = Storage.getLocalStorage(KEY_FILE)
     const element = document.createElement('a')
     const file = new Blob([json_str], { type: 'text/plain' })
     element.href = URL.createObjectURL(file)

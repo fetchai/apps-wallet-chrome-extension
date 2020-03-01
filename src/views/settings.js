@@ -5,11 +5,17 @@ import Account from './account'
 import { Authentication } from '../services/authentication'
 import Expand from 'react-expand-animated'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
-import { TRANSITION_DURATION_MS, VERSION } from '../constants'
+import { KEY_FILE, TRANSITION_DURATION_MS, VERSION } from '../constants'
 import { Storage } from '../services/storage'
 import Login from './login'
 import { getAssetURI } from '../utils/getAsset'
 
+const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required';
+const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required';
+const INCORRECT_PASSWORD_ERROR_MESSAGE = 'Incorrect password';
+const WEAK_PASSWORD_ERROR_MESSAGE = "Weak password: password requires 14 characters including a number and an uppercase, lowercase and special character";
+const PASSWORD_NOT_CHANGED_ERROR_MESSAGE = 'New password equals current password';
+const PASSWORDS_DONT_MATCH_ERROR_MESSAGE = 'Passwords must match';
 /**
  * Corresponds to the settings page.
  *
@@ -67,12 +73,14 @@ export default class Settings extends Component {
   async correctPassword () {
     // for speedy UI just do quickly here just if empty.
     if (!this.state.password.length) {
-      this.setState({ password_error: true, output: 'Password required' })
+      this.setState({ password_error: true, output: PASSWORD_REQUIRED_ERROR_MESSAGE })
+      debugger
       return false
     }
-
+debugger
     if (!(await Authentication.correctPassword(this.state.password))) {
-      this.setState({ password_error: true, output: 'Incorrect password' })
+      this.setState({ password_error: true, output: INCORRECT_PASSWORD_ERROR_MESSAGE })
+      debugger
       return false
     }
     return true
@@ -84,21 +92,22 @@ export default class Settings extends Component {
    * @returns {Promise<boolean>}
    */
   async newPasswordValidate () {
-
-    if (!this.state.new_password){
-      this.setState({ new_password_error: true, output: 'New password required' })
+debugger
+    if (!this.state.new_password.length){
+      debugger
+      this.setState({ new_password_error: true, output: NEW_PASSWORD_REQUIRED_ERROR_MESSAGE })
       return false
     }
 
     if (await Authentication.correctPassword(this.state.new_password)) {
-      this.setState({ new_password_error: true, output: 'New password equals current password' })
+      this.setState({ new_password_error: true, output: PASSWORD_NOT_CHANGED_ERROR_MESSAGE })
       return false
     }
 
     if (!Entity._strong_password(this.state.new_password)) {
       this.setState({
         new_password_error: true,
-        output: 'Weak Password: choose password containing at least 14 characters containing at least 1 uppercase, lowercase, number and special character.'
+        output: WEAK_PASSWORD_ERROR_MESSAGE
       })
       return false
     }
@@ -118,7 +127,7 @@ export default class Settings extends Component {
     if (this.state.new_password !== this.state.new_password_confirm) {
       this.setState({
         password_confirm_error: true,
-        output: 'Passwords must match'
+        output: PASSWORDS_DONT_MATCH_ERROR_MESSAGE
       })
       return false
     }
@@ -154,8 +163,9 @@ export default class Settings extends Component {
    */
   async handlePasswordUpdate (event) {
     event.preventDefault()
-    await this.wipe_form_errors()
     debugger;
+    await this.wipe_form_errors()
+
      if (!(await this.correctPassword())) return
      if (!(await this.newPasswordValidate())) return
      if (!this.passwordConfirmValidate()) return
@@ -172,10 +182,10 @@ export default class Settings extends Component {
    */
   async update_password () {
     //IMPORTANT NOTE: relies on original password being checked for correctness before invoking this, else it will lead to key loss
-    const orig_key_file = Storage.getLocalStorage('key_file')
+    const orig_key_file = Storage.getLocalStorage(KEY_FILE)
     const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
     const key_file = await entity._to_json_object(this.state.new_password)
-    Storage.setLocalStorage('key_file', JSON.stringify(key_file))
+    Storage.setLocalStorage(KEY_FILE, JSON.stringify(key_file))
     this.setState({
         password: '',
         new_password_confirm: '',
@@ -257,12 +267,14 @@ export default class Settings extends Component {
               <legend className="change_password_legend">Change Password</legend>
               <input type="password" className={`change_password_input ${this.state.password_error ? 'red_error' : ''}`}
                      placeholder="Old Password"
+                     data-testid="settings_password"
                      id="password" name="password" value={this.state.password}
                      onChange={this.handleChange.bind(this)}></input>
 
               <input type="password"
                      className={`change_password_input ${this.state.new_password_error ? 'red_error' : ''}`}
                      placeholder="New Password"
+                     data-testid="settings_new_password"
                      id="new_password" name="new_password" value={this.state.new_password}
                      onChange={this.handleChange.bind(this)}></input>
 
@@ -270,12 +282,15 @@ export default class Settings extends Component {
                      className={`change_password_input ${this.state.password_confirm_error ? 'red_error' : ''}`}
                      placeholder="Confirm New Password"
                      id="new_password_confirm" name="new_password_confirm"
+                     data-testid="settings_new_password_confirm"
                      value={this.state.new_password_confirm}
                      onChange={this.handleChange.bind(this)}></input>
               <output type="text"
+                      data-testid="settings_output"
                       className={`change_password_input change_password_output change_password_error red_error`}
                       id="output">{this.state.output}</output>
               <button type="submit" className="update_button"
+                      data-testid="settings_submit"
                       onClick={this.handlePasswordUpdate}>Update
               </button>
             </form>

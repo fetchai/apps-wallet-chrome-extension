@@ -4,13 +4,14 @@ import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/address'
 import { Storage } from './storage'
 import { goTo } from '../services/router'
 import Login from '../views/login'
-import { initial } from 'lodash'
 import Initial from '../views/initial'
+import { digest } from '../utils/digest'
+import { ADDRESS, KEY_FILE, LOGGED_IN } from '../constants'
 
 export default class Authentication {
 
   static isLoggedIn () {
-    const logged_in = Storage.getLocalStorage('logged_in')
+    const logged_in = Storage.getLocalStorage(LOGGED_IN)
     return Boolean(JSON.parse(logged_in))
   }
 
@@ -23,20 +24,17 @@ export default class Authentication {
    * @param file_str
    */
   static storeNewUser (entity, file_str) {
-    debugger;
-    Storage.setLocalStorage('key_file', file_str)
-        debugger;
-
-    Storage.setLocalStorage('address', new Address(entity).toString())
-    Storage.setLocalStorage('logged_in', 'true')
+    Storage.setLocalStorage(KEY_FILE, file_str)
+    Storage.setLocalStorage(ADDRESS, new Address(digest(entity.public_key_bytes())).toString())
+    Storage.setLocalStorage(LOGGED_IN, 'true')
   }
 
   static hasSavedKey () {
-    return Storage.getLocalStorage('key_file') !== null
+    return Storage.getLocalStorage(KEY_FILE) !== null
   }
 
   static logOut () {
-    Storage.setLocalStorage('logged_in', 'false')
+    Storage.setLocalStorage(LOGGED_IN, 'false')
   }
 
   /**
@@ -47,14 +45,20 @@ export default class Authentication {
    * @returns {Promise<boolean>}
    */
   static async correctPassword (password) {
-    const key_file = Storage.getLocalStorage('key_file')
-    const address = Storage.getLocalStorage('address')
+    const key_file = Storage.getLocalStorage(KEY_FILE)
+    const address = Storage.getLocalStorage(ADDRESS)
+
     let valid_flag = true
     let entity
     entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
 
+
+    const a = new Address(entity)
+
+    const b = a.toString()
+    debugger
     // check it creates correct address from decryption.
-    if (valid_flag && new Address(entity).toString() !== address) valid_flag = false
+    if (!valid_flag || b !== address) valid_flag = false
     return valid_flag
   }
 

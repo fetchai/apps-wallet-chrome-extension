@@ -3,7 +3,8 @@ import React, { Component } from 'react'
 import { BN } from 'bn.js'
 import Expand from '../other_imported_modules/react-expand-animated-2/build/Expand'
 import {
-  BALANCE_CHECK_INTERVAL_MS,
+  ADDRESS,
+  BALANCE_CHECK_INTERVAL_MS, DOLLAR_PRICE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_URI, NETWORK_NAME,
   TRANSITION_DURATION_MS,
@@ -35,13 +36,13 @@ export default class Account extends Component {
     this.scrollHistoryTop = this.scrollHistoryTop.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
     this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
-
+console.log("DID RENDER ACCOUNT")
     this.state = {
       show_self: false,
       balance: null,
-      percentage: Storage.getLocalStorage("dollar_price"),
+      percentage: Storage.getLocalStorage(DOLLAR_PRICE),
       dollar_balance: null,
-       address: Storage.getLocalStorage('address'),
+       address: Storage.getLocalStorage(ADDRESS),
       //address: "2H7Csuaom7BUrC5YcUgJUExGPnApL8vQ5Wr9yGyzGWpRNqgWiJ",
       show_history: false,
       hover_1: false,
@@ -105,7 +106,7 @@ export default class Account extends Component {
 
    this.setState({ percentage: data.percentage*100 }, this.calculateDollarBalance)
 
-    Storage.setLocalStorage("dollar_price", data.percentage)
+    Storage.setLocalStorage(DOLLAR_PRICE, data.percentage)
   }
 
   calculateDollarBalance () {

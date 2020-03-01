@@ -14,10 +14,10 @@ export default class Storage {
     // if (!EXTENSION) {
     //     chrome.storage.sync.set({k, v})
     // } else {
-    debugger;
-     localStorage.setItem('abc');
+    // localStorage.setItem('abc');
 
-   // localStorage.setItem(k, v)
+   localStorage.setItem(k, v)
+
     // }
   }
 

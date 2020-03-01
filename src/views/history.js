@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { ACCOUNT_HISTORY_URI, EXTENSION } from '../constants'
+import { ACCOUNT_HISTORY_URI, ADDRESS, EXTENSION } from '../constants'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
@@ -25,7 +25,7 @@ export default class History extends Component {
     this.setHistoryCount = props.setHistoryCount
 
     this.state = {
-      address: Storage.getLocalStorage('address'),
+      address: Storage.getLocalStorage(ADDRESS),
       items: 20,
       current_page: 1,
       has_more_items: true,
@@ -42,7 +42,7 @@ export default class History extends Component {
     }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
 
-    await this.fetchAnotherPageOfHistory(true)
+     await this.fetchAnotherPageOfHistory(true)
   }
 
   unclick (element) {

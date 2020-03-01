@@ -45,7 +45,7 @@ export default class Create extends Component {
    */
   async handleSubmit (event) {
     event.preventDefault()
-
+debugger
     if(!this.state.user_password){
        this.setState({
         error: true,
@@ -54,13 +54,14 @@ export default class Create extends Component {
       return
     }
 
-    if (!Entity._strong_password(this.state.user_password)) {
-      this.setState({
-        error: true,
-        output: WEAK_PASSWORD_ERROR_MESSAGE
-      })
-      return
-    }
+    // if (!Entity._strong_password(this.state.user_password)) {
+    //   debugger
+    //   this.setState({
+    //     error: true,
+    //     output: WEAK_PASSWORD_ERROR_MESSAGE
+    //   })
+    //   return
+    // }
 
     if (this.state.user_password !== this.state.user_password_confirm) {
       this.setState({ error: true, output: PASSWORDS_DONT_MATCH_ERROR_MESSAGE })
@@ -68,7 +69,9 @@ export default class Create extends Component {
     }
 
     let entity = new Entity()
-    const json_obj = await entity._to_json_object(this.state.user_password)
+    debugger
+     const json_obj = await entity._to_json_object(this.state.user_password)
+    debugger
     Authentication.storeNewUser(entity, JSON.stringify(json_obj))
     goTo(Account)
   }
