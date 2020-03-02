@@ -129,7 +129,7 @@ export default class Send extends Component {
   fetchDollarPrice () {
     fetchResource(DOLLAR_PRICE_URI).then((response) => this.handleDollarPriceResponse(response))
       .catch((err) => {
-        debugger
+
         console.log('Fetch Error :-S', err)
       })
   }

@@ -66,14 +66,8 @@ export default class Settings extends Component {
       new_password_confirm = '';
       new_password = '';
       output = "";
-    } else {
-      password =  this.state.password;
-      new_password_confirm = this.state.new_password_confirm;
-      new_password =  this.state.new_password;
-      output =  this.state.output;
-    }
 
-    return new Promise(resolve => this.setState({
+      return new Promise(resolve => this.setState({
       password_confirm_error: false,
       password_error: false,
       new_password_error: false,
@@ -82,6 +76,17 @@ export default class Settings extends Component {
       new_password_confirm: new_password_confirm,
       new_password: new_password,
     }, resolve))
+
+    } else {
+
+       return new Promise(resolve => this.setState({
+      password_confirm_error: false,
+      password_error: false,
+      new_password_error: false
+    }, resolve))
+    }
+
+
   }
 
 
@@ -118,13 +123,12 @@ export default class Settings extends Component {
     // for speedy UI just do quickly here just if empty.
     if (!this.state.password.length) {
       this.setState({ password_error: true, output: PASSWORD_REQUIRED_ERROR_MESSAGE })
-      debugger
       return false
     }
 
     if (!(await Authentication.correctPassword(this.state.password))) {
       this.setState({ password_error: true, output: INCORRECT_PASSWORD_ERROR_MESSAGE })
-      debugger
+
       return false
     }
     return true
@@ -137,7 +141,6 @@ export default class Settings extends Component {
    */
   async newPasswordValidate () {
     if (!this.state.new_password.length){
-      debugger
       this.setState({ new_password_error: true, output: NEW_PASSWORD_REQUIRED_ERROR_MESSAGE })
       return false
     }

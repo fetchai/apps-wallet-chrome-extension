@@ -20,12 +20,10 @@ export default class Initial extends Component {
 
   componentDidMount () {
 
-debugger;
     // if they have a saved key they should not be here so redirect them to Login.
    if(!Authentication.hasSavedKey()) {
-     debugger;
      goTo(Login)
-     debugger;
+
    }
   }
 

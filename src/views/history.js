@@ -36,7 +36,6 @@ export default class History extends Component {
   async componentDidMount () {
 
     if (typeof window.fetchai_history !== 'undefined') {
-      debugger
       this.setState({ results: window.fetchai_history })
       this.setHistoryCount(window.fetchai_history.length)
     }
@@ -129,7 +128,6 @@ export default class History extends Component {
    * @param retry
    */
   handlePageFetchResponse (response, retry) {
-    debugger;
     if (response.status !== 200) {
       if (retry === true) {
         // recursive set_timeout loop if we want to keep retrying. This is used on initialization to try get some data if network dodgy.
