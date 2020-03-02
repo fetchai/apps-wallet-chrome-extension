@@ -10,12 +10,14 @@ import Login from './views/login'
 import Frame, { FrameContextConsumer } from 'react-frame-component'
 import Account from './views/account'
 import Recover from './views/recover'
+import Settings from './views/settings'
+import Create from './views/create'
 
 class Main extends React.Component {
   render () {
 
     let opening_page
-// browser uses this.
+
         if(Authentication.isLoggedIn()) {
       opening_page = <Account/>
     } else if (Authentication.hasSavedKey()) {
@@ -40,7 +42,6 @@ class Main extends React.Component {
   }
 }
 
-console.log('QWERTTYYYYYYYYYY99999999999999999')
 const app = document.createElement('div')
 app.id = 'my-extension-root'
 

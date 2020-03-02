@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
 import qrCode from 'qrcode-generator'
-import { KEY_FILE, KEY_FILE_NAME, TRANSITION_DURATION_MS } from '../constants'
+import {
+  ADDRESS,
+  COPIED_MESSAGE,
+  COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
+  KEY_FILE,
+  KEY_FILE_NAME, LOCALHOST, MAINNET, MAINNET_BLOCKEXPLORER, SELECTED_NETWORK, TESTNET, TESTNET_BLOCKEXPLORER,
+  TRANSITION_DURATION_MS
+} from '../constants'
 import { goTo } from '../services/router'
 import Account from './account'
 import { Storage } from '../services/storage'
 import { format } from '../utils/format'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
-import Expand from 'react-expand-animated'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 
 /**
@@ -21,9 +27,10 @@ export default class Download extends Component {
     this.closeSelf = this.closeSelf.bind(this)
     this.make_QR = this.make_QR.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
+    this.blockExplorerURL = this.blockExplorerURL.bind(this)
 
     this.state = {
-      show_self: false,
+      block_explorer_url: this.blockExplorerURL(),
       address: Storage.getLocalStorage(ADDRESS),
       QR: '',
       hover_1: false,
@@ -31,14 +38,26 @@ export default class Download extends Component {
     }
   }
 
+  /**
+   * return block explorer url (with accounts path) based on whichever network is users selected network.
+   *
+   * @returns {string}
+   */
+  blockExplorerURL(){
+        const network = Storage.getLocalStorage(SELECTED_NETWORK);
+        if(network === TESTNET)  return TESTNET_BLOCKEXPLORER;
+        else if(network === MAINNET) return MAINNET_BLOCKEXPLORER;
+        else if(network === LOCALHOST) return '';
+        else throw new Error(`the network from storage : ${network} is not an expected network`)
+  }
+
+
   async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
     this.setState({ copied: copied_status })
   }
 
   componentDidMount () {
-
-    this.setState({ show_self: true })
     Authentication.Authenticate()
     this.make_QR()
   }
@@ -56,12 +75,6 @@ export default class Download extends Component {
     qr.addData(this.state.address)
     qr.make()
     this.setState({ QR: qr.createDataURL(2, 0) })
-  }
-
-  toggleHover (index) {
-    return
-    const hover = 'hover_' + index
-    this.setState(prevState => ({ [hover]: !prevState[hover] }))
   }
 
   /**
@@ -86,19 +99,7 @@ export default class Download extends Component {
   }
 
   render () {
-    const styles = {
-      open: { background: ' #1c2846' },
-    }
-
-    const transitions = ['height', 'opacity']
-
     return (
-      <Expand
-        open={this.state.show_self}
-        duration={TRANSITION_DURATION_MS}
-        styles={styles}
-        transitions={transitions}
-      >
         <div id="my-extension-root-inner" className="OverlayMain"  data-testid="download">
           <div className="OverlayMainInner">
             <div className='settings_title'>
@@ -108,7 +109,7 @@ export default class Download extends Component {
                 <span className="hoverable-address"
                       onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
                 <span
-                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? 'Copied!' : 'Copy Address to clipboard'}</span>
+                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
               </div>
               <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
             </div>
@@ -117,8 +118,8 @@ export default class Download extends Component {
               {this.state.QR ? <img src={this.state.QR} className='qr'/> : ''}
               <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
               <span
-                className="tooltiptext tooltiptext-positioning">{this.state.copied ? 'Copied!' : 'Copy text to clipboard'}</span>
-              <a className='large-button fetch_link account-button'  target="_blank" rel="noopener noreferrer" href={`https://explore-testnet.fetch.ai/accounts/${this.state.address}`}>
+                className="tooltiptext tooltiptext-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
+              <a className='large-button fetch_link account-button'  target="_blank" rel="noopener noreferrer" href={`${this.state.block_explorer_url}${this.state.address}`}>
                 View on Fetch.ai
               </a>
               <button className='large-button account-button download-button' onClick={this.download}>
@@ -127,7 +128,6 @@ export default class Download extends Component {
             </div>
           </div>
         </div>
-      </Expand>
     )
   }
 }

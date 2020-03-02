@@ -20,6 +20,7 @@ export default class Create extends Component {
     super(props)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.wipeFormErrors = this.wipeFormErrors.bind(this)
 
     this.state = {
       error: false,
@@ -29,11 +30,20 @@ export default class Create extends Component {
     }
   }
 
-  handleChange (event) {
+  async wipeFormErrors(){
+    return new Promise(resolve => {
+      this.setState({
+         error: false
+      }, resolve)
+    })
+  }
+
+  async handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
     change.error = false
     this.setState(change)
+     await this.wipeFormErrors()
   }
 
   /**
@@ -54,14 +64,14 @@ debugger
       return
     }
 
-    // if (!Entity._strong_password(this.state.user_password)) {
-    //   debugger
-    //   this.setState({
-    //     error: true,
-    //     output: WEAK_PASSWORD_ERROR_MESSAGE
-    //   })
-    //   return
-    // }
+    if (!Entity._strong_password(this.state.user_password)) {
+      debugger
+      this.setState({
+        error: true,
+        output: WEAK_PASSWORD_ERROR_MESSAGE
+      })
+      return
+    }
 
     if (this.state.user_password !== this.state.user_password_confirm) {
       this.setState({ error: true, output: PASSWORDS_DONT_MATCH_ERROR_MESSAGE })

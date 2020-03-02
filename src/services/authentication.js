@@ -6,7 +6,7 @@ import { goTo } from '../services/router'
 import Login from '../views/login'
 import Initial from '../views/initial'
 import { digest } from '../utils/digest'
-import { ADDRESS, KEY_FILE, LOGGED_IN } from '../constants'
+import { ADDRESS, DEFAULT_NETWORK, KEY_FILE, LOGGED_IN, SELECTED_NETWORK } from '../constants'
 
 export default class Authentication {
 
@@ -27,6 +27,7 @@ export default class Authentication {
     Storage.setLocalStorage(KEY_FILE, file_str)
     Storage.setLocalStorage(ADDRESS, new Address(digest(entity.public_key_bytes())).toString())
     Storage.setLocalStorage(LOGGED_IN, 'true')
+    Storage.setLocalStorage(SELECTED_NETWORK, DEFAULT_NETWORK)
   }
 
   static hasSavedKey () {

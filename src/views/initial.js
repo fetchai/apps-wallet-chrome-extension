@@ -40,7 +40,7 @@ debugger;
         <div className="overlay2">
           <div className="overlay3">
             <button className='button-free-standing' data-testid="recover_button99" onClick={goTo.bind(null, Recover)}>
-              Recover22211111
+              Recover
             </button>
             <button className='button-free-standing' data-testid="create_button" onClick={goTo.bind(null, Create)}>
               Create

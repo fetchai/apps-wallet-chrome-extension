@@ -35,16 +35,16 @@ export class API {
    *
    * @returns {Promise<boolean|API>}
    */
-  static async fromBootstrap () {
-    let address = await API.getBootstrapAddress()
+  static async fromBootstrap (network) {
+    let address = await API.getBootstrapAddress(network)
     if (address === false) return false
     const [protocol, host, port] = Bootstrap.split_address(address)
     return new API(host, port, protocol)
   }
 
-  static getBootstrapAddress () {
+  static getBootstrapAddress (network) {
     const promise = new Promise(async (resolve, reject) => {
-      const response = await fetchResource(BOOTSTRAP_REQUEST_URI).catch(() => reject(false))
+      const response = await fetchResource(BOOTSTRAP_REQUEST_URI + network).catch(() => reject(false))
       if (response.status < 200 || response.status > 300) reject(false)
       const data = await response.json().catch(() => reject(false))
       resolve(data[0].address)

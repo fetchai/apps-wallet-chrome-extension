@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import {
   ADDRESS,
-  BALANCE_CHECK_INTERVAL_MS, DOLLAR_PRICE,
+  BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, DEFAULT_NETWORK, DOLLAR_PRICE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_URI, KEY_FILE,
-  NETWORK_NAME
+  NETWORK_NAME, SELECTED_NETWORK
 } from '../constants'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
@@ -20,6 +20,11 @@ import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
 import { BN } from "bn.js"
 
+
+const INVALID_ADDRESS_ERROR_MESSAGE = "Invalid address"
+const INSUFFICIENT_FUNDS_ERROR_MESSAGE = "Insufficient funds"
+const INCORRECT_PASSWORD_ERROR_MESSAGE = "Incorrect password"
+
 /**
  * Corresponds to the send view.
  */
@@ -30,6 +35,8 @@ export default class Send extends Component {
     // eslint-disable-next-line react/prop-types
     this.api = props.api;
     this.address = Storage.getLocalStorage(ADDRESS)
+    this.network = Storage.getLocalStorage(SELECTED_NETWORK)
+
     this.sufficientFunds = this.sufficientFunds.bind(this)
     this.transferController = this.transferController.bind(this)
     this.handleTransfer = this.handleTransfer.bind(this)
@@ -43,6 +50,7 @@ export default class Send extends Component {
     this.balance = this.balance.bind(this)
 
     this.state = {
+      network: Storage.getLocalStorage(SELECTED_NETWORK),
       balance: null,
       password: '',
       to_address: '',
@@ -85,7 +93,7 @@ export default class Send extends Component {
     this.port = 8000
     this.api = new API(this.host, this.port, 'http')
     } else {
-      this.api = await API.fromBootstrap();
+      this.api = await API.fromBootstrap(this.state.network);
     }
 
     this.api = new API(this.host, this.port, 'http')
@@ -319,10 +327,10 @@ export default class Send extends Component {
     let error = false
     const txs = await this.api.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
     if (error | txs === false) {
-      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: 'Transfer failed' })
+      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED })
       return;
     }
-          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: 'Transfer failed' }))
+          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED }))
   }
 
   /**
@@ -364,7 +372,7 @@ export default class Send extends Component {
               <span className="hoverable-address"
                     onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
               <span
-                className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? 'Copied!' : 'Copy Address to clipboard'}</span>
+                className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
             </div>
             <img className='cross' src={getAssetURI('burger_icon.svg')} onClick={goTo.bind(null, Settings)}/>
           </div>
@@ -375,16 +383,18 @@ export default class Send extends Component {
               <label htmlFor="to_address">Account<br></br> Number: </label>
               <input className={`send_form_input ${this.state.address_error ? 'red_error' : ''}`} type="text"
                      name="to_address" id="to_address"
+                     data-testid="send_address"
                      onChange={this.handleChange.bind(this)} value={this.state.to_address}></input>
             </div>
             <output type="text"
-                    className={`red_error account-number-error`}>{this.state.address_error ? 'Invalid address' : ''}</output>
+                    className={`red_error account-number-error`}>{this.state.address_error ? INVALID_ADDRESS_ERROR_MESSAGE : ''}</output>
             <div className="send_form_row">
               <label htmlFor="amount">Amount: </label>
               <div
                 className={`send_form_row_output_wrapper send_form_input ${this.state.amount_error ? 'red_error' : ''}`}>
                 <div className="amount_stack_wrapper">
                   <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number" placeholder="0 FET" name="amount"
+                         data-testid="send_amount"
                          id="amount" onChange={(event) => { debugger; this.handleAmountChange(event, this.sufficientFunds.bind(null, true));}}
                          value={this.state.amount}></input>
                   <br></br>
@@ -394,7 +404,7 @@ export default class Send extends Component {
 
             </div>
             <output type="text"
-                    className={`red_error send-amount-error`}>{this.state.amount_error ? 'Insufficient funds' : ''}</output>
+                    className={`red_error send-amount-error`}>{this.state.amount_error ? INSUFFICIENT_FUNDS_ERROR_MESSAGE : ''}</output>
             <div className="send_form_row send_form_row_password">
               <label htmlFor="password">Password: </label>
               <input className={`send_form_input ${this.state.password_error ? 'red_error' : ''}`} type="password"
@@ -403,7 +413,7 @@ export default class Send extends Component {
                      id="password"></input>
             </div>
             <output type="text"
-                    className='red_error password-error'>{this.state.password_error ? 'Incorrect password' : ''}</output>
+                    className='red_error password-error'>{this.state.password_error ? INCORRECT_PASSWORD_ERROR_MESSAGE : ''}</output>
             <output type="text"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">

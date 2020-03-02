@@ -3,6 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/../ledger-api-javascript" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/../ledger-api-py" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/react-expand-animated" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/react-expand-animated-2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/src/react-expand-animated-2" vcs="Git" />

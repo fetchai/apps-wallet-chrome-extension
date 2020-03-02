@@ -4,9 +4,9 @@ import { BN } from 'bn.js'
 import Expand from '../other_imported_modules/react-expand-animated-2/build/Expand'
 import {
   ADDRESS,
-  BALANCE_CHECK_INTERVAL_MS, DOLLAR_PRICE,
+  BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, DEFAULT_NETWORK, DOLLAR_PRICE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI, NETWORK_NAME,
+  DOLLAR_PRICE_URI, NETWORK_NAME, SELECTED_NETWORK,
   TRANSITION_DURATION_MS,
 } from '../constants'
 import { goTo } from '../services/router'
@@ -36,13 +36,12 @@ export default class Account extends Component {
     this.scrollHistoryTop = this.scrollHistoryTop.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
     this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
-console.log("DID RENDER ACCOUNT")
     this.state = {
-      show_self: false,
+      network: Storage.getLocalStorage(SELECTED_NETWORK),
       balance: null,
       percentage: Storage.getLocalStorage(DOLLAR_PRICE),
       dollar_balance: null,
-       address: Storage.getLocalStorage(ADDRESS),
+      address: Storage.getLocalStorage(ADDRESS),
       //address: "2H7Csuaom7BUrC5YcUgJUExGPnApL8vQ5Wr9yGyzGWpRNqgWiJ",
       show_history: false,
       hover_1: false,
@@ -63,14 +62,13 @@ console.log("DID RENDER ACCOUNT")
 
   async componentDidMount () {
     Authentication.Authenticate()
-    this.setState({ show_self: true })
 
     if(NETWORK_NAME === 'localhost'){
         this.host = '127.0.0.1'
     this.port = 8000
     this.api = new API(this.host, this.port, 'http')
     } else {
-      this.api = await API.fromBootstrap();
+     this.api = await API.fromBootstrap(this.state.network);
     }
 
      // this.balance()
@@ -155,6 +153,7 @@ console.log("DID RENDER ACCOUNT")
 
   async balance () {
     const balance = await this.api.balance(this.state.address)
+    if(balance === false) return;
     this.setState({ balance: new BN(balance) }, this.calculateDollarBalance)
   }
 
@@ -166,12 +165,6 @@ console.log("DID RENDER ACCOUNT")
     const transitions = ['height', 'opacity', 'background']
 
     return (
-      <Expand
-        open={this.state.show_self}
-        duration={TRANSITION_DURATION_MS}
-        styles={styles}
-        transitions={transitions}
-      >
         <div id="my-extension-root-inner" className="OverlayMain"  data-testid="account">
           <div className="OverlayMainInner">
             <div className="settings_title">
@@ -185,11 +178,12 @@ console.log("DID RENDER ACCOUNT")
                 {format(this.state.address)}
               </span>
                 <span
-                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? 'Copied!' : 'Copy Address to clipboard'}</span>
+                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
               </div>
               {(this.state.hover_1) ? ''
-                : <img className="cross" src={getAssetURI('burger_icon.svg')}
-                       onClick={goTo.bind(null, Settings)}/>}
+                // eslint-disable-next-line react/jsx-key
+                : [<span className="network_name" >{this.state.network}</span>,<img className="cross" src={getAssetURI('burger_icon.svg')}
+                       onClick={goTo.bind(null, Settings)}/>]}
             </div>
             <hr/>
             <Expand
@@ -277,7 +271,6 @@ console.log("DID RENDER ACCOUNT")
               : ''}
           </div>
         </div>
-      </Expand>
     )
   }
 }

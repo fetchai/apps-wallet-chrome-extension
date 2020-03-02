@@ -5,7 +5,16 @@ import Account from './account'
 import { Authentication } from '../services/authentication'
 import Expand from 'react-expand-animated'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
-import { KEY_FILE, TRANSITION_DURATION_MS, VERSION } from '../constants'
+import {
+  DEFAULT_NETWORK,
+  DOLLAR_PRICE,
+  KEY_FILE,
+  MAINNET,
+  SELECTED_NETWORK,
+  TESTNET,
+  TRANSITION_DURATION_MS,
+  VERSION
+} from '../constants'
 import { Storage } from '../services/storage'
 import Login from './login'
 import { getAssetURI } from '../utils/getAsset'
@@ -29,9 +38,12 @@ export default class Settings extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handlePasswordUpdate = this.handlePasswordUpdate.bind(this)
     this.update_password = this.update_password.bind(this)
-    this.wipe_form_errors = this.wipe_form_errors.bind(this)
+    this.wipeFormErrors = this.wipeFormErrors.bind(this)
+    this.handleNetworkChange = this.handleNetworkChange.bind(this)
+    this.hasError = this.hasError.bind(this)
 
     this.state = {
+      network: Storage.getLocalStorage(SELECTED_NETWORK) || DEFAULT_NETWORK,
       collapsible_1: false,
       collapsible_2: false,
       collapsible_3: false,
@@ -46,23 +58,55 @@ export default class Settings extends Component {
     }
   }
 
-  async wipe_form_errors () {
+  async wipeFormErrors (clear_output = false) {
+     let password, new_password_confirm, new_password, output;
+
+    if (clear_output) {
+      password = '';
+      new_password_confirm = '';
+      new_password = '';
+      output = "";
+    } else {
+      password =  this.state.password;
+      new_password_confirm = this.state.new_password_confirm;
+      new_password =  this.state.new_password;
+      output =  this.state.output;
+    }
+
     return new Promise(resolve => this.setState({
       password_confirm_error: false,
       password_error: false,
-      new_password_error: false
+      new_password_error: false,
+      output: output,
+      password: password,
+      new_password_confirm: new_password_confirm,
+      new_password: new_password,
     }, resolve))
+  }
+
+
+  hasError(){
+    return (this.state.password_confirm_error ||
+      this.state.password_error ||
+      this.state.new_password_error)
   }
 
   async componentDidMount () {
     Authentication.Authenticate()
   }
 
+
+  async handleNetworkChange(event){
+    const selected_network = event.target.value;
+      await this.handleChange(event)
+       Storage.setLocalStorage(SELECTED_NETWORK, selected_network)
+  }
+
   async handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
     this.setState(change)
-    await this.wipe_form_errors()
+    await this.wipeFormErrors()
   }
 
   /**
@@ -77,7 +121,7 @@ export default class Settings extends Component {
       debugger
       return false
     }
-debugger
+
     if (!(await Authentication.correctPassword(this.state.password))) {
       this.setState({ password_error: true, output: INCORRECT_PASSWORD_ERROR_MESSAGE })
       debugger
@@ -92,7 +136,6 @@ debugger
    * @returns {Promise<boolean>}
    */
   async newPasswordValidate () {
-debugger
     if (!this.state.new_password.length){
       debugger
       this.setState({ new_password_error: true, output: NEW_PASSWORD_REQUIRED_ERROR_MESSAGE })
@@ -150,7 +193,7 @@ debugger
         continue
       }
       // but with the other ones we close them for better UI
-      this.setState({ [collapse]: false })
+      this.setState({ [collapse]: false }, this.wipeFormErrors.bind(null, true))
     }
   };
 
@@ -163,8 +206,7 @@ debugger
    */
   async handlePasswordUpdate (event) {
     event.preventDefault()
-    debugger;
-    await this.wipe_form_errors()
+    await this.wipeFormErrors()
 
      if (!(await this.correctPassword())) return
      if (!(await this.newPasswordValidate())) return
@@ -219,6 +261,7 @@ debugger
         <div className="OverlayMainInner">
           <div className='address_title'>
             <h1>Settings</h1>
+            <span>Network: {this.state.network}</span>
             <img className='cross settings-close' src={getAssetURI('cross_icon.svg')}
                  onClick={goTo.bind(null, Account)}/>
           </div>
@@ -232,13 +275,11 @@ debugger
           >
             <form className="settings_form">
               <div className="input_container">
-                <label htmlFor="conversion">Conversion<br></br>Currency</label>
+                <label htmlFor="conversion">Choose<br></br>Network</label>
                 <div className="select_container">
-                  <select id="conversion" className="custom_select" name="dropdown">
-                    <option value="USD">USD</option>
-                    <option value="XBT">XBT</option>
-                    <option value="EUR">EUR</option>
-                    <option value="GBP">GBP</option>
+                  <select  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select" name="network">
+                    <option value={TESTNET}>{TESTNET}</option>
+                    <option value={MAINNET}>{MAINNET}</option>
                   </select>
                 </div>
               </div>
@@ -285,14 +326,14 @@ debugger
                      data-testid="settings_new_password_confirm"
                      value={this.state.new_password_confirm}
                      onChange={this.handleChange.bind(this)}></input>
-              <output type="text"
-                      data-testid="settings_output"
-                      className={`change_password_input change_password_output change_password_error red_error`}
-                      id="output">{this.state.output}</output>
-              <button type="submit" className="update_button"
+              <button type="submit" className="update_button change_password_update_button"
                       data-testid="settings_submit"
                       onClick={this.handlePasswordUpdate}>Update
               </button>
+              <output type="text"
+                      data-testid="settings_output"
+                      className={`change_password_input change_password_output change_password_error ${this.hasError() ? "red_error" : ""}`}
+                      id="output">{this.state.output}</output>
             </form>
           </Expand>
           <button className="settings_button clear" onClick={() => this.toggle(3)}>About</button>

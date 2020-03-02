@@ -322,15 +322,16 @@ input::-webkit-inner-spin-button {
 }
 
 #my-extension-root-inner .logout_button {
-    position: absolute;
+     position: absolute;
     bottom: 10px;
-    font-size: 23px;
+    font-size: 21px;
     line-height: 30px;
-    padding-bottom: 3px;
+    padding-bottom: 1px;
     padding-top: 0px;
     font-weight: 700;
     width: 300px;
     margin: 15px 0;
+    border-width: 2px;
 }
 
 #my-extension-root-inner .toggle-history-button {
@@ -382,6 +383,11 @@ input::-webkit-inner-spin-button {
     margin: 10px 18px;
     min-width: 259px;
     border-color: white;
+    border-wdth: 1px;
+}
+
+#my-extension-root-inner .change_password_update_button {
+      border-wdth: 1px;
 }
 
 #my-extension-root-inner .change_password_output {

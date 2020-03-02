@@ -8,6 +8,8 @@ import Authentication from './services/authentication'
 import Login from './views/login'
 import Account from './views/account'
 import Initial from './views/initial'
+import Settings from './views/settings'
+import Create from './views/create'
 
 class Main extends React.Component {
   render () {
@@ -17,9 +19,9 @@ class Main extends React.Component {
       // if (true) {
       opening_page = <Account/>
     } else if (Authentication.hasSavedKey()) {
-      opening_page = <Login/>
+      opening_page = <Create/>
     } else {
-      opening_page = <Initial/>
+      opening_page = <Create/>
     }
     return (<Router>{opening_page}</Router>)
   }

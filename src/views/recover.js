@@ -22,6 +22,8 @@ export default class Recover extends Component {
     this.validAddress = this.validAddress.bind(this)
     this.handleConfirmationSubmit = this.handleConfirmationSubmit.bind(this)
     this.hideConfirmation = this.hideConfirmation.bind(this)
+    this.wipeFormErrors = this.wipeFormErrors.bind(this)
+    this.hasError = this.hasError.bind(this)
 
     this.state = {
       file: null,
@@ -37,6 +39,25 @@ export default class Recover extends Component {
     }
   }
 
+
+ async wipeFormErrors(){
+    return new Promise(resolve => {
+      this.setState({
+        file_error: false,
+        password_error: false,
+        address_error: false
+      }, resolve)
+    })
+  }
+
+  hasError(){
+    return(
+    this.state.file_error ||
+    this.state.password_error ||
+    this.state.address_error)
+  }
+
+
   async read_file (file) {
     return new Promise((resolve, reject) => {
       let reader = new FileReader()
@@ -50,17 +71,19 @@ export default class Recover extends Component {
     })
   }
 
-  handleChange (event) {
+async handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
     this.setState(change)
+    await this.wipeFormErrors()
   }
 
-  handleFileChange (event) {
+ async handleFileChange (event) {
     this.setState({
       file: event.target.files[0],
       file_name: event.target.value
     })
+   await this.wipeFormErrors()
   };
 
   /**
@@ -98,7 +121,7 @@ export default class Recover extends Component {
         error_message: 'File required',
         file_error: true
       })
-      return
+      return false
     }
 
     const file_str = await this.read_file(this.state.file)
@@ -241,9 +264,8 @@ export default class Recover extends Component {
                      id="address" type="text"
                      name="address" placeholder="Address (optional)"
                      value={this.state.address} onChange={this.handleChange.bind(this)}></input>
-              <output type="text" className={`recover-output red_error`}
+              <output type="text" className={`recover-output ${this.hasError()? "red_error" : ""}`}
                       id="output">{this.state.error_message}</output>
-
               <div className="small-button-container">
                 <button type="button" className="small-button recover-small-button" onClick={event => {
                   event.preventDefault()
