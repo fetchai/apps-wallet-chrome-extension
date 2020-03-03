@@ -83,7 +83,6 @@ async handleChange (event) {
 
   triggerFileUpload(){
     const file = getElementById('file').click();
-
   }
 
  async handleFileChange (event) {
