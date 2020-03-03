@@ -10,10 +10,12 @@ import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 const validAddress = (address) => {
   //todo swap to is_address when Ed updates public SDK
   try {
-    new Address(address)
+   const d = new Address(address)
   } catch (e) {
+    debugger
     return false
   }
+  debugger
   return true
 }
 

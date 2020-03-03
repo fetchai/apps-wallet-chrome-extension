@@ -37,7 +37,7 @@ export default class Login extends Component {
 
 
   // async componentDidMount () {
-  //   if(!) //todo add check for saved key else redirect to initial.
+  //   if(!)
   // }
   /**
    * Processes login form submission. If the user_password is correct we set logged-in to true in local storage and redirect to account page.

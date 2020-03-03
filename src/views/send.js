@@ -24,6 +24,8 @@ import { BN } from "bn.js"
 const INVALID_ADDRESS_ERROR_MESSAGE = "Invalid address"
 const INSUFFICIENT_FUNDS_ERROR_MESSAGE = "Insufficient funds"
 const INCORRECT_PASSWORD_ERROR_MESSAGE = "Incorrect password"
+const TRANSFER_FAILED_ERROR_MESSAGE = "transfer failed"
+const NETWORK_ERROR_MESSAGE = "Network error"
 
 /**
  * Corresponds to the send view.
@@ -44,7 +46,7 @@ export default class Send extends Component {
     this.handleAmountChange = this.handleAmountChange.bind(this)
     this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
-    this.reset_form_errors = this.reset_form_errors.bind(this)
+    this.wipeFormErrors = this.wipeFormErrors.bind(this)
     this.sync = this.sync.bind(this)
     this.setTransferMessage = this.setTransferMessage.bind(this)
     this.balance = this.balance.bind(this)
@@ -71,7 +73,7 @@ export default class Send extends Component {
     }
   }
 
-  async reset_form_errors () {
+  async wipeFormErrors () {
     return new Promise(resolve => {
       this.setState({
         transfer_disabled: false,
@@ -96,7 +98,6 @@ export default class Send extends Component {
       this.api = await API.fromBootstrap(this.state.network);
     }
 
-    this.api = new API(this.host, this.port, 'http')
     this.fetchDollarPrice()
     this.balance()
     this.dollar_price_fet_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
@@ -129,7 +130,6 @@ export default class Send extends Component {
   fetchDollarPrice () {
     fetchResource(DOLLAR_PRICE_URI).then((response) => this.handleDollarPriceResponse(response))
       .catch((err) => {
-
         console.log('Fetch Error :-S', err)
       })
   }
@@ -141,6 +141,7 @@ export default class Send extends Component {
    * @param response
    */
   handleDollarPriceResponse (response) {
+
     if (response.status !== 200) {
       console.log('Looks like there was a problem. Status Code: ' +
         response.status)
@@ -221,7 +222,7 @@ export default class Send extends Component {
     change[event.target.name] = event.target.value
     this.setState(change)
     // we don't bother async of these.
-    await this.reset_form_errors()
+    await this.wipeFormErrors()
   }
 
   /**
@@ -232,7 +233,7 @@ export default class Send extends Component {
    */
   async handleTransfer (event) {
     event.preventDefault()
-    await this.reset_form_errors()
+    await this.wipeFormErrors()
     // we set this flag which we use to see if we'll make transaction.
     // error flags in state within individual validation methods are for display only.
     // this flag is the actual one.
@@ -245,7 +246,11 @@ export default class Send extends Component {
       error = true
     }
 
-    if (!(await Authentication.correctPassword(this.state.password))) {
+    if(!this.state.password){
+            this.setState({ password_error: true })
+                 error = true
+    } else if (!(await Authentication.correctPassword(this.state.password))) {
+      debugger
       this.setState({ password_error: true })
       error = true
     }
@@ -273,7 +278,7 @@ export default class Send extends Component {
           status = await this.api.poll(tx_digest)
         } catch (e) {
           clearInterval(loop)
-          await this.setTransferMessage(`API Error `, true)
+          await this.setTransferMessage(NETWORK_ERROR_MESSAGE, true)
           this.setState({transfer_disabled: false})
           reject('API Error')
         }
@@ -327,10 +332,10 @@ export default class Send extends Component {
     let error = false
     const txs = await this.api.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
     if (error | txs === false) {
-      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED })
+      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE })
       return;
     }
-          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED }))
+          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE }))
   }
 
   /**
@@ -341,8 +346,15 @@ export default class Send extends Component {
    */
   async sufficientFunds () {
 
+    // this suggests a bad network request
     if (this.state.balance === false) {
-      this.setState({ amount_error_message: 'Network error', amount_error: true })
+      this.setState({ amount_error_message: NETWORK_ERROR_MESSAGE, amount_error: true })
+      return false
+    }
+
+    // rare: if no network request returned yet
+    if (this.state.balance === null) {
+      this.setState({ amount_error_message: NETWORK_ERROR_MESSAGE, amount_error: true })
       return false
     }
 
@@ -387,6 +399,7 @@ export default class Send extends Component {
                      onChange={this.handleChange.bind(this)} value={this.state.to_address}></input>
             </div>
             <output type="text"
+                    data-testid="address_error_output"
                     className={`red_error account-number-error`}>{this.state.address_error ? INVALID_ADDRESS_ERROR_MESSAGE : ''}</output>
             <div className="send_form_row">
               <label htmlFor="amount">Amount: </label>
@@ -398,29 +411,34 @@ export default class Send extends Component {
                          id="amount" onChange={(event) => { debugger; this.handleAmountChange(event, this.sufficientFunds.bind(null, true));}}
                          value={this.state.amount}></input>
                   <br></br>
-                  <output className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
+                  <output  className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
                 </div>
               </div>
 
             </div>
-            <output type="text"
-                    className={`red_error send-amount-error`}>{this.state.amount_error ? INSUFFICIENT_FUNDS_ERROR_MESSAGE : ''}</output>
+            <output type="text" data-testid="amount_error_output"
+                    className={`red_error send-amount-error`}>{this.state.amount_error_message}</output>
             <div className="send_form_row send_form_row_password">
               <label htmlFor="password">Password: </label>
               <input className={`send_form_input ${this.state.password_error ? 'red_error' : ''}`} type="password"
                      name="password"
+                      data-testid="send_password"
                      onChange={this.handleChange.bind(this)} value={this.state.password}
                      id="password"></input>
             </div>
             <output type="text"
-                    className='red_error password-error'>{this.state.password_error ? INCORRECT_PASSWORD_ERROR_MESSAGE : ''}</output>
+                    className='red_error password-error'
+                     data-testid="password_error_output"
+            >{this.state.password_error ? INCORRECT_PASSWORD_ERROR_MESSAGE : ''}</output>
             <output type="text"
+                     data-testid="transfer_error_output"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">
               <button className="small-button send_buttons" onClick={goTo.bind(null, Account)}>
                 Cancel
               </button>
-              <input className="small-button send_buttons disabled-pointer" disabled={this.state.transfer_disabled} type="submit" value="Send"></input>
+              <input  data-testid="send_submit"
+                className="small-button send_buttons disabled-pointer" disabled={this.state.transfer_disabled} type="submit" value="Send"></input>
             </div>
           </form>
         </div>

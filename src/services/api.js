@@ -45,6 +45,7 @@ export class API {
   static getBootstrapAddress (network) {
     const promise = new Promise(async (resolve, reject) => {
       const response = await fetchResource(BOOTSTRAP_REQUEST_URI + network).catch(() => reject(false))
+      debugger;
       if (response.status < 200 || response.status > 300) reject(false)
       const data = await response.json().catch(() => reject(false))
       resolve(data[0].address)

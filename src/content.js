@@ -9,9 +9,6 @@ import Authentication from './services/authentication'
 import Login from './views/login'
 import Frame, { FrameContextConsumer } from 'react-frame-component'
 import Account from './views/account'
-import Recover from './views/recover'
-import Settings from './views/settings'
-import Create from './views/create'
 
 class Main extends React.Component {
   render () {
