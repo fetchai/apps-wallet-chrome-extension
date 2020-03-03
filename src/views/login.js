@@ -57,7 +57,7 @@ export default class Login extends Component {
   render () {
     return (
       <div id="my-extension-root-inner"  data-testid="login">
-        {/*Video is not background but attached to top div with other elements placed over it via absolute positioning*/}
+        Video is not background but attached to top div with other elements placed over it via absolute positioning
         <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
           <source src={getAssetURI('welcome.mp4')} type="video/mp4"></source>
         </video>

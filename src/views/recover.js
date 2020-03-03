@@ -10,6 +10,7 @@ import Expand from 'react-expand-animated'
 import { TRANSITION_DURATION_MS } from '../constants'
 import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
+import Initial from './initial'
 
 export default class Recover extends Component {
 
@@ -276,7 +277,7 @@ async handleChange (event) {
               <div className="small-button-container">
                 <button type="button" className="small-button recover-small-button" onClick={event => {
                   event.preventDefault()
-                  goBack()
+                  goTo(Initial)
                 }}>Back
                 </button>
                 <button type="submit" className="small-button recover-small-button"

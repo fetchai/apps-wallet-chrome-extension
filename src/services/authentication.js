@@ -54,13 +54,8 @@ export default class Authentication {
 
     entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
 
-
-    const a = new Address(entity)
-
-    const b = a.toString()
-
     // check it creates correct address from decryption.
-    if (!valid_flag || b !== address) valid_flag = false
+    if (!valid_flag || new Address(entity).toString() !== address) valid_flag = false
     return valid_flag
   }
 
