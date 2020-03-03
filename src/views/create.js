@@ -96,12 +96,12 @@ debugger
             <input type="password"  data-testid="create_password" className={`large-button ${this.state.error ? 'red_error red-lock-icon' : ''}`}
                    placeholder="Password" id="user_password"
                    name="user_password" value={this.state.user_password}
-                   onChange={this.handleChange} required></input>
+                   onChange={this.handleChange} ></input>
             <input type="password" data-testid="create_password_confirm"
                    className={` large-button create-confirm-password ${this.state.error ? 'red_error red-lock-icon' : ''}`}
                    placeholder="Confirm Password"
                    id="user_password_confirm" name="user_password_confirm" value={this.state.user_password_confirm}
-                   onChange={this.handleChange} required></input>
+                   onChange={this.handleChange} ></input>
             <output type="text"  data-testid="create_output"
                     className={`create-output ${this.state.error ? 'red_error' : ''}`}
                     id="output">{this.state.output}</output>

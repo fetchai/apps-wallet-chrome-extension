@@ -10,14 +10,16 @@ import Account from './views/account'
 import Initial from './views/initial'
 import Settings from './views/settings'
 import Create from './views/create'
+import Recover from './views/recover'
 
 class Main extends React.Component {
   render () {
     let opening_page
 // browser uses this.
-    if (Authentication.isLoggedIn()) {
+    //if (Authentication.isLoggedIn()) {
+    if (true) {
       // if (true) {
-      opening_page = <Settings/>
+      opening_page = <Recover/>
     } else if (Authentication.hasSavedKey()) {
       opening_page = <Create/>
     } else {

@@ -303,7 +303,35 @@ input::-webkit-inner-spin-button {
     margin-bottom: 0px;
 }
 
-#my-extension-root-inner .fetch_link, button, input {
+/** the below three all are the same I need to find a way to without breaking them */
+
+#my-extension-root-inner .fetch_link {
+    display: block;
+    /* margin: auto; */
+    font-size: 24px;
+    border-width: 3px;
+    border-radius: 35px;
+    background-color: Transparent;
+    /* border-color: coral; */
+    border-color: #00b6a0;
+    border-style: solid;
+    padding-top: 3px;
+    padding-bottom: 5px;
+}
+#my-extension-root-inner  button {
+    display: block;
+    /* margin: auto; */
+    font-size: 24px;
+    border-width: 3px;
+    border-radius: 35px;
+    background-color: Transparent;
+    /* border-color: coral; */
+    border-color: #00b6a0;
+    border-style: solid;
+    padding-top: 3px;
+    padding-bottom: 5px;
+}
+#my-extension-root-inner input {
     display: block;
     /* margin: auto; */
     font-size: 24px;
@@ -561,12 +589,14 @@ input::-webkit-inner-spin-button {
     cursor: pointer;
 }
 
+
+
+
 #my-extension-root-inner .hide {
     display: none;
     transition: opacity 5s ease-out;
     opacity: 0;
 }
-
 
 #my-extension-root-inner .light {
     font-width: 200;
@@ -754,6 +784,15 @@ input::-webkit-inner-spin-button {
     width: 100%;
     margin-bottom: 17px;
 }
+
+
+
+#my-extension-root-inner .file-button {
+
+}
+
+
+
 
 #my-extension-root-inner input[type='file'] {
   color: transparent;

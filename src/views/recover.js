@@ -9,6 +9,7 @@ import { validAddress } from '../utils/validAddress'
 import Expand from 'react-expand-animated'
 import { TRANSITION_DURATION_MS } from '../constants'
 import Authentication from '../services/authentication'
+import { getElementById } from '../utils/getElementById'
 
 export default class Recover extends Component {
 
@@ -24,6 +25,7 @@ export default class Recover extends Component {
     this.hideConfirmation = this.hideConfirmation.bind(this)
     this.wipeFormErrors = this.wipeFormErrors.bind(this)
     this.hasError = this.hasError.bind(this)
+    this.triggerFileUpload = this.triggerFileUpload.bind(this)
 
     this.state = {
       file: null,
@@ -76,6 +78,12 @@ async handleChange (event) {
     change[event.target.name] = event.target.value
     this.setState(change)
     await this.wipeFormErrors()
+  }
+
+
+  triggerFileUpload(){
+    const file = getElementById('file').click();
+
   }
 
  async handleFileChange (event) {
@@ -258,7 +266,7 @@ async handleChange (event) {
                      className={`recover-input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`}
                      placeholder="Password" id="password"
                      name="password" value={this.state.password}
-                     onChange={this.handleChange.bind(this)} required></input>
+                     onChange={this.handleChange.bind(this)}></input>
               <input label='address'
                      className={`recover-input recover-address ${this.state.address_error ? 'red_error red-lock-icon' : ''}`}
                      id="address" type="text"

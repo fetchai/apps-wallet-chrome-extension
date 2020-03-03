@@ -2,6 +2,7 @@
 // const NETWORK_NAME = 'devnet'
 // name to assign to downloadable key file on the end-users system.
 const KEY_FILE_NAME = 'private_key.json'
+
 const VERSION = '1.0.0'
 // flag to change when running as extension or in browser.
 const EXTENSION = true
@@ -25,8 +26,7 @@ const COPY_ADDRESS_TO_CLIPBOARD_MESSAGE = "Copy Address to clipboard"
 // default time given to transition an element, usually the collapsables
 const TRANSITION_DURATION_MS = 500
 
-
-// the names of the keys of the properties saved in local storage
+// the names of the keys with which properties are saved in local storage
 const LOGGED_IN = 'logged_in'
 const ADDRESS = 'address'
 const KEY_FILE = 'key_file'
