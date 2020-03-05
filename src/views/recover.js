@@ -11,6 +11,7 @@ import { TRANSITION_DURATION_MS } from '../constants'
 import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
 import Initial from './initial'
+import Terms from './terms'
 
 export default class Recover extends Component {
 
@@ -253,7 +254,7 @@ async handleChange (event) {
           <hr></hr>
           <Expand
             open={this.state.collapsible_1}
-            duration={TRANSITION_DURATION_MS / 2}
+            duration={TRANSITION_DURATION_MS}
             styles={styles}
             transitions={transitions}
           >
@@ -275,12 +276,12 @@ async handleChange (event) {
               <output type="text" className={`recover-output ${this.hasError()? "red_error" : ""}`}
                       id="output">{this.state.error_message}</output>
               <div className="small-button-container">
-                <button type="button" className="small-button recover-small-button" onClick={event => {
+                <button type="button" className="recover-back-button" onClick={event => {
                   event.preventDefault()
-                  goTo(Initial)
+                 goTo(Terms, {next: 'recover'})
                 }}>Back
                 </button>
-                <button type="submit" className="small-button recover-small-button"
+                <button type="submit" className="recover-upload-button"
                         onClick={event => {
                           event.preventDefault()
                           this.handleSubmit()
@@ -308,10 +309,10 @@ async handleChange (event) {
               anyway or &quot;Back&quot; to return to the upload form.</p>
             </div>
             <div className="small-button-container">
-              <button type="button" className="small-button recover-small-button"
+              <button type="button" className="recover-back-button"
                       onClick={this.hideConfirmation}>Back
               </button>
-              <button type="submit" className="small-button recover-small-button"
+              <button type="submit" className="recover-upload-button"
                       onClick={this.handleConfirmationSubmit}>Next
               </button>
             </div>

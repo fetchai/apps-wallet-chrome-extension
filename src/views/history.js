@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { ACCOUNT_HISTORY_URI, ADDRESS, EXTENSION } from '../constants'
+import { ADDRESS, DEFAULT_NETWORK, EXTENSION, SELECTED_NETWORK } from '../constants'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
@@ -8,6 +8,8 @@ import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
 import { getElementById } from '../utils/getElementById'
 import { Address, Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
+import { blockExplorerURL } from '../utils/blockExplorerURL'
+import { historyURL } from '../utils/historyURL'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -24,8 +26,13 @@ export default class History extends Component {
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount
 
+    // for  development only.
+    Storage.setLocalStorage(SELECTED_NETWORK, DEFAULT_NETWORK)
+
+    debugger
     this.state = {
       address: Storage.getLocalStorage(ADDRESS),
+      blockexplorer_url: blockExplorerURL(),
       items: 20,
       current_page: 1,
       has_more_items: true,
@@ -36,11 +43,10 @@ export default class History extends Component {
   async componentDidMount () {
 
     if (typeof window.fetchai_history !== 'undefined') {
-      this.setState({ results: window.fetchai_history })
+      this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL() })
       this.setHistoryCount(window.fetchai_history.length)
     }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
-
      await this.fetchAnotherPageOfHistory(true)
   }
 
@@ -76,7 +82,7 @@ export default class History extends Component {
     results = results.map(this.unclick)
     // toggle clicked history items clicked status.
     results[index].clicked = !clicked_status
-    if (results[index].clicked) this.scrollCorrection(event, already_open_above)
+    // if (results[index].clicked) this.scrollCorrection(event, already_open_above)
     this.setState({ results: results })
   }
 
@@ -117,7 +123,7 @@ export default class History extends Component {
   async fetchAnotherPageOfHistory (retry = false) {
    const address =  new Address(new Entity()).toString()
     console.log("address is : " + address)
-    const url = ACCOUNT_HISTORY_URI + address + '&page=' + this.state.current_page;
+    const url = historyURL() + address + '&page=' + this.state.current_page;
     fetchResource(url).then((response) => this.handlePageFetchResponse(response, retry))
   }
 
@@ -143,6 +149,7 @@ export default class History extends Component {
         this.setState({ has_more_items: false })
         return
       }
+debugger;
       // reduce memory by only storing needed properties from api result
       const next = result.results.map(el => {
         return {
@@ -191,6 +198,7 @@ export default class History extends Component {
       items.push(<ExpandedHistoryItem clicked={this.state.results[i].clicked}
                                       digest={this.state.results[i].digest}
                                       status={this.state.results[i].status}
+                                      blockexplorer_url ={this.state.blockexplorer_url}
                                       fee={this.state.results[i].fee}
                                       created_date={this.state.results[i].created_date}
                                       toggle_clicked={this.toggleClicked}

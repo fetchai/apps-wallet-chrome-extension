@@ -11,6 +11,7 @@
     <orderEntry type="module" module-name="ledger-api-javascript" />
     <orderEntry type="module" module-name="ledger-api-javascript" />
     <orderEntry type="module" module-name="ledger-api-py" />
+    <orderEntry type="module" module-name="ledger-api-py" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_FOLDERS">

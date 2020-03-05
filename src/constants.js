@@ -5,13 +5,17 @@ const KEY_FILE_NAME = 'private_key.json'
 
 const VERSION = '1.0.0'
 // flag to change when running as extension or in browser.
-const EXTENSION = true
+const EXTENSION = false
 // fee limit for transactions.
 const DEFAULT_FEE_LIMIT = 20
 
 // uris we use for requests for data
 const DOLLAR_PRICE_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/'
-const ACCOUNT_HISTORY_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions/?digest=0x'
+
+const DEVNET_ACCOUNT_HISTORY_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions/?digest=0x'
+const TESTNET_ACCOUNT_HISTORY_URI = 'https://blockexplorer.geuwe2a-testnet.fetch-ai.com/api/v1/transactions/?digest=0x'
+const MAINNET_ACCOUNT_HISTORY_URI = 'https://blockexplorer.geuwe2a-mainnet.fetch-ai.com/api/v1/transactions/?digest=0x'
+
 const BOOTSTRAP_REQUEST_URI = `https://bootstrap.fetch.ai/endpoints/?network=`
 
 // the intervals in MS we poll for data at
@@ -54,7 +58,7 @@ export {
   COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, COPIED_MESSAGE,
   LOGGED_IN, ADDRESS, KEY_FILE, DOLLAR_PRICE, SELECTED_NETWORK, TESTNET,  MAINNET, LOCALHOST, DEFAULT_NETWORK,
   BOOTSTRAP_REQUEST_URI,
-  ACCOUNT_HISTORY_URI,
+  MAINNET_ACCOUNT_HISTORY_URI, TESTNET_ACCOUNT_HISTORY_URI, DEVNET_ACCOUNT_HISTORY_URI,
   TRANSACTION_HISTORY_CHECK_INTERVAL_MS,
   TRANSITION_DURATION_MS,
   NETWORK_NAME,

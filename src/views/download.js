@@ -15,6 +15,7 @@ import { format } from '../utils/format'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
+import { blockExplorerURL } from '../utils/blockExplorerURL'
 
 /**
  * component corresponds to download view.
@@ -27,29 +28,18 @@ export default class Download extends Component {
     this.closeSelf = this.closeSelf.bind(this)
     this.make_QR = this.make_QR.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
-    this.blockExplorerURL = this.blockExplorerURL.bind(this)
 
     this.state = {
-      block_explorer_url: this.blockExplorerURL(),
+      block_explorer_url: blockExplorerURL(),
       address: Storage.getLocalStorage(ADDRESS),
+      // address: Storage.getLocalStorage(ADDRESS),
       QR: '',
       hover_1: false,
       copied: false
     }
   }
 
-  /**
-   * return block explorer url (with accounts path) based on whichever network is users selected network.
-   *
-   * @returns {string}
-   */
-  blockExplorerURL(){
-        const network = Storage.getLocalStorage(SELECTED_NETWORK);
-        if(network === TESTNET)  return TESTNET_BLOCKEXPLORER;
-        else if(network === MAINNET) return MAINNET_BLOCKEXPLORER;
-        else if(network === LOCALHOST) return '';
-        else throw new Error(`the network from storage : ${network} is not an expected network`)
-  }
+
 
 
   async handleCopyToClipboard () {

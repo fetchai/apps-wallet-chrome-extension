@@ -182,8 +182,8 @@ export default class Account extends Component {
               </div>
               {(this.state.hover_1) ? ''
                 // eslint-disable-next-line react/jsx-key
-                : [<span className="network_name" >{this.state.network}</span>,<img className="cross" src={getAssetURI('burger_icon.svg')}
-                       onClick={goTo.bind(null, Settings)}/>]}
+                : <img className="cross" src={getAssetURI('burger_icon.svg')}
+                       onClick={goTo.bind(null, Settings)}/>}
             </div>
             <hr/>
             <Expand
@@ -225,10 +225,12 @@ export default class Account extends Component {
                 ) : ''}
               </div>
               <div className="small-button-container">
-                <button className="small-button account-button" onClick={goTo.bind(null, Download)}>
-                  Download
+                {/*<button className="small-button account-button" onClick={goTo.bind(null, Download)}>*/}
+                <button className="account-receive-button" onClick={goTo.bind(null, Download)}>
+                  Receive
                 </button>
-                <button className="small-button account-button" onClick={goTo.bind(null, Send, {api: this.api})}>
+                {/*<button className="small-button account-button" onClick={goTo.bind(null, Send, {api: this.api})}>*/}
+                <button className="account-send--button" onClick={goTo.bind(null, Send, {api: this.api})}>
                   Send
                 </button>
               </div>

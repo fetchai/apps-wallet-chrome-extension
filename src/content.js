@@ -10,6 +10,9 @@ import Login from './views/login'
 import Frame, { FrameContextConsumer } from 'react-frame-component'
 import Account from './views/account'
 
+
+//side note: todo run install `npm install --ignore-scripts` before publication to stop npm worms
+
 class Main extends React.Component {
   render () {
 

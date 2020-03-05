@@ -36,7 +36,7 @@ export default class RegularHistoryItem extends Component {
     return (
       <div className={`history_item history-pointer ${this.state.clicked ? 'hide' : ''}`}
            onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}><span
-        className="history_left_value">{format(this.state.digest, 13)}</span><span
+        className="history_left_value">{format(this.state.digest, 10)}</span><span
         className="history_right_value">-200</span><br></br>
         <span className="history_left_value light">{this.state.status}</span><span
           className="history_right_value light">{toLocaleDateString(this.state.created_date)}</span>

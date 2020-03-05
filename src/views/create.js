@@ -5,6 +5,7 @@ import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import Account from './account'
 import Authentication from '../services/authentication'
 import Initial from './initial'
+import Terms from './terms'
 
 const WEAK_PASSWORD_ERROR_MESSAGE = "Weak password: password requires 14 characters including a number and an uppercase, lowercase and special character"
 const PASSWORDS_DONT_MATCH_ERROR_MESSAGE = "Passwords Don't Match"
@@ -93,12 +94,12 @@ debugger
           <h1>Create account</h1>
           <hr></hr>
           <form id="form">
-            <input type="password"  data-testid="create_password" className={`large-button ${this.state.error ? 'red_error red-lock-icon' : ''}`}
-                   placeholder="Password" id="user_password"
+            <input type="password"  data-testid="create_password" className={`create-password ${this.state.error ? 'red_error red-lock-icon' : ''}`}
+                   placeholder="Password (min 14 chars)" id="user_password"
                    name="user_password" value={this.state.user_password}
                    onChange={this.handleChange} ></input>
             <input type="password" data-testid="create_password_confirm"
-                   className={` large-button create-confirm-password ${this.state.error ? 'red_error red-lock-icon' : ''}`}
+                   className={`create-confirm-password ${this.state.error ? 'red_error red-lock-icon' : ''}`}
                    placeholder="Confirm Password"
                    id="user_password_confirm" name="user_password_confirm" value={this.state.user_password_confirm}
                    onChange={this.handleChange} ></input>
@@ -106,12 +107,12 @@ debugger
                     className={`create-output ${this.state.error ? 'red_error' : ''}`}
                     id="output">{this.state.output}</output>
             <div className="small-button-container">
-              <button type="button" className="small-button create-button" data-testid="create_back_button"  onClick={event => {
+              <button type="button" className="create-back-button" data-testid="create_back_button"  onClick={event => {
                 event.preventDefault()
-                goTo(Initial)
+                goTo(Terms, {next: 'create'})
               }}>Back
               </button>
-              <button type="submit" className="small-button create-button" data-testid="create_submit" onClick={this.handleSubmit}>Next</button>
+              <button type="submit" className="create-next-button" data-testid="create_submit" onClick={this.handleSubmit}>Next</button>
             </div>
           </form>
         </div>

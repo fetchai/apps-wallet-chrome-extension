@@ -5,6 +5,7 @@ import Recover from './recover'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
 import Login from './login'
+import Terms from './terms'
 
 /**
  * Each stage corresponds to a page as per the original 8 pages of the wireframes, and this corresponds to the initial view.
@@ -34,12 +35,13 @@ export default class Initial extends Component {
                                        className="logo"></img></div>
         <div className="overlay2">
           <div className="overlay3">
-            <button className='button-free-standing' data-testid="recover_button99" onClick={goTo.bind(null, Recover)}>
+            <button className='button-free-standing initial-recover-button' data-testid="recover_button99" onClick={goTo.bind(null, Terms, {next: 'recover'})}>
               Recover
             </button>
-            <button className='button-free-standing' data-testid="create_button" onClick={goTo.bind(null, Create)}>
+            <button className='button-free-standing initial-create-button' data-testid="create_button" onClick={goTo.bind(null, Terms, {next: 'create'})}>
               Create
             </button>
+            <span className='initial-terms-link' onClick={goTo.bind(null, Terms)}>View Terms and Conditions</span>
           </div>
         </div>
       </div>

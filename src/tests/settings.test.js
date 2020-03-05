@@ -40,7 +40,6 @@ function mockBasicChangePasswordEventHandlerMethods() {
 
 
 describe.skip(':Settings', () => {
-
   beforeAll(() => {
     global.chrome = chrome;
   })
@@ -62,14 +61,10 @@ describe.skip(':Settings', () => {
     ReactDOM.unmountComponentAtNode(div)
   })
 
-
-
   test.skip('initial renders without crashing', () => {
    const { getByTestId } = render(<Router><Settings/></Router>);
 
    expect(getByTestId('background')).toHaveStyle(`background-image: url(${props.image})`)
-
-
   })
 
   test('test empty password field outputs password required error message', async () => {

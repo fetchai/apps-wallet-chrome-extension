@@ -11,6 +11,7 @@ import Initial from './views/initial'
 import Settings from './views/settings'
 import Create from './views/create'
 import Recover from './views/recover'
+import Send from './views/send'
 
 class Main extends React.Component {
   render () {
@@ -19,7 +20,8 @@ class Main extends React.Component {
     //if (Authentication.isLoggedIn()) {
     if (true) {
       // if (true) {
-      opening_page = <Login/>
+      // eslint-disable-next-line react/jsx-no-undef
+      opening_page = <Account/>
     } else if (Authentication.hasSavedKey()) {
       opening_page = <Create/>
     } else {

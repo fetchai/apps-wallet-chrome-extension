@@ -16,9 +16,9 @@ import Settings from './settings'
 import Account from './account'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
-import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
 import { BN } from "bn.js"
+import { capitalise } from '../utils/capitalise'
 
 
 const INVALID_ADDRESS_ERROR_MESSAGE = "Invalid address"
@@ -26,6 +26,7 @@ const INSUFFICIENT_FUNDS_ERROR_MESSAGE = "Insufficient funds"
 const INCORRECT_PASSWORD_ERROR_MESSAGE = "Incorrect password"
 const TRANSFER_FAILED_ERROR_MESSAGE = "transfer failed"
 const NETWORK_ERROR_MESSAGE = "Network error"
+const CONFIRM_PASSWORD_PLACEHOLDER = "Confirm Password"
 
 /**
  * Corresponds to the send view.
@@ -45,7 +46,6 @@ export default class Send extends Component {
     this.handleChange = this.handleChange.bind(this)
     this.handleAmountChange = this.handleAmountChange.bind(this)
     this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
-    this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
     this.wipeFormErrors = this.wipeFormErrors.bind(this)
     this.sync = this.sync.bind(this)
     this.setTransferMessage = this.setTransferMessage.bind(this)
@@ -117,11 +117,6 @@ export default class Send extends Component {
   componentWillUnmount () {
     clearInterval(this.dollar_price_fet_loop)
     clearInterval(this.balance_request_loop)
-  }
-
-  async handleCopyToClipboard () {
-    const copied_status = await copyToClipboard(this.state.address)
-    this.setState({ copied: copied_status })
   }
 
   /**
@@ -366,7 +361,7 @@ export default class Send extends Component {
      *
      */
     if (this.state.balance !== false && new BN(this.state.balance, 16).lt(new BN(new BN(this.state.amount).add(new BN(1))))) {
-      this.setState({ amount_error_message: `Insufficient funds ( Balance: ${this.state.balance})` , amount_error: true})
+      this.setState({ amount_error_message: `Balance: ${this.state.balance} : Insufficient funds` , amount_error: true})
       return false
     }
 
@@ -379,19 +374,17 @@ export default class Send extends Component {
         <div className="OverlayMainInner">
           <div className='settings_title'>
             <div className='address_title_inner'>
-              <h1 className="account_address">Account address</h1>
-              <br></br>
-              <span className="hoverable-address"
-                    onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
-              <span
-                className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
+             <h3 className="send-title">Send</h3>
             </div>
             <img className='cross' src={getAssetURI('burger_icon.svg')} onClick={goTo.bind(null, Settings)}/>
           </div>
           <hr></hr>
-          <h3 className="send-title">Send</h3>
+           <div className={'send-connected-to-network'}>
+                Connected to {capitalise(this.state.network)}
+              </div>newt
           <form onSubmit={this.handleTransfer} className="send-form">
             <div className="send_form_row">
+
               <label htmlFor="to_address">Account<br></br> Number: </label>
               <input className={`send_form_input ${this.state.address_error ? 'red_error' : ''}`} type="text"
                      name="to_address" id="to_address"
@@ -419,9 +412,9 @@ export default class Send extends Component {
             <output type="text" data-testid="amount_error_output"
                     className={`red_error send-amount-error`}>{this.state.amount_error_message}</output>
             <div className="send_form_row send_form_row_password">
-              <label htmlFor="password">Password: </label>
-              <input className={`send_form_input ${this.state.password_error ? 'red_error' : ''}`} type="password"
+              <input className={`send_form_password_input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`} type="password"
                      name="password"
+                     placeholder={CONFIRM_PASSWORD_PLACEHOLDER}
                       data-testid="send_password"
                      onChange={this.handleChange.bind(this)} value={this.state.password}
                      id="password"></input>
