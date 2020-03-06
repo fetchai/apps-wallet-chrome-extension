@@ -5,7 +5,7 @@ import Account from './account'
 import Authentication from '../services/authentication'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
-import { LOGGED_IN } from '../constants'
+import { LOGGED_IN, VERSION } from '../constants'
 
 /**
  * Our login Page.
@@ -62,6 +62,7 @@ export default class Login extends Component {
         </video>
         <div className="overlay1"><img src={getAssetURI('fetchai_logo.svg')} alt="Fetch.ai's Logo"
                                        className="logo"></img></div>
+        <span className='preview-build'>Preview Build: {VERSION}</span>
         <div className="overlay2">
           <div className="overlay3">
             <form id="form">

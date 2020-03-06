@@ -6,6 +6,7 @@ import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
 import Login from './login'
 import Terms from './terms'
+import { VERSION } from '../constants'
 
 /**
  * Each stage corresponds to a page as per the original 8 pages of the wireframes, and this corresponds to the initial view.
@@ -33,6 +34,7 @@ export default class Initial extends Component {
         </video>
         <div className="overlay1"><img src={getAssetURI('fetchai_logo.svg')} alt="Fetch.ai's Logo"
                                        className="logo"></img></div>
+        <span className='preview-build'>Preview Build: {VERSION}</span>
         <div className="overlay2">
           <div className="overlay3">
             <button className='button-free-standing initial-recover-button' data-testid="recover_button99" onClick={goTo.bind(null, Terms, {next: 'recover'})}>

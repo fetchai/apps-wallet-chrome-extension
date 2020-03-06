@@ -21,7 +21,7 @@ class Main extends React.Component {
     if (true) {
       // if (true) {
       // eslint-disable-next-line react/jsx-no-undef
-      opening_page = <Account/>
+      opening_page = <Initial/>
     } else if (Authentication.hasSavedKey()) {
       opening_page = <Create/>
     } else {

@@ -474,6 +474,7 @@ border-radius: 5px;
     width: 300px;
     margin: 15px 0;
     border-width: 2px;
+     background-color: rgba(43, 181, 162, .25);
 }
 
 #my-extension-root-inner .toggle-history-button {
@@ -509,10 +510,6 @@ border-radius: 5px;
     margin-bottom: 15px;
 }
 
-#my-extension-root-inner .form_label_single_line {
-    line-height: 50px;
-}
-
 #my-extension-root-inner .change_password_legend {
     padding-top: 10px;
     padding-bottom: 10px;
@@ -526,16 +523,22 @@ border-radius: 5px;
     min-width: 259px;
     border-color: white;
     border-wdth: 1px;
+      border-radius: 7px;
 }
 
-#my-extension-root-inner .change_password_update_button {
-      border-wdth: 1px;
-}
 
 #my-extension-root-inner .change_password_output {
     display: block;
     height: 20px;
     text-align: center;
+    border-radius: 5px;
+}
+
+#my-extension-root-inner .preview-build {
+    top: 58px;
+    position: absolute;
+    left: 17px;
+    font-size: 14px;
 }
 
 #my-extension-root-inner .red_error {
@@ -555,7 +558,7 @@ border-radius: 5px;
     font-size: 16px;
     border-radius: 35px;
     min-width: 277px;
-    border-color: white;
+      background-color: rgba(43, 181, 162, .25);
 }
 
 #my-extension-root-inner .clear {
@@ -591,19 +594,11 @@ border-radius: 5px;
     margin-bottom: 25px;
 }
 
-#my-extension-root-inner .small-button {
-    display: inline;
-    width: 47%;
-    margin: 10px 3px;
-    font-size: 24px;
-    line-height: 38px;
-    font-weight: 700;
-}
-
 #my-extension-root-inner .plus {
-    width: 125px;
+    width: 130px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
-
 
 #my-extension-root-inner .settings_button {
     border: none;
@@ -654,7 +649,29 @@ border-radius: 5px;
     margin-right:2px;
 }
 
-#my-extension-root-inner .account-send--button {
+#my-extension-root-inner .account-send-button  {
+     display: inline;
+    width: 49%;
+    font-size: 22px;
+    line-height: 31px;
+    font-weight: 700;
+    background-color: rgba(43, 181, 162, .25);
+     margin-left:2px;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+#my-extension-root-inner .send-left-button {
+     display: inline;
+    width: 49%;
+    font-size: 22px;
+    line-height: 31px;
+    font-weight: 700;
+         background-color: rgba(88, 135, 218, .3);
+    border-color: rgba(88, 135, 218);
+    margin-right:2px;
+}
+
+#my-extension-root-inner .send-right-button  {
      display: inline;
     width: 49%;
     font-size: 22px;
@@ -715,8 +732,9 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .history-container {
-    height: 485px;
+    height: 510px;
     overflow: auto;
+    margin-top: -30px;
 }
 
 
@@ -737,12 +755,13 @@ border-radius: 5px;
     padding-left: 10px
 }
 
-#my-extension-root-inner .button-large-thin {
+#my-extension-root-inner .account-toggle-history-button {
     font-size: 15px;
     width: 98%;
     margin: 15px 0;
     height: 33px;
     margin-top: 23px;
+     background-color: rgba(43, 181, 162, .25);
     cursor: pointer;
 }
 
@@ -807,11 +826,11 @@ border-radius: 5px;
     display: block;
 }
 
-#my-extension-root-inner .send_buttons {
-    background: none;
-    padding: 0 0;
-    text-indent: 0;
-}
+/*#my-extension-root-inner .send_buttons {*/
+/*    background: none;*/
+/*    padding: 0 0;*/
+/*    text-indent: 0;*/
+/*}*/
 
 #my-extension-root-inner .send-form {
     text-align: center;
@@ -868,15 +887,14 @@ border-radius: 5px;
 
 
 #my-extension-root-inner .send-connected-to-network {
-    /*background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 50.37 71.96'%3e%3cdefs%3e%3cstyle%3e.cls-1%7bfill:%23eaf0f2;%7d%3c/style%3e%3c/defs%3e%3ctitle%3eLock Icon%3c/title%3e%3cg id='Layer_2' data-name='Layer 2'%3e%3cg id='Layer_1-2' data-name='Layer 1'%3e%3cpath class='cls-1' d='M40.11,72H10.26A10.27,10.27,0,0,1,0,61.71V36.86A10.27,10.27,0,0,1,10.26,26.61H40.11A10.27,10.27,0,0,1,50.37,36.86V61.71A10.27,10.27,0,0,1,40.11,72ZM10.26,35.37a1.5,1.5,0,0,0-1.5,1.49V61.71a1.5,1.5,0,0,0,1.5,1.49H40.11a1.49,1.49,0,0,0,1.5-1.49V36.86a1.49,1.49,0,0,0-1.5-1.49Z'/%3e%3cpath class='cls-1' d='M12.41,31H3.65V21.54a21.54,21.54,0,1,1,43.07,0H38a12.78,12.78,0,1,0-25.55,0Z'/%3e%3c/g%3e%3c/g%3e%3c/svg%3e") no-repeat;*/
-/*background: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMzEyLjA3IDI5LjE5Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6dXJsKCNsaW5lYXItZ3JhZGllbnQpO308L3N0eWxlPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB5MT0iMTQuNTkiIHgyPSIzMTIuMDciIHkyPSIxNC41OSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJiYjVhMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzRjODRkZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGlkPSJMYXllcl8yIiBkYXRhLW5hbWU9IkxheWVyIDIiPjxnIGlkPSJMYXllcl8xLTIiIGRhdGEtbmFtZT0iTGF5ZXIgMSI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzA2LjE4Ljg4YTUsNSwwLDAsMSw1LDVWMjMuM2E1LDUsMCwwLDEtNSw1SDUuODlhNSw1LDAsMCwxLTUtNVY1Ljg5YTUsNSwwLDAsMSw1LTVIMzA2LjE4bTAtLjg4SDUuODlBNS44OSw1Ljg5LDAsMCwwLDAsNS44OVYyMy4zYTUuODksNS44OSwwLDAsMCw1Ljg5LDUuODlIMzA2LjE4YTUuODksNS44OSwwLDAsMCw1Ljg5LTUuODlWNS44OUE1Ljg5LDUuODksMCwwLDAsMzA2LjE4LDBaIi8+PC9nPjwvZz48L3N2Zz4=") no-repeat;*/
-    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMzEyLjA3IDI5LjE5Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6dXJsKCNsaW5lYXItZ3JhZGllbnQpO308L3N0eWxlPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB5MT0iMTQuNTkiIHgyPSIzMTIuMDciIHkyPSIxNC41OSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJiYjVhMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzRjODRkZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGlkPSJMYXllcl8yIiBkYXRhLW5hbWU9IkxheWVyIDIiPjxnIGlkPSJMYXllcl8xLTIiIGRhdGEtbmFtZT0iTGF5ZXIgMSI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzA2LjE4Ljg4YTUsNSwwLDAsMSw1LDVWMjMuM2E1LDUsMCwwLDEtNSw1SDUuODlhNSw1LDAsMCwxLTUtNVY1Ljg5YTUsNSwwLDAsMSw1LTVIMzA2LjE4bTAtLjg4SDUuODlBNS44OSw1Ljg5LDAsMCwwLDAsNS44OVYyMy4zYTUuODksNS44OSwwLDAsMCw1Ljg5LDUuODlIMzA2LjE4YTUuODksNS44OSwwLDAsMCw1Ljg5LTUuODlWNS44OUE1Ljg5LDUuODksMCwwLDAsMzA2LjE4LDBaIi8+PC9nPjwvZz48L3N2Zz4=) no-repeat;
-
-    text-indent: 50px;
-    font-size: 16px;
-    padding: 11px 0px;
+    background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2aWV3Qm94PSIwIDAgMzY2LjA2IDM0LjI0Ij48ZGVmcz48c3R5bGU+LmNscy0xe2ZpbGw6dXJsKCNsaW5lYXItZ3JhZGllbnQpO308L3N0eWxlPjxsaW5lYXJHcmFkaWVudCBpZD0ibGluZWFyLWdyYWRpZW50IiB5MT0iMTcuMTIiIHgyPSIzNjYuMDYiIHkyPSIxNy4xMiIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJiYjVhMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzRjODRkZiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxnIGlkPSJMYXllcl8yIiBkYXRhLW5hbWU9IkxheWVyIDIiPjxnIGlkPSJMYXllcl8xLTIiIGRhdGEtbmFtZT0iTGF5ZXIgMSI+PHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMzU5LjE1Ljg4YTYsNiwwLDAsMSw2LDZWMjcuMzNhNiw2LDAsMCwxLTYsNkg2LjkxYTYsNiwwLDAsMS02LTZWNi45MWE2LDYsMCwwLDEsNi02SDM1OS4xNW0wLS44OEg2LjkxQTYuOTEsNi45MSwwLDAsMCwwLDYuOTFWMjcuMzNhNi45MSw2LjkxLDAsMCwwLDYuOTEsNi45MUgzNTkuMTVhNi45MSw2LjkxLDAsMCwwLDYuOTEtNi45MVY2LjkxQTYuOTEsNi45MSwwLDAsMCwzNTkuMTUsMFoiLz48L2c+PC9nPjwvc3ZnPg==) no-repeat;
+    text-indent: 70px;
+    font-size: 15px;
+    padding: 12px 0px;
     background-size: 290px 24px;
-    background-position: 14px 8px;
+    background-position: 0px 8px;
+    background-size: 100%;
+    margin-top: -15px;
 }
 
 #my-extension-root-inner .send_form_row_output_wrapper output {

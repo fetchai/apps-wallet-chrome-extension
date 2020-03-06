@@ -381,7 +381,7 @@ export default class Send extends Component {
           <hr></hr>
            <div className={'send-connected-to-network'}>
                 Connected to {capitalise(this.state.network)}
-              </div>newt
+              </div>
           <form onSubmit={this.handleTransfer} className="send-form">
             <div className="send_form_row">
 
@@ -427,11 +427,11 @@ export default class Send extends Component {
                      data-testid="transfer_error_output"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">
-              <button className="small-button send_buttons" onClick={goTo.bind(null, Account)}>
+              <button className="send-left-button" onClick={goTo.bind(null, Account)}>
                 Cancel
               </button>
-              <input  data-testid="send_submit"
-                className="small-button send_buttons disabled-pointer" disabled={this.state.transfer_disabled} type="submit" value="Send"></input>
+              <button  data-testid="send_submit"
+                className="send-right-button disabled-pointer" disabled={this.state.transfer_disabled} type="submit" value="Send">Send</button>
             </div>
           </form>
         </div>

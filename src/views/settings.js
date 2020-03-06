@@ -264,7 +264,6 @@ export default class Settings extends Component {
         <div className="OverlayMainInner">
           <div className='address_title'>
             <h1>Settings</h1>
-            <span>Network: {this.state.network}</span>
             <img className='cross settings-close' src={getAssetURI('cross_icon.svg')}
                  onClick={goTo.bind(null, Account)}/>
           </div>
@@ -283,18 +282,6 @@ export default class Settings extends Component {
                   <select  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select" name="network">
                     <option value={TESTNET}>{TESTNET}</option>
                     <option value={MAINNET}>{MAINNET}</option>
-                  </select>
-                </div>
-              </div>
-              <br></br>
-              <div className="input_container form_label_single_line">
-                <label htmlFor="conversion">Language</label>
-                <div className="select_container">
-                  <select id="conversion" className="custom_select" name="dropdown">
-                    <option value="EN">English</option>
-                    <option value="CN">Chinese</option>
-                    <option value="ESN">Spanish</option>
-                    <option value="FRN">French</option>
                   </select>
                 </div>
               </div>

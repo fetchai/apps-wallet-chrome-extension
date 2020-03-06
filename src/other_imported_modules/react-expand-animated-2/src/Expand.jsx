@@ -39,11 +39,11 @@ class Expand extends Component {
   componentWillUnmount() {
     this.clearDelay();
   }
-cd ../
+
   getClientHeight = () => this.refWrapper.scrollHeight;
 
   getClosedHeight = () => {
-    return this.props.partial ?  { height: '120px', opacity: 1, overflow: 'hidden' } :
+    return this.props.partial ?  { height: '195px', opacity: 1, overflow: 'hidden' } :
        { height: 0, opacity: 0, overflow: 'hidden' } ;
   }
 

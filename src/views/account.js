@@ -22,6 +22,7 @@ import { getElementById } from '../utils/getElementById'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
 import Storage from '../services/storage'
+import { capitalise } from '../utils/capitalise'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
@@ -192,6 +193,9 @@ export default class Account extends Component {
               styles={styles}
               transitions={transitions}
             >
+               <div className={'send-connected-to-network'}>
+                Connected to {capitalise(this.state.network)}
+              </div>
               <div className="balance_container">
                 <img className="plus" alt="fetch circular logo"
                      src={getAssetURI('fetch_circular_icon.svg')}/>
@@ -230,7 +234,7 @@ export default class Account extends Component {
                   Receive
                 </button>
                 {/*<button className="small-button account-button" onClick={goTo.bind(null, Send, {api: this.api})}>*/}
-                <button className="account-send--button" onClick={goTo.bind(null, Send, {api: this.api})}>
+                <button className="account-send-button" onClick={goTo.bind(null, Send, {api: this.api})}>
                   Send
                 </button>
               </div>
@@ -267,7 +271,7 @@ export default class Account extends Component {
               : '<p> No History to show </p>'}
             {(this.state.history_first_page_count > 2)
               ?
-              <button className="button-large-thin account-button toggle-history-button" onClick={this.toggleHistory}>
+              <button className="account-toggle-history-button toggle-history-button" onClick={this.toggleHistory}>
                 {(this.state.show_history) ? 'Hide' : 'View All'}
               </button>
               : ''}
