@@ -6,12 +6,12 @@ import { goTo } from '../services/router'
 import Login from '../views/login'
 import Initial from '../views/initial'
 import { digest } from '../utils/digest'
-import { ADDRESS, DEFAULT_NETWORK, KEY_FILE, LOGGED_IN, SELECTED_NETWORK } from '../constants'
+import { DEFAULT_NETWORK, STORAGE_ENUM} from '../constants'
 
 export default class Authentication {
 
   static isLoggedIn () {
-    const logged_in = Storage.getLocalStorage(LOGGED_IN)
+    const logged_in = Storage.getLocalStorage(STORAGE_ENUM.LOGGED_IN)
     return Boolean(JSON.parse(logged_in))
   }
 
@@ -24,18 +24,18 @@ export default class Authentication {
    * @param file_str
    */
   static storeNewUser (entity, file_str) {
-    Storage.setLocalStorage(KEY_FILE, file_str)
-    Storage.setLocalStorage(ADDRESS, new Address(digest(entity.public_key_bytes())).toString())
-    Storage.setLocalStorage(LOGGED_IN, 'true')
-    Storage.setLocalStorage(SELECTED_NETWORK, DEFAULT_NETWORK)
+    Storage.setLocalStorage(STORAGE_ENUM.KEY_FILE, file_str)
+    Storage.setLocalStorage(STORAGE_ENUM.ADDRESS, new Address(digest(entity.public_key_bytes())).toString())
+    Storage.setLocalStorage(STORAGE_ENUM.LOGGED_IN, 'true')
+    Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, DEFAULT_NETWORK)
   }
 
   static hasSavedKey () {
-    return Storage.getLocalStorage(KEY_FILE) !== null
+    return Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE) !== null
   }
 
   static logOut () {
-    Storage.setLocalStorage(LOGGED_IN, 'false')
+    Storage.setLocalStorage(STORAGE_ENUM.LOGGED_IN, 'false')
   }
 
   /**
@@ -46,8 +46,8 @@ export default class Authentication {
    * @returns {Promise<boolean>}
    */
   static async correctPassword (password) {
-    const key_file = Storage.getLocalStorage(KEY_FILE)
-    const address = Storage.getLocalStorage(ADDRESS)
+    const key_file = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
+    const address = Storage.getLocalStorage(STORAGE_ENUM.ADDRESS)
 
     let valid_flag = true
     let entity

@@ -23,7 +23,7 @@ jest.mock('fetchai-ledger-api/dist/fetchai/ledger/crypto/address');
 
 
 
-import { ADDRESS, BOOTSTRAP_REQUEST_URI, DOLLAR_PRICE_URI, KEY_FILE } from '../constants'
+import { BOOTSTRAP_REQUEST_URI, DOLLAR_PRICE_URI, STORAGE_ENUM } from '../constants'
 import Send from '../views/send'
 
 
@@ -89,8 +89,8 @@ describe(':Send', () => {
 
   beforeEach(() => {
     global.chrome = chrome;
-    localStorage.setItem(KEY_FILE, ENCRYPTED_KEY_FILE)
-    localStorage.setItem(ADDRESS, EXAMPLE_ADDRESS)
+    localStorage.setItem(STORAGE_ENUM.KEY_FILE, ENCRYPTED_KEY_FILE)
+    localStorage.setItem(STORAGE_ENUM.ADDRESS, EXAMPLE_ADDRESS)
     jest.clearAllMocks();
   })
 

@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
 import {
-  ADDRESS,
   BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, DEFAULT_NETWORK, DOLLAR_PRICE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI, KEY_FILE,
-  NETWORK_NAME, SELECTED_NETWORK
+  DOLLAR_PRICE_URI,
+  NETWORK_NAME,  STORAGE_ENUM
 } from '../constants'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
@@ -37,8 +36,8 @@ export default class Send extends Component {
     super(props)
     // eslint-disable-next-line react/prop-types
     this.api = props.api;
-    this.address = Storage.getLocalStorage(ADDRESS)
-    this.network = Storage.getLocalStorage(SELECTED_NETWORK)
+    this.address = Storage.getLocalStorage(STORAGE_ENUM.ADDRESS)
+    this.network = Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK)
 
     this.sufficientFunds = this.sufficientFunds.bind(this)
     this.transferController = this.transferController.bind(this)
@@ -52,13 +51,13 @@ export default class Send extends Component {
     this.balance = this.balance.bind(this)
 
     this.state = {
-      network: Storage.getLocalStorage(SELECTED_NETWORK),
+      network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK),
       balance: null,
       password: '',
       to_address: '',
-      percentage: Storage.getLocalStorage(DOLLAR_PRICE),
+      percentage: Storage.getLocalStorage(STORAGE_ENUM.DOLLAR_PRICE),
       amount: null,
-      address: Storage.getLocalStorage(ADDRESS),
+      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
       copied: false,
       error: false,
       amount_error: false,
@@ -321,7 +320,7 @@ export default class Send extends Component {
   async transferController () {
     // we only disabled this button after click until result shown. to stop somebody accidentally clicking twice quickly.
     this.setState({transfer_disabled: true})
-    const json_str = Storage.getLocalStorage(KEY_FILE)
+    const json_str = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
      const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
    // const entity = Entity.from_hex('6e8339a0c6d51fc58b4365bf2ce18ff2698d2b8c40bb13fcef7e1ba05df18e4b')
     let error = false

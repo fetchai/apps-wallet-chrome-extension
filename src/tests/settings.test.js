@@ -18,7 +18,7 @@ import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/address'
 jest.mock('fetchai-ledger-api/dist/fetchai/ledger/crypto/entity');
 jest.mock('fetchai-ledger-api/dist/fetchai/ledger/crypto/address');
-import { ADDRESS, KEY_FILE } from '../constants'
+import { STORAGE_ENUM } from '../constants'
 const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required';
 const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required';
 const INCORRECT_PASSWORD_ERROR_MESSAGE = 'Incorrect password';
@@ -46,8 +46,8 @@ describe.skip(':Settings', () => {
 
   beforeEach(() => {
     global.chrome = chrome;
-    localStorage.setItem(KEY_FILE, ENCRYPTED_KEY_FILE)
-    localStorage.setItem(ADDRESS, EXAMPLE_ADDRESS)
+    localStorage.setItem(STORAGE_ENUM.KEY_FILE, ENCRYPTED_KEY_FILE)
+    localStorage.setItem(STORAGE_ENUM.ADDRESS, EXAMPLE_ADDRESS)
   })
 
   afterEach(() => {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { ADDRESS, DEFAULT_NETWORK, EXTENSION, SELECTED_NETWORK } from '../constants'
+import { DEFAULT_NETWORK, STORAGE_ENUM } from '../constants'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
@@ -10,6 +10,7 @@ import { getElementById } from '../utils/getElementById'
 import { Address, Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 import { blockExplorerURL } from '../utils/blockExplorerURL'
 import { historyURL } from '../utils/historyURL'
+import {BN} from 'bn.js'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -22,16 +23,17 @@ export default class History extends Component {
     super(props)
     this.toggleClicked = this.toggleClicked.bind(this)
     this.hideAllLargeHistoryItems = this.hideAllLargeHistoryItems.bind(this)
+    this.fetchAnotherPageOfHistory = this.fetchAnotherPageOfHistory.bind(this)
 
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount
 
     // for  development only.
-    Storage.setLocalStorage(SELECTED_NETWORK, DEFAULT_NETWORK)
+    Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, DEFAULT_NETWORK)
 
     debugger
     this.state = {
-      address: Storage.getLocalStorage(ADDRESS),
+      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
       blockexplorer_url: blockExplorerURL(),
       items: 20,
       current_page: 1,
@@ -123,7 +125,8 @@ export default class History extends Component {
   async fetchAnotherPageOfHistory (retry = false) {
    const address =  new Address(new Entity()).toString()
     console.log("address is : " + address)
-    const url = historyURL() + address + '&page=' + this.state.current_page;
+    const url = historyURL(this.state.address, this.state.current_page)
+    debugger
     fetchResource(url).then((response) => this.handlePageFetchResponse(response, retry))
   }
 
@@ -134,7 +137,8 @@ export default class History extends Component {
    * @param retry
    */
   handlePageFetchResponse (response, retry) {
-    if (response.status !== 200) {
+    debugger
+    if (response.status !== 200 && response.status !== 500 && response.status !== 404) {
       if (retry === true) {
         // recursive set_timeout loop if we want to keep retrying. This is used on initialization to try get some data if network dodgy.
         // todo refactor since since not unmountable, probably a quasi leak
@@ -143,18 +147,44 @@ export default class History extends Component {
       return
     }
 
+    // whilst api is buggy assuming 404 and 500 means no results
+
+    if(response.status == 500 || response.status == 404){
+         this.setHistoryCount(0)
+      debugger
+              this.setState({ has_more_items: false })
+        return
+    }
+
     response.json().then((result) => {
+
+      debugger
+
       // check for having gotten past last page page and terminate here if true
-      if (typeof result.detail !== 'undefined' && result.detail === 'Invalid page.') {
+      if (response.status === 500 || (typeof result.detail !== 'undefined' && result.detail === 'Invalid page.')) {
         this.setState({ has_more_items: false })
+              debugger
+
+         this.setHistoryCount(0)
         return
       }
 debugger;
       // reduce memory by only storing needed properties from api result
       const next = result.results.map(el => {
+        let amount = new BN(el.amount);
+
+        // we decide here if amount is positive or negative
+        debugger;
+        if(el.from_address === this.state.address){
+          amount = amount.neg()
+        }
+
         return {
           status: el.status,
-          digest: el.digest,
+          digest: el.tx,
+          from_address: el.from_address,
+          to_address: el.to_address,
+          amount: amount,
           fee: el.fee,
           created_date: el.created_date,
           clicked: false
@@ -191,6 +221,7 @@ debugger;
       items.push(<RegularHistoryItem clicked={this.state.results[i].clicked}
                                      digest={this.state.results[i].digest}
                                      status={this.state.results[i].status}
+                                     amount={this.state.results[i].amount}
                                      created_date={this.state.results[i].created_date}
                                      toggle_clicked={this.toggleClicked}
                                      index={i}/>)
@@ -198,6 +229,10 @@ debugger;
       items.push(<ExpandedHistoryItem clicked={this.state.results[i].clicked}
                                       digest={this.state.results[i].digest}
                                       status={this.state.results[i].status}
+                                      from_address={this.state.results[i].from_address}
+                                      address={this.state.address}
+                                      to_address={this.state.results[i].to_address}
+                                      amount={this.state.results[i].amount}
                                       blockexplorer_url ={this.state.blockexplorer_url}
                                       fee={this.state.results[i].fee}
                                       created_date={this.state.results[i].created_date}

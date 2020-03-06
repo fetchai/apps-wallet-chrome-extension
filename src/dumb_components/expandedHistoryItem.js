@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { toLocaleDateString } from '../utils/toLocaleDateString'
-import { blockExplorerURL } from '../utils/blockExplorerURL'
 import { format } from '../utils/format'
-import { COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE } from '../constants'
 import { getElementById } from '../utils/getElementById'
 
 /**
@@ -15,12 +13,17 @@ export default class ExpandedHistoryItem extends Component {
     super(props)
 
     // eslint-disable-next-line react/prop-types
-    const { index, created_date, clicked, digest, status, toggle_clicked, blockexplorer_url } = props
+    const { index, created_date, clicked, digest, status, toggle_clicked, blockexplorer_url, from_address, to_address, amount, address } = props
 
     this.setToolTipHeight = this.setToolTipHeight.bind(this)
+    this.toOrFromListItem = this.toOrFromListItem.bind(this)
 
     this.state = {
       digest: digest,
+      address: address,
+      from_address: from_address,
+      to_address: to_address,
+      amount: amount,
       status: status,
       created_date: created_date,
       blockexplorer_url: blockexplorer_url,
@@ -31,6 +34,10 @@ export default class ExpandedHistoryItem extends Component {
     }
   }
 
+  toOrFromListItem(){
+    if(this.state.to_address === this.state.address) return <li><span>From: </span>{format(this.state.from_address, 9)}</li>
+    else return  <li><span>To: </span>{format(this.state.to_address, 9)}</li>
+}
 
   setToolTipHeight(event){
       event.stopPropagation()
@@ -39,9 +46,7 @@ export default class ExpandedHistoryItem extends Component {
     const tooltip = getElementById(`tooltip-${this.state.index}`)
     let top = bounding_client_rect.top
      top = top -5
-     debugger;
      tooltip.style.top = `${top}px`;
-    debugger;
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -49,7 +54,6 @@ export default class ExpandedHistoryItem extends Component {
     if (nextProps.clicked !== this.props.clicked) {
       // eslint-disable-next-line react/prop-types
       this.setState({ clicked: nextProps.clicked })
-
     }
   }
 
@@ -68,11 +72,10 @@ export default class ExpandedHistoryItem extends Component {
                   id={`tooltip-${this.state.index}`}
                   className={`tooltiptext tooltiptext-expanded-history-item-positioning ${(this.state.css !== null)? this.state.css : "" }`}>View on BlockExplorer</span>
          </li>
-        <li><span>To: </span> this.state.status</li>
+        {this.toOrFromListItem()}
         <li><span>Fee: </span>{this.state.fee}</li>
         <li><span>Time: </span>{toLocaleDateString(this.state.created_date)}</li>
-        <li><span>Amount: </span><span>-999</span> <span className={'expanded-history-item-status'}> {this.state.status}</span></li>
-
+        <li><span>Amount: </span><span  className={this.state.amount.isNeg()? "red" : "green"}>{this.state.amount.isNeg()? "-" : "+"}{this.state.amount.toString(10)}</span><span className={'expanded-history-item-status'}> {this.state.status}</span></li>
       </ul>
     </div>)
   }

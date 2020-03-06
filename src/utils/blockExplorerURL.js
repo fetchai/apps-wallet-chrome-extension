@@ -1,8 +1,5 @@
 import {
-  LOCALHOST,
-  MAINNET,
-  MAINNET_BLOCKEXPLORER, SELECTED_NETWORK,
-  TESTNET,
+  MAINNET_BLOCKEXPLORER, NETWORKS_ENUM, STORAGE_ENUM,
   TESTNET_BLOCKEXPLORER
 } from '../constants'
 
@@ -15,10 +12,10 @@ import {
 
 
 const blockExplorerURL = () => {
-     const network = Storage.getLocalStorage(SELECTED_NETWORK)
-        if(network === TESTNET)  return TESTNET_BLOCKEXPLORER;
-        else if(network === MAINNET) return MAINNET_BLOCKEXPLORER;
-        else if(network === LOCALHOST) return '';
+     const network = Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK)
+        if(network === NETWORKS_ENUM.TESTNET)  return TESTNET_BLOCKEXPLORER;
+        else if(network === NETWORKS_ENUM.MAINNET) return MAINNET_BLOCKEXPLORER;
+        else if(network === NETWORKS_ENUM.LOCALHOST) return '';
         else throw new Error(`the network from storage : ${network} is not an expected network`)
   }
 

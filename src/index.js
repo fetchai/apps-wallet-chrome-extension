@@ -12,20 +12,20 @@ import Settings from './views/settings'
 import Create from './views/create'
 import Recover from './views/recover'
 import Send from './views/send'
+import Terms from './views/terms'
 
 class Main extends React.Component {
   render () {
     let opening_page
 // browser uses this.
-    //if (Authentication.isLoggedIn()) {
-    if (true) {
-      // if (true) {
+//     if (Authentication.isLoggedIn()) {
+       if (true) {
       // eslint-disable-next-line react/jsx-no-undef
-      opening_page = <Initial/>
+      opening_page = <Terms/>
     } else if (Authentication.hasSavedKey()) {
-      opening_page = <Create/>
+      opening_page = <Login/>
     } else {
-      opening_page = <Create/>
+      opening_page = <Initial/>
     }
     return (<Router>{opening_page}</Router>)
   }

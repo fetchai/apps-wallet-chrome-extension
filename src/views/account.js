@@ -3,10 +3,10 @@ import React, { Component } from 'react'
 import { BN } from 'bn.js'
 import Expand from '../other_imported_modules/react-expand-animated-2/build/Expand'
 import {
-  ADDRESS,
-  BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, DEFAULT_NETWORK, DOLLAR_PRICE,
+
+  BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI, NETWORK_NAME, SELECTED_NETWORK,
+  DOLLAR_PRICE_URI, NETWORK_NAME, STORAGE_ENUM,
   TRANSITION_DURATION_MS,
 } from '../constants'
 import { goTo } from '../services/router'
@@ -38,12 +38,11 @@ export default class Account extends Component {
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
     this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
     this.state = {
-      network: Storage.getLocalStorage(SELECTED_NETWORK),
+      network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK),
       balance: null,
-      percentage: Storage.getLocalStorage(DOLLAR_PRICE),
+      percentage: Storage.getLocalStorage(STORAGE_ENUM.DOLLAR_PRICE),
       dollar_balance: null,
-      address: Storage.getLocalStorage(ADDRESS),
-      //address: "2H7Csuaom7BUrC5YcUgJUExGPnApL8vQ5Wr9yGyzGWpRNqgWiJ",
+      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
       show_history: false,
       hover_1: false,
       hover_2: false,
@@ -105,7 +104,7 @@ export default class Account extends Component {
 
    this.setState({ percentage: data.percentage*100 }, this.calculateDollarBalance)
 
-    Storage.setLocalStorage(DOLLAR_PRICE, data.percentage)
+    Storage.setLocalStorage(STORAGE_ENUM.DOLLAR_PRICE, data.percentage)
   }
 
   calculateDollarBalance () {
@@ -268,7 +267,9 @@ export default class Account extends Component {
 
                 </Expand>
               )
-              : '<p> No History to show </p>'}
+              : [<h1 key = {1} className="account_address history-header">History</h1>,
+                    <hr key = {2} className="history-hr"/>,
+                <div key = {3} className="empty-history"><p>No Transactions</p></div>]}
             {(this.state.history_first_page_count > 2)
               ?
               <button className="account-toggle-history-button toggle-history-button" onClick={this.toggleHistory}>

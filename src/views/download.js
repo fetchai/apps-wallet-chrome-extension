@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import qrCode from 'qrcode-generator'
 import {
-  ADDRESS,
   COPIED_MESSAGE,
   COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
-  KEY_FILE,
-  KEY_FILE_NAME, LOCALHOST, MAINNET, MAINNET_BLOCKEXPLORER, SELECTED_NETWORK, TESTNET, TESTNET_BLOCKEXPLORER,
-  TRANSITION_DURATION_MS
+  KEY_FILE_NAME, STORAGE_ENUM
 } from '../constants'
 import { goTo } from '../services/router'
 import Account from './account'
@@ -31,8 +28,7 @@ export default class Download extends Component {
 
     this.state = {
       block_explorer_url: blockExplorerURL(),
-      address: Storage.getLocalStorage(ADDRESS),
-      // address: Storage.getLocalStorage(ADDRESS),
+      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
       QR: '',
       hover_1: false,
       copied: false
@@ -74,7 +70,7 @@ export default class Download extends Component {
    */
 
   async download () {
-    const json_str = Storage.getLocalStorage(KEY_FILE)
+    const json_str = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
     const element = document.createElement('a')
     const file = new Blob([json_str], { type: 'text/plain' })
     element.href = URL.createObjectURL(file)
@@ -109,10 +105,10 @@ export default class Download extends Component {
               <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
               <span
                 className="tooltiptext tooltiptext-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
-              <a className='large-button fetch_link account-button'  target="_blank" rel="noopener noreferrer" href={`${this.state.block_explorer_url}${this.state.address}`}>
-                View on Fetch.ai
+              <a className='download-button fetch-link'  target="_blank" rel="noopener noreferrer" href={`${this.state.block_explorer_url}${this.state.address}`}>
+                View on Block Explorer
               </a>
-              <button className='large-button account-button download-button' onClick={this.download}>
+              <button className='download-button download-private-key-button' onClick={this.download}>
                 Export Private Key
               </button>
             </div>

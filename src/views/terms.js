@@ -22,7 +22,7 @@ export default class Terms extends Component {
 
    // accept ( a boolean) refers to if the terms must be accepted, otherwise we dont show accept link
     this.state = {
-      next: next
+      next: next || null
   }
 
 }
@@ -42,7 +42,7 @@ next() {
         <div className="OverlayMainInner">
           <h1 className="terms-header">Terms & Conditions</h1>
           <hr></hr>
-          <div className={"terms-text"}>
+          <div className={"terms-text custom-scrollbar"}>
             <b>This web application is provided with no warranty. </b>Whilst every effort has been made to ensure its reliability, security and performance, you use it at your own risk. <u>Fetch.AI takes no responsibility for any loss of tokens that occur as a result of using this application.</u> In particular:
 <ul>
  <li>

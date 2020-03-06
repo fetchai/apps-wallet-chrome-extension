@@ -7,11 +7,7 @@ import Expand from 'react-expand-animated'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import {
   DEFAULT_NETWORK,
-  DOLLAR_PRICE,
-  KEY_FILE,
-  MAINNET,
-  SELECTED_NETWORK,
-  TESTNET,
+  NETWORKS_ENUM, STORAGE_ENUM,
   TRANSITION_DURATION_MS,
   VERSION
 } from '../constants'
@@ -43,7 +39,7 @@ export default class Settings extends Component {
     this.hasError = this.hasError.bind(this)
 
     this.state = {
-      network: Storage.getLocalStorage(SELECTED_NETWORK) || DEFAULT_NETWORK,
+      network: Storage.getLocalStorage(NETWORKS_ENUM.SELECTED_NETWORK) || DEFAULT_NETWORK,
       collapsible_1: false,
       collapsible_2: false,
       collapsible_3: false,
@@ -227,10 +223,10 @@ export default class Settings extends Component {
    */
   async update_password () {
     //IMPORTANT NOTE: relies on original password being checked for correctness before invoking this, else it will lead to key loss
-    const orig_key_file = Storage.getLocalStorage(KEY_FILE)
+    const orig_key_file = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
     const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
     const key_file = await entity._to_json_object(this.state.new_password)
-    Storage.setLocalStorage(KEY_FILE, JSON.stringify(key_file))
+    Storage.setLocalStorage(STORAGE_ENUM.KEY_FILE, JSON.stringify(key_file))
     this.setState({
         password: '',
         new_password_confirm: '',
@@ -280,8 +276,8 @@ export default class Settings extends Component {
                 <label htmlFor="conversion">Choose<br></br>Network</label>
                 <div className="select_container">
                   <select  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select" name="network">
-                    <option value={TESTNET}>{TESTNET}</option>
-                    <option value={MAINNET}>{MAINNET}</option>
+                    <option value={NETWORKS_ENUM.TESTNET}>{NETWORKS_ENUM.TESTNET}</option>
+                    <option value={NETWORKS_ENUM.MAINNET}>{NETWORKS_ENUM.MAINNET}</option>
                   </select>
                 </div>
               </div>

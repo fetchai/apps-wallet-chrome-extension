@@ -12,10 +12,11 @@ export default class RegularHistoryItem extends Component {
     super(props)
 
     // eslint-disable-next-line react/prop-types
-    const { index, created_date, clicked, digest, status, toggle_clicked } = props
+    const { index, created_date, clicked, digest, status, toggle_clicked, amount } = props
 
     this.state = {
       digest: digest,
+      amount: amount,
       status: status,
       created_date: created_date,
       clicked: clicked,
@@ -37,7 +38,7 @@ export default class RegularHistoryItem extends Component {
       <div className={`history_item history-pointer ${this.state.clicked ? 'hide' : ''}`}
            onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}><span
         className="history_left_value">{format(this.state.digest, 10)}</span><span
-        className="history_right_value">-200</span><br></br>
+        className={`history_right_value ${this.state.amount.isNeg()? "red" : "green"}`}>{this.state.amount.isNeg()? "-" : "+"}{this.state.amount.toString(10)}</span><br></br>
         <span className="history_left_value light">{this.state.status}</span><span
           className="history_right_value light">{toLocaleDateString(this.state.created_date)}</span>
       </div>

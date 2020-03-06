@@ -5,7 +5,7 @@ import Account from './account'
 import Authentication from '../services/authentication'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
-import { LOGGED_IN, VERSION } from '../constants'
+import { STORAGE_ENUM, VERSION } from '../constants'
 
 /**
  * Our login Page.
@@ -50,7 +50,7 @@ export default class Login extends Component {
       this.setState({ output: `Incorrect password`, login_error: true })
       return
     }
-    Storage.setLocalStorage(LOGGED_IN, 'true')
+    Storage.setLocalStorage(STORAGE_ENUM.LOGGED_IN, 'true')
     goTo(Account)
   }
 

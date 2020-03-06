@@ -21,7 +21,6 @@ export default class Initial extends Component {
     }
 
   componentDidMount () {
-
     // if they have a saved key they should not be here so redirect them to Login.
    if(Authentication.hasSavedKey()) goTo(Login)
   }
