@@ -36,7 +36,7 @@ export class API {
    * @returns {Promise<boolean|API>}
    */
   static async fromBootstrap (network) {
-    let address = await API.getBootstrapAddress(network)
+    let address = await API.getBootstrapAddress(network).catch(() => address === false)
     if (address === false) return false
     const [protocol, host, port] = Bootstrap.split_address(address)
     return new API(host, port, protocol)
@@ -46,7 +46,7 @@ export class API {
     const promise = new Promise(async (resolve, reject) => {
       const response = await fetchResource(BOOTSTRAP_REQUEST_URI + network).catch(() => reject(false))
       debugger;
-      if (response.status < 200 || response.status > 300) reject(false)
+      if (typeof response === "undefined" || response.status < 200 || response.status > 300) return reject(false)
       const data = await response.json().catch(() => reject(false))
       resolve(data[0].address)
     })
@@ -73,7 +73,7 @@ export class API {
 
     if (error) return false
 
-    if (200 < response.status || response.status > 300)
+    if (typeof response === "undefined" || 200 < response.status || response.status > 300)
       return false
 
     const data = await response.json()
@@ -95,7 +95,7 @@ export class API {
 
     if (error) return false
 
-    if (200 < response.status || response.status > 300) {
+    if (typeof response === "undefined" || 200 < response.status || response.status > 300) {
       return false
     }
 
@@ -127,7 +127,7 @@ export class API {
       error = true
     })
 
-    if (error || response.status !== 200) return false
+    if (error || typeof response === "undefined" || response.status !== 200) return false
     const data = await response.json().catch(() => error = true)
     if (error) return false
 
@@ -156,7 +156,7 @@ export class API {
 
     if (error) return false
 
-    if (200 < response.status || response.status > 300) return false
+    if (typeof response === "undefined" || 200 < response.status || response.status > 300) return false
 
     const json = await response.json().catch(() => error = true)
 

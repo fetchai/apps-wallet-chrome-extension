@@ -26,6 +26,11 @@ import { capitalise } from '../utils/capitalise'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
+ *
+ * this acts as two pages since to get a smooth transition between show and hide of history infinite scroll we have the container small in this page and expand it
+ *  . If this.state.show_history is truthy then we hide various parts of the page, show various others and expand the container with the history elements,
+ *  and change the properties
+ *  of the container so it is clickable, scrollable ext. This is the most scrappy/messy part of the app since the html stands for two seperate pages based on this value.
  */
 
 export default class Account extends Component {
@@ -44,7 +49,6 @@ export default class Account extends Component {
       dollar_balance: null,
       address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
       show_history: false,
-      hover_1: false,
       hover_2: false,
       history_first_page_count: 1,
       bootstrap_error: false
@@ -68,9 +72,11 @@ export default class Account extends Component {
     this.port = 8000
     this.api = new API(this.host, this.port, 'http')
     } else {
+
      this.api = await API.fromBootstrap(this.state.network);
     }
 
+     this.setState({network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK) })
      // this.balance()
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
      // this.fetchDollarPrice()
@@ -152,21 +158,28 @@ export default class Account extends Component {
    */
 
   async balance () {
+
+    if(this.api === false) return
     const balance = await this.api.balance(this.state.address)
     if(balance === false) return;
     this.setState({ balance: new BN(balance) }, this.calculateDollarBalance)
   }
 
   render () {
-    const styles = {
-      open: { background: ' #1c2846' },
-    }
 
     const transitions = ['height', 'opacity', 'background']
 
     return (
         <div id="my-extension-root-inner" className="OverlayMain"  data-testid="account">
+
           <div className="OverlayMainInner">
+             <img className="absolute-burger" src={getAssetURI('burger_icon.svg')}
+                       onClick={goTo.bind(null, Settings)}/>
+             <Expand
+              open={!this.state.show_history}
+              duration={TRANSITION_DURATION_MS}
+              transitions={transitions}
+            >
             <div className="settings_title">
               <div className="address_title_inner">
                 <h1 className="account_address">Account address</h1>
@@ -180,18 +193,10 @@ export default class Account extends Component {
                 <span
                   className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
               </div>
-              {(this.state.hover_1) ? ''
-                // eslint-disable-next-line react/jsx-key
-                : <img className="cross" src={getAssetURI('burger_icon.svg')}
-                       onClick={goTo.bind(null, Settings)}/>}
+
             </div>
             <hr/>
-            <Expand
-              open={!this.state.show_history}
-              duration={TRANSITION_DURATION_MS}
-              styles={styles}
-              transitions={transitions}
-            >
+
                <div className={'send-connected-to-network'}>
                 Connected to {capitalise(this.state.network)}
               </div>
@@ -219,13 +224,11 @@ export default class Account extends Component {
                   ) : ''}
                 {' '}
                 <br/>
-                {BN.isBN(this.state.dollar_balance)  &&  !this.state.dollar_balance.isZero()? (
-                  <span>
-                  {this.state.dollar_balance.toNumber().toLocaleString()}
-                    {' '}
-                    USD
-                </span>
-                ) : ''}
+                <span className='account-dollar-balance'>
+                {BN.isBN(this.state.dollar_balance)  &&  !this.state.dollar_balance.isZero()?
+                    [this.state.dollar_balance.toNumber().toLocaleString(),
+                    ' USD']
+                  : ''}</span>
               </div>
               <div className="small-button-container">
                 {/*<button className="small-button account-button" onClick={goTo.bind(null, Download)}>*/}
@@ -243,31 +246,20 @@ export default class Account extends Component {
                 <Expand
                   open={this.state.show_history}
                   duration={TRANSITION_DURATION_MS}
-                  styles={styles}
                   transitions={transitions}
                   partial={true}
                 >
-                  <Expand
-                    open={!this.state.show_history}
-                    duration={TRANSITION_DURATION_MS}
-                    styles={styles}
-                    transitions={transitions}
+                    <h1 className={this.state.show_history ? 'history-header' : 'history-header-collapsed  account_address'}>History</h1>
 
-                  >
-                    <h1 className="account_address history-header">History</h1>
                     <hr className="history-hr"/>
-                  </Expand>
-                  {/*{`history_item large_history_item history-pointer ${this.state.clicked ? '' : 'hide'}`}*/}
                   <div id="history-container"
                        className={`${this.state.show_history ? 'history-container' : 'history-container-collapsed'}`}>
-                    {/*<div style={` height: '400px', ${this.state.show_history ? 'overflow: \'auto\' : 'overflow: \'auto\''}`}>*/}
-                    {/* eslint-disable-next-line react/no-string-refs */}
+                      {/* eslint-disable-next-line react/no-string-refs */}
                     <History ref="history" setHistoryCount={this.setHistoryCount}/>{' '}
                   </div>
-
                 </Expand>
               )
-              : [<h1 key = {1} className="account_address history-header">History</h1>,
+              : [<h1 key = {1} className="account_address history-header-collapsed">History</h1>,
                     <hr key = {2} className="history-hr"/>,
                 <div key = {3} className="empty-history"><p>No Transactions</p></div>]}
             {(this.state.history_first_page_count > 2)

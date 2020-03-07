@@ -14,6 +14,7 @@ import {
 import { Storage } from '../services/storage'
 import Login from './login'
 import { getAssetURI } from '../utils/getAsset'
+import { capitalise } from '../utils/capitalise'
 
 const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required';
 const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required';
@@ -39,7 +40,7 @@ export default class Settings extends Component {
     this.hasError = this.hasError.bind(this)
 
     this.state = {
-      network: Storage.getLocalStorage(NETWORKS_ENUM.SELECTED_NETWORK) || DEFAULT_NETWORK,
+      network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK) || DEFAULT_NETWORK,
       collapsible_1: false,
       collapsible_2: false,
       collapsible_3: false,
@@ -99,8 +100,10 @@ export default class Settings extends Component {
 
   async handleNetworkChange(event){
     const selected_network = event.target.value;
+
       await this.handleChange(event)
-       Storage.setLocalStorage(SELECTED_NETWORK, selected_network)
+       Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, selected_network)
+    debugger;
   }
 
   async handleChange (event) {
@@ -249,26 +252,22 @@ export default class Settings extends Component {
 
   render () {
 
-    const styles = {
-      open: { background: ' #1c2846' }
-    }
-
     const transitions = ['height', 'opacity', 'background']
 
     return (
       <div id="my-extension-root-inner" className="OverlayMain"  data-testid="settings">
         <div className="OverlayMainInner">
           <div className='address_title'>
-            <h1>Settings</h1>
+            <h1 className="settings-header">Settings</h1>
             <img className='cross settings-close' src={getAssetURI('cross_icon.svg')}
                  onClick={goTo.bind(null, Account)}/>
           </div>
-          <hr></hr>
+          <hr className="settings-hr"></hr>
           <button className="settings_button" onClick={() => this.toggle(1)}>General</button>
           <Expand
             open={this.state.collapsible_1}
             duration={TRANSITION_DURATION_MS}
-            styles={styles}
+
             transitions={transitions}
           >
             <form className="settings_form">
@@ -276,8 +275,8 @@ export default class Settings extends Component {
                 <label htmlFor="conversion">Choose<br></br>Network</label>
                 <div className="select_container">
                   <select  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select" name="network">
-                    <option value={NETWORKS_ENUM.TESTNET}>{NETWORKS_ENUM.TESTNET}</option>
-                    <option value={NETWORKS_ENUM.MAINNET}>{NETWORKS_ENUM.MAINNET}</option>
+                    <option value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
+                    <option value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
                   </select>
                 </div>
               </div>
@@ -287,7 +286,7 @@ export default class Settings extends Component {
           <Expand
             open={this.state.collapsible_2}
             duration={TRANSITION_DURATION_MS}
-            styles={styles}
+
             transitions={transitions}
           >
             <form id="form">
@@ -326,7 +325,6 @@ export default class Settings extends Component {
           <Expand
             open={this.state.collapsible_3}
             duration={TRANSITION_DURATION_MS}
-            styles={styles}
             transitions={transitions}
           >
             <p className="settings_about">FET Wallet Version {VERSION}</p>

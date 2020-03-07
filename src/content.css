@@ -96,36 +96,66 @@ input::-webkit-inner-spin-button {
 }
 #my-extension-root-inner .hoverable-expanded-history-item {
  font-family: "sol-pro", sans-serif;
-    font-size: 13px;
 }
 
 #my-extension-root-inner .fet-balance {
-    font-size: 30px;
+    font-size: 27px;
     color: #00b6a0;
 }
 
+
+
+#my-extension-root-inner .absolute-burger {
+        position: absolute;
+    max-width: 23px;
+    right: 37px;
+    top: 41px;
+    bottom: 0;
+    cursor: pointer;
+    z-index:99999999999999;
+}
+
+
 #my-extension-root-inner .cross {
     position: absolute;
-    max-width: 17px;
+    max-width: 20px;
     right: 0;
     top: 0;
     bottom: 0;
     margin: auto;
-        cursor: pointer;
+    cursor: pointer;
 }
 
 #my-extension-root-inner .settings-close {
-    margin-top: 38px;
+    margin-top: 40px;
 }
+
+#my-extension-root-inner .settings-header {
+    margin-top: 28px;
+    font-family: "sol-pro", sans-serif;
+    margin-bottom: 15px;
+    font-weight: 500;
+    font-size: 35px;
+}
+
+#my-extension-root-inner .settings-hr {
+       background-color: #eee;
+    border: 0 none;
+    color: #eee;
+    height: 2px;
+    margin-top: 12px;
+    margin-bottom: 15px;
+}
+
+
+
 
 #my-extension-root-inner .cross:hover {
     cursor: pointer;
 }
 
 #my-extension-root-inner .qr {
-    /*    display: block;*/
-    /*position: absolute;*/
-    /*left: 0;*/
+      margin-top: 5px;
     width: 125px;
 }
 
@@ -137,6 +167,7 @@ input::-webkit-inner-spin-button {
 }
 
 #my-extension-root-inner .qr_caption {
+        padding-top: 10px;
   display: block;
     width: 260px;
     margin-left: 24px;
@@ -160,6 +191,30 @@ input::-webkit-inner-spin-button {
 #my-extension-root-inner .hoverable-expanded-history-item:hover {
     cursor: pointer;
 }
+
+
+#my-extension-root-inner .history-header-collapsed {
+       margin-top: 28px;
+    font-family: "sol-pro", sans-serif;
+    margin-bottom: 15px;
+    font-weight: 500;
+    transition-delay: 500ms;
+    transition: font 0.6s ease;
+}
+
+
+
+#my-extension-root-inner .history-header {
+    margin-top: 32px;
+    font-family: "sol-pro", sans-serif;
+    margin-bottom: 33px;
+    font-weight: 500;
+    font-size: 35px;
+       transition-delay: 500ms;
+    transition: font 0.6s ease;
+}
+
+
 
 /* Tooltip text */
 #my-extension-root-inner .tooltiptext {
@@ -214,7 +269,7 @@ input::-webkit-inner-spin-button {
 
 #my-extension-root-inner .account_address {
     display: inline;
-    font-size: 20px;
+    font-size: 21px;
 }
 
 #my-extension-root-inner .address_title {
@@ -224,11 +279,12 @@ input::-webkit-inner-spin-button {
     margin-top: 10px;
 }
 
-#my-extension-root-inner .settings_title {
+#my-extension-root-inner  .settings_title {
     position: relative;
     display: inline-block;
     width: 100%;
-    margin-top: 13px;
+    margin-top: 31px;
+    margin-bottom: 20px;
 }
 
 #my-extension-root-inner .address_title_inner {
@@ -470,17 +526,17 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .logout_button {
-     position: absolute;
+    position: absolute;
     bottom: 10px;
-    font-size: 21px;
-    line-height: 30px;
+    font-size: 26px;
+    line-height: 40px;
     padding-bottom: 1px;
     padding-top: 0px;
     font-weight: 700;
     width: 300px;
-    margin: 15px 0;
+    margin: 18px 0;
     border-width: 2px;
-     background-color: rgba(43, 181, 162, .25);
+    background-color: rgba(43, 181, 162, .25);
 }
 
 #my-extension-root-inner .toggle-history-button {
@@ -576,7 +632,7 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .download-button {
-    margin: 15px 0;
+    margin: 20px 0;
       background-color: rgba(43, 181, 162, .25);
 
 }
@@ -601,8 +657,8 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .plus {
-    width: 130px;
-    margin-top: 10px;
+        width: 130px;
+    margin-top: 20px;
     margin-bottom: 10px;
 }
 
@@ -614,8 +670,8 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .small-button-container {
-    margin-top: 5px;
-    margin-bottom: 5px;
+   margin-top: 10px;
+    margin-bottom: 15px;
     text-align: center;
 }
 
@@ -632,9 +688,16 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .history-hr {
-    margin-top: 5px;
-    margin-bottom: 0;
+    margin-top: 8px;
+    margin-bottom: 5px;
 }
+#my-extension-root-inner .account-dollar-balance {
+    display: block;
+    height: 16px;
+    font-size: 20px;
+    padding-top: 0px;
+}
+
 #my-extension-root-inner .empty-history {
     text-align:center;
 }
@@ -646,7 +709,6 @@ border-radius: 5px;
 /*    padding-top: 0px;*/
 /*    font-weight: 700;*/
 /*}*/
-
 
 #my-extension-root-inner .account-receive-button {
      display: inline;
@@ -692,7 +754,7 @@ border-radius: 5px;
 
 
 #my-extension-root-inner .history_item {
-    margin-top: 22px;
+    margin-top: 9px;
     border-style: solid;
     border-color: white;
     border-radius: 10px;
@@ -741,9 +803,12 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .history-container {
-   height: 525px;
+   height: 480px;
     overflow: auto;
-    margin-top: -25px;
+    margin-top: -5px;
+}
+#my-extension-root-inner .history-header-container {
+display:block;
 }
 
 #my-extension-root-inner .history-container-collapsed {
@@ -757,6 +822,10 @@ border-radius: 5px;
     margin-left: 45px;
     padding-top: 10px;
 }
+#my-extension-root-inner .mini-loader {
+        margin-left: 109px;
+    width: 75px;
+}
 
 #my-extension-root-inner .history_left_value {
     padding-left: 10px
@@ -765,7 +834,7 @@ border-radius: 5px;
 #my-extension-root-inner .account-toggle-history-button {
     font-size: 15px;
     width: 98%;
-    margin: 15px 0;
+    margin: 18px 0;
     height: 33px;
     margin-top: 23px;
      background-color: rgba(43, 181, 162, .25);
@@ -875,7 +944,7 @@ border-radius: 5px;
 }
 
 #my-extension-root-inner .send-title {
-    font-size: 24px;
+    font-size:  35px;
 }
 
 #my-extension-root-inner .send_form_row_password label {
@@ -898,7 +967,7 @@ border-radius: 5px;
     background-size: 290px 24px;
     background-position: 0px 8px;
     background-size: 100%;
-    margin-top: -15px;
+    margin-top: -13px;
 }
 
 #my-extension-root-inner .send_form_row_output_wrapper output {

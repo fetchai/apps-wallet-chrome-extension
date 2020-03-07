@@ -240,9 +240,6 @@ async handleChange (event) {
   }
 
   render () {
-    const styles = {
-      open: { background: ' #1c2846' }
-    }
 
     const transitions = ['height', 'opacity', 'background']
 
@@ -255,7 +252,6 @@ async handleChange (event) {
           <Expand
             open={this.state.collapsible_1}
             duration={TRANSITION_DURATION_MS}
-            styles={styles}
             transitions={transitions}
           >
 
@@ -293,7 +289,6 @@ async handleChange (event) {
           <Expand
             open={this.state.collapsible_2}
             duration={TRANSITION_DURATION_MS}
-            styles={styles}
             transitions={transitions}
           >
             <div className={"recover-warning-container"}>

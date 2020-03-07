@@ -28,9 +28,6 @@ export default class History extends Component {
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount
 
-    // for  development only.
-    Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, DEFAULT_NETWORK)
-
     debugger
     this.state = {
       address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
@@ -41,6 +38,7 @@ export default class History extends Component {
       results: []
     }
   }
+
 
   async componentDidMount () {
 
@@ -247,7 +245,7 @@ debugger;
       <InfiniteScroll
         loadMore={this.fetchAnotherPageOfHistory.bind(this)}
         hasMore={this.state.has_more_items}
-        loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon" className='loader'/>}
+        loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon" className={this.state.results.length > 0? "loader" : "mini-loader"}/>}
         useWindow={false}
       >
         {this.showItems()}{' '}

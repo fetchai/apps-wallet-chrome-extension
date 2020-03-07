@@ -18,10 +18,10 @@ class Main extends React.Component {
   render () {
     let opening_page
 // browser uses this.
-//     if (Authentication.isLoggedIn()) {
-       if (true) {
+  if (Authentication.isLoggedIn()) {
+//        if (true) {
       // eslint-disable-next-line react/jsx-no-undef
-      opening_page = <Terms/>
+      opening_page = <Account/>
     } else if (Authentication.hasSavedKey()) {
       opening_page = <Login/>
     } else {

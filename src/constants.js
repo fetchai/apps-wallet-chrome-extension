@@ -25,18 +25,23 @@ const TRANSACTION_HISTORY_CHECK_INTERVAL_MS = 5000
 const COPIED_MESSAGE = "Copied!";
 const COPY_ADDRESS_TO_CLIPBOARD_MESSAGE = "Copy Address to clipboard";
 
-// default time given to transition an element, usually the collapsables
 
+// default time given to transition an element, usually the collapsables
 const TRANSITION_DURATION_MS = 500
 
-// the names of the keys with which properties are saved in local storage
-const STORAGE_ENUM = Object.freeze({"LOGGED_IN": 'logged_in', "ADDRESS": 'address', "KEY_FILE": 'key_file',  "DOLLAR_PRICE": 'dollar_price', "SELECTED_NETWORK": 'selected_network'})
+
+// exhaustive list of keys with which properties are saved in local storage
+const STORAGE_ENUM = Object.freeze({"LOGGED_IN": 'logged_in',
+  "ADDRESS": 'address',
+  "KEY_FILE": 'key_file',
+  "DOLLAR_PRICE": 'dollar_price',
+  "SELECTED_NETWORK": 'selected_network'})
 
 // urls for block explorers (/accounts dir)
 const TESTNET_BLOCKEXPLORER = 'https://explore-testnet.fetch.ai/accounts/'
 const MAINNET_BLOCKEXPLORER = 'https://explore.fetch.ai/accounts/'
 
-// network names (must be same as names returned by bootstrap, other than localhost)
+// network names (must be same as strings returned by bootstraps list networks, other than localhost)
 const NETWORKS_ENUM = Object.freeze({"TESTNET": 'testnet', "MAINNET": 'mainnet', "LOCALHOST": 'localhost'})
 
 // default network to give to them use on create and recover.

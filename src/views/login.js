@@ -71,7 +71,7 @@ export default class Login extends Component {
                      placeholder="Password"
                      id="user_password" name="user_password" value={this.state.user_password}
                      onChange={this.handleChange.bind(this)} required></input>
-              <output type="TEXT" className={`login-output ${this.state.login_error ? 'red_error' : ''}`}
+              <output type="text" className={`login-output ${this.state.login_error ? 'red_error' : ''}`}
                       id="output">{this.state.output}</output>
               <button type="submit" className="button-free-standing login-submit-field"
                       onClick={this.handleSubmit}>Login
