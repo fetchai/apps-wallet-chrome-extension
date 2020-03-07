@@ -21,10 +21,13 @@ const historyURL = (address, page_number) => {
      if(!Object.values(NETWORKS_ENUM).some(el => el === network)) throw new Error("selected network must be within networks enum")
 
 let url
-     // url = ACCOUNT_HISTORY_URI.replace('NETWORKNAME', network).replace('ACCOUNTADDRESS', address)
-     // url = ACCOUNT_HISTORY_URI.replace('NETWORKNAME', network).replace('ACCOUNTADDRESS', "3bcm1Mi9mvvSCTwNdkz9tU2K6Yo2AdohYw2y2wimTJJ9eJZa1")
-    // return  url +  '?page=' + page_number;
-  return `https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/accounts/yYTKC4yswXzrf6iPwa4oebfWtawPGRFC1XPT5kRSv4Wimb745/transfers`
+  const toby_const = false;
+  if(!toby_const) {
+    url = ACCOUNT_HISTORY_URI.replace('NETWORKNAME', network).replace('ACCOUNTADDRESS', address)
+      .replace('NETWORKNAME', network).replace('ACCOUNTADDRESS', "3bcm1Mi9mvvSCTwNdkz9tU2K6Yo2AdohYw2y2wimTJJ9eJZa1")
+     return  url +  '?page=' + page_number;
+  } else
+     return `https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/accounts/yYTKC4yswXzrf6iPwa4oebfWtawPGRFC1XPT5kRSv4Wimb745/transfers`
   }
 
   export {historyURL}
