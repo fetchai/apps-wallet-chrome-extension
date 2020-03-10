@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { BN } from 'bn.js'
 import Expand from '../other_imported_modules/react-expand-animated-2/build/Expand'
 import {
-
   BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_URI, NETWORK_NAME, STORAGE_ENUM,
@@ -60,8 +59,12 @@ export default class Account extends Component {
    * so we get this variable from passing this function to History component.
    * @param history_first_page_count
    */
-  setHistoryCount (history_first_page_count) {
-    this.setState({ history_first_page_count: history_first_page_count })
+  setHistoryCount (history_first_page_count, page_number) {
+
+    if(page_number !== 1) return
+
+     this.setState({ history_first_page_count: history_first_page_count })
+
   }
 
   async componentDidMount () {
@@ -108,7 +111,7 @@ export default class Account extends Component {
 
    if(error || !data.percentage) return;
 
-   this.setState({ percentage: data.percentage*100 }, this.calculateDollarBalance)
+   this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
 
     Storage.setLocalStorage(STORAGE_ENUM.DOLLAR_PRICE, data.percentage)
   }
@@ -119,17 +122,14 @@ export default class Account extends Component {
       return
     }
 
-    // do it at ten times percentage and then convert back since BN only deals with integers to reduce rounding imprecision.
-    const percentage_times_ten = new BN(this.state.percentage*10)
     const balance = this.state.balance
-
     let dollar_balance
 
-    // if either is zero then we set it to 0 manually as the BN.js library doesn't allow multiplication by zero
-    if (percentage_times_ten.isZero() || balance.isZero()) {
-      dollar_balance = new BN(0)
+
+    if (this.state.percentage === 0 || balance.isZero()) {
+      dollar_balance = 0
     } else {
-      dollar_balance = balance.mul(percentage_times_ten).div(new BN(1000))
+      dollar_balance = balance.toNumber() * this.state.percentage
     }
     this.setState({ dollar_balance: dollar_balance })
   }
@@ -225,8 +225,8 @@ export default class Account extends Component {
                 {' '}
                 <br/>
                 <span className='account-dollar-balance'>
-                {BN.isBN(this.state.dollar_balance)  &&  !this.state.dollar_balance.isZero()?
-                    [this.state.dollar_balance.toNumber().toLocaleString(),
+                {(this.state.dollar_balance)  &&  this.state.dollar_balance !== 0 ?
+                    [this.state.dollar_balance.toFixed(2).toLocaleString(),
                     ' USD']
                   : ''}</span>
               </div>

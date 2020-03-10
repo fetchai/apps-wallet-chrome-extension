@@ -9,7 +9,6 @@ import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
 import Storage from '../services/storage'
-import { format } from '../utils/format'
 import { goTo } from '../services/router'
 import Settings from './settings'
 import Account from './account'
@@ -110,7 +109,7 @@ export default class Send extends Component {
 
   async balance () {
     const balance = await this.api.balance(this.state.address)
-    this.setState({ balance: new BN(balance).toString(16) })
+    this.setState({ balance: balance })
   }
 
   componentWillUnmount () {
@@ -173,16 +172,8 @@ export default class Send extends Component {
   calculateDollarDisplayAmount (amount, percentage) {
 
     if(amount === "")  return "";
-
     const total = amount * percentage
-    const dollar = Number.parseFloat(total)
-
-    //todo decide if to round to dollar (not cents) if high dollar amount egg > 1000
-    // if(dollar > 1000){
-    //   return Number.parseInt(total)
-    // }
-
-    return Number.parseFloat(total).toFixed(2)
+    return total.toFixed(2)
   }
 
   /**
@@ -190,18 +181,20 @@ export default class Send extends Component {
    *
    * @param event
    */
-  handleAmountChange (event) {
-    if (this.state.percentage === null) return this.setState({ dollar: null, amount: event.target.value })
+  async handleAmountChange (event) {
+    const amount = event.target.value;
+
+    if (this.state.percentage === null) return this.setState({ dollar: null, amount: event.target.value, amount_error_message: "", amount_error: false })
 
     // we don't wait for sufficient funds method by choice.
-    if(this.state.balance !== null) this.sufficientFunds()
+    await this.sufficientFunds(amount)
 
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
-    if (event.target.value == 0) return this.setState({ dollar: 0, amount: 0 })
+    if (parseFloat(amount) === 0) return this.setState({ dollar: 0, amount: 0 })
 
     this.setState({
-      dollar: this.calculateDollarDisplayAmount(event.target.value, this.state.percentage),
-      amount: event.target.value
+      dollar: this.calculateDollarDisplayAmount(amount, this.state.percentage),
+      amount: amount
     })
   }
 
@@ -236,7 +229,9 @@ export default class Send extends Component {
     if (!validAddress(this.state.to_address)) {
       this.setState({ address_error: true })
       error = true
-   } else if (!(await this.sufficientFunds())) {
+   }
+
+    if (this.state.amount !== null && !(await this.sufficientFunds(this.state.amount))) {
       error = true
     }
 
@@ -244,7 +239,6 @@ export default class Send extends Component {
             this.setState({ password_error: true })
                  error = true
     } else if (!(await Authentication.correctPassword(this.state.password))) {
-      debugger
       this.setState({ password_error: true })
       error = true
     }
@@ -326,10 +320,11 @@ export default class Send extends Component {
     let error = false
     const txs = await this.api.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
     if (error | txs === false) {
-      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE })
+      debugger
+      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE + "todo delete" })
       return;
     }
-          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE }))
+          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE + "todo delete twice" }))
   }
 
   /**
@@ -338,8 +333,7 @@ export default class Send extends Component {
    *
    * @returns {Promise<boolean>}
    */
-  async sufficientFunds () {
-
+  async sufficientFunds (amount) {
     // this suggests a bad network request
     if (this.state.balance === false) {
       this.setState({ amount_error_message: NETWORK_ERROR_MESSAGE, amount_error: true })
@@ -359,11 +353,13 @@ export default class Send extends Component {
      * fee
      *
      */
-    if (this.state.balance !== false && new BN(this.state.balance, 16).lt(new BN(new BN(this.state.amount).add(new BN(1))))) {
-      this.setState({ amount_error_message: `Balance: ${this.state.balance} : Insufficient funds` , amount_error: true})
+    debugger;
+    if (BN.isBN(this.state.balance) && this.state.balance.lt(new BN(new BN(amount).add(new BN(1))))) {
+      this.setState({ amount_error_message: INSUFFICIENT_FUNDS_ERROR_MESSAGE, amount_error: true})
       return false
     }
 
+     this.setState({ amount_error_message: "" , amount_error: false})
     return true
   }
 
@@ -371,7 +367,7 @@ export default class Send extends Component {
     return (
       <div id="my-extension-root-inner" className="OverlayMain"  data-testid="send">
         <div className="OverlayMainInner">
-          <div className='settings_title'>
+          <div className='send_title'>
             <div className='address_title_inner'>
              <h3 className="send-title">Send</h3>
             </div>
@@ -400,7 +396,7 @@ export default class Send extends Component {
                 <div className="amount_stack_wrapper">
                   <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number" placeholder="0 FET" name="amount"
                          data-testid="send_amount"
-                         id="amount" onChange={(event) => { debugger; this.handleAmountChange(event, this.sufficientFunds.bind(null, true));}}
+                         id="amount" onChange={this.handleAmountChange}
                          value={this.state.amount}></input>
                   <br></br>
                   <output  className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>

@@ -13,7 +13,7 @@ function proxyToBackground (input, init) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ input, init }, messageResponse => {
       const [response, ] = messageResponse
-      if (response === null) {
+      if (status === null ) {
         reject(null)
       } else {
         const body = response.body ? new Blob([response.body]) : undefined

@@ -43,7 +43,7 @@ next() {
           <h1 className="terms-header">Terms & Conditions</h1>
           <hr></hr>
           <div className={"terms-text custom-scrollbar"}>
-            <b>This web application is provided with no warranty. </b>Whilst every effort has been made to ensure its reliability, security and performance, you use it at your own risk. <u>Fetch.AI takes no responsibility for any loss of tokens that occur as a result of using this application.</u> In particular:
+            <b>This web application is provided with no warranty. </b>Whilst every effort has been made to ensure its reliability, security and performance, you use it at your own risk. Fetch.AI takes no responsibility for any loss of tokens that occur as a result of using this application. In particular:
 <ul>
  <li>
 <b>You are responsible for securely backing up your private keys:  </b>we cannot recover any tokens lost as a result of their loss.

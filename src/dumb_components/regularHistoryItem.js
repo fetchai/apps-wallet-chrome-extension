@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { format } from '../utils/format'
 import { toLocaleDateString } from '../utils/toLocaleDateString'
+import { toNonCanonicalFet } from '../utils/toNonCanonicalFet'
 
 /**
  * Represents a item in history as is shown to the user in the accounts and history (infinite scroll) section.
@@ -38,7 +39,7 @@ export default class RegularHistoryItem extends Component {
       <div className={`history_item history-pointer ${this.state.clicked ? 'hide' : ''}`}
            onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}><span
         className="history_left_value">{format(this.state.digest, 10)}</span><span
-        className={`history_right_value ${this.state.amount.isNeg()? "red" : "green"}`}>{this.state.amount.isNeg()? "-" : "+"}{this.state.amount.toString(10)}</span><br></br>
+        className={`history_right_value ${this.state.amount.isNeg()? "red" : "green"}`}>{this.state.amount.isNeg()? "" : "+"}{toNonCanonicalFet(this.state.amount).toString(10)}</span><br></br>
         <span className="history_left_value light">{this.state.status}</span><span
           className="history_right_value light">{toLocaleDateString(this.state.created_date)}</span>
       </div>

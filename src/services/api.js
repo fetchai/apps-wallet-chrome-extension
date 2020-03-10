@@ -3,8 +3,9 @@ import { BOOTSTRAP_REQUEST_URI, DEFAULT_FEE_LIMIT } from '../constants'
 import { Transaction } from 'fetchai-ledger-api/dist/fetchai/ledger'
 import { encode_transaction } from 'fetchai-ledger-api/dist/fetchai/ledger/serialization'
 import { BN } from 'bn.js'
-import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
+import { Address, Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 import { Bootstrap } from 'fetchai-ledger-api/dist/fetchai/ledger/api/bootstrap'
+import { toNonCanonicalFet } from '../utils/toNonCanonicalFet'
 
 /**
  *
@@ -45,7 +46,6 @@ export class API {
   static getBootstrapAddress (network) {
     const promise = new Promise(async (resolve, reject) => {
       const response = await fetchResource(BOOTSTRAP_REQUEST_URI + network).catch(() => reject(false))
-      debugger;
       if (typeof response === "undefined" || response.status < 200 || response.status > 300) return reject(false)
       const data = await response.json().catch(() => reject(false))
       resolve(data[0].address)
@@ -54,7 +54,7 @@ export class API {
   }
 
   /**
-   * Gets FEt Balance of account, or false if error.
+   * Gets FEt Balance of account, or false if error. Not in canonical fet.
    *
    * @param address
    * @returns {Promise<API.balance|TokenApi.balance|Account.balance|((address: AddressLike) => Promise<>)|*|null|boolean>}
@@ -77,8 +77,11 @@ export class API {
       return false
 
     const data = await response.json()
-    return data.balance
+
+    return toNonCanonicalFet(data.balance)
   }
+
+
 
   /**
    * Gets block number.
@@ -135,7 +138,6 @@ export class API {
   }
 
   async transfer (from, to, amount) {
-
     const tx = await this.buildTransferTransaction(from, to, amount)
     if (tx === false) return false
 
@@ -143,7 +145,7 @@ export class API {
 
     const body = {
       method: 'post',
-      headers: { 'Content-Type': 'application/json' },
+       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ver: '1.2',
         data: encoded_tx.toString('base64')
@@ -185,7 +187,7 @@ export class API {
     }), 'ascii')
 
     tx.data(encoded)
-
+     debugger
     return tx
   }
 }

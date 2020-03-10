@@ -102,8 +102,9 @@ export default class Settings extends Component {
     const selected_network = event.target.value;
 
       await this.handleChange(event)
+      // clear cached values on window object
+    delete  window.fetchai_history
        Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, selected_network)
-    debugger;
   }
 
   async handleChange (event) {
@@ -275,8 +276,8 @@ export default class Settings extends Component {
                 <label htmlFor="conversion">Choose<br></br>Network</label>
                 <div className="select_container">
                   <select  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select" name="network">
-                    <option value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
-                    <option value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
+                    <option selected={this.state.network == NETWORKS_ENUM.TESTNET} value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
+                    <option selected={this.state.network == NETWORKS_ENUM.MAINNET} value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
                   </select>
                 </div>
               </div>

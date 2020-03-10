@@ -7,7 +7,6 @@ import { fetchResource } from '../utils/fetchRescource'
 import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
 import { getElementById } from '../utils/getElementById'
-import { Address, Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 import { blockExplorerURL } from '../utils/blockExplorerURL'
 import { historyURL } from '../utils/historyURL'
 import {BN} from 'bn.js'
@@ -24,11 +23,12 @@ export default class History extends Component {
     this.toggleClicked = this.toggleClicked.bind(this)
     this.hideAllLargeHistoryItems = this.hideAllLargeHistoryItems.bind(this)
     this.fetchAnotherPageOfHistory = this.fetchAnotherPageOfHistory.bind(this)
+    this.filterResults = this.filterResults.bind(this)
+    this.merge_without_duplicates = this.merge_without_duplicates.bind(this)
 
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount
 
-    debugger
     this.state = {
       address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
       blockexplorer_url: blockExplorerURL(),
@@ -47,7 +47,7 @@ export default class History extends Component {
       this.setHistoryCount(window.fetchai_history.length)
     }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
-     await this.fetchAnotherPageOfHistory(true)
+     //await this.fetchAnotherPageOfHistory(true)
   }
 
   unclick (element) {
@@ -99,7 +99,6 @@ export default class History extends Component {
     const element = event.target
     const DESIRED_TOP = 342
     const bounding_client_rect = element.getBoundingClientRect()
-// 171
     const DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM = 120
     // we have  a different calculation if one above it is already open.
     if (already_open_above && (bounding_client_rect.top > (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM))) {
@@ -121,11 +120,8 @@ export default class History extends Component {
    * @returns {Promise<void>}
    */
   async fetchAnotherPageOfHistory (retry = false) {
-   const address =  new Address(new Entity()).toString()
-    console.log("address is : " + address)
     const url = historyURL(this.state.address, this.state.current_page)
-    debugger
-    fetchResource(url).then((response) => this.handlePageFetchResponse(response, retry))
+    fetchResource(url).then((response) => { debugger; this.handlePageFetchResponse(response, retry)})
   }
 
   /**
@@ -135,49 +131,74 @@ export default class History extends Component {
    * @param retry
    */
   handlePageFetchResponse (response, retry) {
-    debugger
-    if (response.status !== 200 && response.status !== 500 && response.status !== 404) {
+
+    // 200 and 404 are expected returns
+    if (response.status !== 200 && response.status !== 404 && response.status !== 500) {
       if (retry === true) {
-        // recursive set_timeout loop if we want to keep retrying. This is used on initialization to try get some data if network dodgy.
-        // todo refactor since since not unmountable, probably a quasi leak
+        this.setHistoryCount(0, this.state.current_page)
         setTimeout(this.fetchAnotherPageOfHistory.bind(null, retry), 1000)
       }
       return
     }
-
+   debugger;
     // whilst api is buggy assuming 404 and 500 means no results
 
     if(response.status == 500 || response.status == 404){
-         this.setHistoryCount(0)
-      debugger
-              this.setState({ has_more_items: false })
+         this.setHistoryCount(0, this.state.current_page)
+          const next_page = this.state.current_page + 1
+         this.setState({ has_more_items: false, current_page: next_page  })
         return
     }
 
     response.json().then((result) => {
 
-      debugger
-
-      // check for having gotten past last page page and terminate here if true
-      if (response.status === 500 || (typeof result.detail !== 'undefined' && result.detail === 'Invalid page.')) {
-        this.setState({ has_more_items: false })
-              debugger
-
-         this.setHistoryCount(0)
-        return
-      }
-debugger;
       // reduce memory by only storing needed properties from api result
-      const next = result.results.map(el => {
+     const next = this.filterResults(result)
+
+      let updated_results
+      // lets cache first page on window for quicker remounts of component.
+      if (this.state.current_page === 1) {
+        //todo maybe swap to iframe window from global window
+        window.fetchai_history = next
+        this.setHistoryCount(next.length, this.state.current_page)
+      }
+        updated_results = this.merge_without_duplicates(this.state.results, next)
+
+
+     if(this.state.current_page >1 ) debugger;
+
+      const next_page = this.state.current_page + 1
+      this.setState({ results: updated_results, current_page: next_page })
+    })
+  }
+
+  /**
+   * merge but do not put in ones with hashes already in the list.
+   *
+   * @param results1
+   * @param results2
+   */
+  merge_without_duplicates(results1, results2){
+    const res = results1;
+
+    results2.forEach((el) => {
+      if(!results1.some(el2 => el2.id === el.id)) res.push(el)
+    })
+
+    return res;
+  }
+
+  filterResults(result){
+    return result.results.map(el => {
         let amount = new BN(el.amount);
 
         // we decide here if amount is positive or negative
-        debugger;
         if(el.from_address === this.state.address){
           amount = amount.neg()
         }
 
         return {
+          id: el.id,
           status: el.status,
           digest: el.tx,
           from_address: el.from_address,
@@ -188,21 +209,6 @@ debugger;
           clicked: false
         }
       })
-      let updated_results
-      // lets cache first page on window for quicker remounts of component.
-      if (this.state.current_page === 1) {
-        //todo maybe swap to iframe window from global window
-        window.fetchai_history = next
-        updated_results = next
-        this.setHistoryCount(next.length)
-      } else {
-        updated_results = this.state.results.concat(next)
-      }
-
-      const next_page = this.state.current_page + 1
-
-      this.setState({ results: updated_results, current_page: next_page })
-    })
   }
 
   /**

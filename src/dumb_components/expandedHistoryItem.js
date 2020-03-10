@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { toLocaleDateString } from '../utils/toLocaleDateString'
 import { format } from '../utils/format'
 import { getElementById } from '../utils/getElementById'
+import { toNonCanonicalFet } from '../utils/toNonCanonicalFet'
 
 /**
  * When clicked a different history item is shown, with different extra data
@@ -73,9 +74,9 @@ export default class ExpandedHistoryItem extends Component {
                   className={`tooltiptext tooltiptext-expanded-history-item-positioning ${(this.state.css !== null)? this.state.css : "" }`}>View on BlockExplorer</span>
          </li>
         {this.toOrFromListItem()}
-        <li><span>Fee: </span>{this.state.fee}</li>
+        {/*<li><span>Fee: </span>{this.state.fee}</li>*/}
         <li><span>Time: </span>{toLocaleDateString(this.state.created_date)}</li>
-        <li><span>Amount: </span><span  className={this.state.amount.isNeg()? "red" : "green"}>{this.state.amount.isNeg()? "-" : "+"}{this.state.amount.toString(10)}</span><span className={'expanded-history-item-status'}> {this.state.status}</span></li>
+        <li><span>Amount: </span><span  className={this.state.amount.isNeg()? "red" : "green"}>{this.state.amount.isNeg()? "" : "+"}{toNonCanonicalFet(this.state.amount).toString(10)}</span><span className={'expanded-history-item-status'}> {this.state.status}</span></li>
       </ul>
     </div>)
   }

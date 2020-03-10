@@ -12,6 +12,7 @@ import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
 import Initial from './initial'
 import Terms from './terms'
+import { getAssetURI } from '../utils/getAsset'
 
 export default class Recover extends Component {
 
@@ -27,7 +28,7 @@ export default class Recover extends Component {
     this.hideConfirmation = this.hideConfirmation.bind(this)
     this.wipeFormErrors = this.wipeFormErrors.bind(this)
     this.hasError = this.hasError.bind(this)
-    this.triggerFileUpload = this.triggerFileUpload.bind(this)
+    this.openUploadFile = this.openUploadFile.bind(this)
 
     this.state = {
       file: null,
@@ -61,6 +62,10 @@ export default class Recover extends Component {
     this.state.address_error)
   }
 
+  async openUploadFile(event){
+    event.preventDefault()
+    getElementById("file").click()
+  }
 
   async read_file (file) {
     return new Promise((resolve, reject) => {
@@ -80,11 +85,6 @@ async handleChange (event) {
     change[event.target.name] = event.target.value
     this.setState(change)
     await this.wipeFormErrors()
-  }
-
-
-  triggerFileUpload(){
-    const file = getElementById('file').click();
   }
 
  async handleFileChange (event) {
@@ -109,7 +109,7 @@ async handleChange (event) {
       return false
     } else if (!Entity._strong_password(this.state.password)) {
       this.setState({
-        error_message: 'Incorrect Password: Password too weak',
+        error_message: 'Incorrect Password: Password too weak (14 chars including letter, number, special character and uppercase letter ',
         password_error: true
       })
       return false
@@ -119,7 +119,7 @@ async handleChange (event) {
 
   /**
    * Check if file exists in state, and if it is valid JSON and returns Promise<boolean>. Side-effect is setting appropriate
-   * form error message.
+   * form error message and if not valid we delete the file from state also.
    *
    * @returns {Promise<boolean>}
    */
@@ -128,7 +128,9 @@ async handleChange (event) {
     if(this.state.file === "" || this.state.file === null){
       this.setState({
         error_message: 'File required',
-        file_error: true
+        file_error: true,
+            file: "",
+      file_name: ""
       })
       return false
     }
@@ -138,7 +140,9 @@ async handleChange (event) {
     if (file_str === null) {
       this.setState({
         error_message: 'Unable to read file',
-        file_error: true
+        file_error: true,
+            file: "",
+      file_name: ""
       })
       return false
     }
@@ -146,7 +150,9 @@ async handleChange (event) {
     if (!validJSONstring(file_str)) {
       this.setState({
         error_message: 'Incorrect file type',
-        file_error: true
+        file_error: true,
+            file: "",
+      file_name: ""
       })
       return false
     }
@@ -186,6 +192,7 @@ async handleChange (event) {
     let error_flag = false, entity, file_str
 
     if (!this.validPassword()) error_flag = true
+    debugger
     if (!(await this.validFile())) error_flag = true
     else {
       file_str = await this.read_file(this.state.file)
@@ -257,7 +264,9 @@ async handleChange (event) {
 
             <form id="form" className={'recover-form'}>
               <legend className="recover-legend">Upload File with Password</legend>
-              <input label='file' className={`recover-input ${this.state.file_error ? 'red_error red-lock-icon' : ''}`}
+              <button className={`recover-input   ${this.state.file_error ? 'red-upload-button' : 'upload-button'}`}
+                    onClick={this.openUploadFile}>{this.state.file_name === "" ? "" : "selected"}</button>
+              <input label='file' className="hide"
                      id="file" type="file" onChange={this.handleFileChange.bind(this)}></input>
               <input type="password"
                      className={`recover-input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`}

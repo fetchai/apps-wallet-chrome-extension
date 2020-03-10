@@ -67,58 +67,58 @@ describe.skip(':Initial', () => {
     cleanup();
     clear()
   })
+
+  test('Create renders without crashing', () => {
+    const div = document.createElement('div')
+    ReactDOM.render(<Create/>, div)
+    ReactDOM.unmountComponentAtNode(div)
+  })
+
+  test('initial snapshot test', () => {
+    const component = renderer.create(<Create/>);
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  })
+
+  test('test empty password field outputs password required error message', () => {
+    const { getByTestId } = render(<Create/>);
+   form_write_value(getByTestId, 'create_password', "")
+   click_button(getByTestId, 'create_submit')
+    expect(getByTestId('create_output')).toHaveTextContent(PASSWORD_REQUIRED_ERROR_MESSAGE)
+  })
+
+  test('test weak password shows weak password error message', () => {
+    const { getByTestId } = render(<Create/>);
+   form_write_value(getByTestId, 'create_password', WEAK_PASSWORD)
+   click_button(getByTestId, 'create_submit')
+    expect(getByTestId('create_output')).toHaveTextContent(WEAK_PASSWORD_ERROR_MESSAGE)
+  })
+
+  test('test not matching passwords outputs not matching passwords error message', () => {
+    const { getByTestId } = render(<Create/>);
+   form_write_value(getByTestId, 'create_password', STRONG_PASSWORD )
+   form_write_value(getByTestId, 'create_password_confirm',STRONG_PASSWORD_2 )
+   click_button(getByTestId, 'create_submit')
+    expect(getByTestId('create_output')).toHaveTextContent(PASSWORDS_DONT_MATCH_ERROR_MESSAGE)
+  })
+
+  // test('test clicking on form with error message removes class responsible for red highlighting', () => {
   //
-  // test('Create renders without crashing', () => {
-  //   const div = document.createElement('div')
-  //   ReactDOM.render(<Create/>, div)
-  //   ReactDOM.unmountComponentAtNode(div)
   // })
-  //
-  // test('initial snapshot test', () => {
-  //   const component = renderer.create(<Create/>);
-  //   let tree = component.toJSON();
-  //   expect(tree).toMatchSnapshot();
-  // })
-  //
-  // test('test empty password field outputs password required error message', () => {
-  //   const { getByTestId } = render(<Create/>);
-  //  form_write_value(getByTestId, 'create_password', "")
-  //  click_button(getByTestId, 'create_submit')
-  //   expect(getByTestId('create_output')).toHaveTextContent(PASSWORD_REQUIRED_ERROR_MESSAGE)
-  // })
-  //
-  // test('test weak password shows weak password error message', () => {
-  //   const { getByTestId } = render(<Create/>);
-  //  form_write_value(getByTestId, 'create_password', WEAK_PASSWORD)
-  //  click_button(getByTestId, 'create_submit')
-  //   expect(getByTestId('create_output')).toHaveTextContent(WEAK_PASSWORD_ERROR_MESSAGE)
-  // })
-  //
-  // test('test not matching passwords outputs not matching passwords error message', () => {
-  //   const { getByTestId } = render(<Create/>);
-  //  form_write_value(getByTestId, 'create_password', STRONG_PASSWORD )
-  //  form_write_value(getByTestId, 'create_password_confirm',STRONG_PASSWORD_2 )
-  //  click_button(getByTestId, 'create_submit')
-  //   expect(getByTestId('create_output')).toHaveTextContent(PASSWORDS_DONT_MATCH_ERROR_MESSAGE)
-  // })
-  //
-  // // test('test clicking on form with error message removes class responsible for red highlighting', () => {
-  // //
-  // // })
-  //
-  // test('test multiple incorrect form submissions overwrites form error message', () => {
-  //   const { getByTestId } = render(<Create/>);
-  //   // initially we give it a not matching one
-  //  form_write_value(getByTestId, 'create_password', STRONG_PASSWORD )
-  //  form_write_value(getByTestId, 'create_password_confirm',STRONG_PASSWORD_2 )
-  //  click_button(getByTestId, 'create_submit')
-  //   expect(getByTestId('create_output')).toHaveTextContent(PASSWORDS_DONT_MATCH_ERROR_MESSAGE)
-  //
-  //   // then secondly we give no password
-  //  form_write_value(getByTestId, 'create_password', "")
-  //  click_button(getByTestId, 'create_submit')
-  //   expect(getByTestId('create_output')).toHaveTextContent(PASSWORD_REQUIRED_ERROR_MESSAGE)
-  // })
+
+  test('test multiple incorrect form submissions overwrites form error message', () => {
+    const { getByTestId } = render(<Create/>);
+    // initially we give it a not matching one
+   form_write_value(getByTestId, 'create_password', STRONG_PASSWORD )
+   form_write_value(getByTestId, 'create_password_confirm',STRONG_PASSWORD_2 )
+   click_button(getByTestId, 'create_submit')
+    expect(getByTestId('create_output')).toHaveTextContent(PASSWORDS_DONT_MATCH_ERROR_MESSAGE)
+
+    // then secondly we give no password
+   form_write_value(getByTestId, 'create_password', "")
+   click_button(getByTestId, 'create_submit')
+    expect(getByTestId('create_output')).toHaveTextContent(PASSWORD_REQUIRED_ERROR_MESSAGE)
+  })
 
   test('correctly filled in form induces correct local storage updates', async () => {
 
@@ -164,8 +164,6 @@ const mock_bootstrap = jest.fn();
      // tests the account component is now mounted by router.
     const app = getAllByTestId('account')
     expect(app.length).toBe(1);
-debugger
-    debugger
   })
 
 })
