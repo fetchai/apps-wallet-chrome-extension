@@ -1,10 +1,11 @@
 import { BN } from "bn.js"
+// below const is 10000000000
 import { CANONICAL_DIFFERENCE } from '../constants'
 
 const numberOfSignificantDecimalPlaces = n => ((n % 1) != 0)? n.toString().split(".")[1].length : 0;
 
 /**
- * Converts regular fet (allowing for up to ten DP to canonical fet
+ * Converts regular fet (allowing for up to ten DP) to canonical fet
  *
  * it divides by
  *
@@ -12,27 +13,22 @@ const numberOfSignificantDecimalPlaces = n => ((n % 1) != 0)? n.toString().split
  * @returns {BN}
  */
 const toCanonicalFet = (fet) => {
-  debugger;
   if (fet === 0) return new BN(0)
-  if(Number.isInteger(fet)) return new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
-  const dps = numberOfSignificantDecimalPlaces(fet)
 
+  if(Number.isInteger(fet)) {
+    if(!Number.isSafeInteger(fet)) throw new error("unsafe integer" + fet)
+    return new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
+  }
+  const dps = numberOfSignificantDecimalPlaces(fet)
   if(dps > 10) throw new error("Fet cannot have more than 10 decimal places")
 
-  // just truncates the dps so take integer part direct from source
- const integer_part = new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
+  //Just truncates the dps so take integer part direct from source
+  const integer_part = new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
 
-  // const multiplier = CANONICAL_DIFFERENCE.toString().length -1 - dps
-
+  // convert remainder to number, padded to length of 10
   const remainder = (fet % 1).toFixed(10).replace(".", "");
-  debugger;
-  const remainder_part= new BN(remainder)
-  const x =  integer_part.add(remainder_part)
+  return integer_part.add(new BN(remainder))
 
-
-  const y = x.toString()
-  debugger;
-  return x;
 }
 
 export { toCanonicalFet }

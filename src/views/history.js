@@ -26,6 +26,7 @@ export default class History extends Component {
     this.fetchAnotherPageOfHistory = this.fetchAnotherPageOfHistory.bind(this)
     this.filterResults = this.filterResults.bind(this)
     this.merge_without_duplicates = this.merge_without_duplicates.bind(this)
+    this.fetchFirstPage = this.fetchFirstPage.bind(this)
 
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount
@@ -58,8 +59,9 @@ export default class History extends Component {
       this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL("transactions/") })
       this.setHistoryCount(window.fetchai_history.length)
     }
-    // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
-     //await this.fetchAnotherPageOfHistory(true)
+
+    // poll the first page continually checking for new transactions.
+    setInterval(this.fetchFirstPage, 3000)
   }
 
   unclick (element) {
@@ -127,6 +129,19 @@ export default class History extends Component {
     }
   }
 
+
+    /**
+   * This fetches a page of history and adds relavent properties to results array of state.
+   * If we recieve invalid page (result.detail "Invalid page") then we return early and set has_more_items to false to
+   * quit loading more. If response is not 200 we just return unless flag is passed, in which case we loop until we get a http 200 we can parse.
+   *
+   * @returns {Promise<void>}
+   */
+  async fetchFirstPage () {
+    const url = historyURL(this.state.address,   1)
+    fetchResource(url).then((response) => { this.handlePageFetchResponse(response)})
+  }
+
   /**
    * This fetches a page of history and adds relavent properties to results array of state.
    * If we recieve invalid page (result.detail "Invalid page") then we return early and set has_more_items to false to
@@ -159,10 +174,6 @@ export default class History extends Component {
    ;
     // whilst api is buggy assuming 404 and 500 means no results
 
-
-
-
-
     if(response.status == 500 || response.status == 404){
          this.setHistoryCount(0, loaded_page_number)
          this.setState({ has_more_items: false })
@@ -181,16 +192,16 @@ export default class History extends Component {
         window.fetchai_history = next
         this.setHistoryCount(next.length, loaded_page_number)
       }
+
         updated_results = this.merge_without_duplicates(this.state.results, next)
 
 
 
-     if(loaded_page_number ===2 ) debugger;
-
-     // we just set current page as last selected page.
-
 const loaded_page_numbers  =  this.state.loaded_page_numbers
-      loaded_page_numbers.push(loaded_page_number)
+
+      if(!loaded_page_numbers.includes(loaded_page_number)) loaded_page_numbers.push(loaded_page_number)
+
+
       this.setState({ results: updated_results, loaded_page_numbers: loaded_page_numbers })
     })
   }
@@ -226,9 +237,16 @@ const loaded_page_numbers  =  this.state.loaded_page_numbers
           amount = amount.neg()
         }
 
+        let status;
+        if(amount === 0){
+          status = "unknown"
+        } else {
+          status = "Executed"
+        }
+
         return {
           id: el.id,
-          status: el.status,
+          status: status,
           digest: el.tx,
           from_address: el.from_address,
           to_address: el.to_address,

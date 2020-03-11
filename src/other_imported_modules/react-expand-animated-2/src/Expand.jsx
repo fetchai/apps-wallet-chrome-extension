@@ -43,7 +43,7 @@ class Expand extends Component {
   getClientHeight = () => this.refWrapper.scrollHeight;
 
   getClosedHeight = () => {
-    return this.props.partial ?  { height: '105px', opacity: 1, overflow: 'hidden' } :
+    return this.props.partial ?  { height: '100px', opacity: 1, overflow: 'hidden' } :
        { height: 0, opacity: 0, overflow: 'hidden' } ;
   }
 

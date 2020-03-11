@@ -39,8 +39,8 @@ export default class ExpandedHistoryItem extends Component {
    *sreturns  li  as either to or from depening on if we are recieving or sending.
    */
   toOrFromListItem(){
-    if(this.state.to_address === this.state.address) return <li><span>From: </span>{format(this.state.from_address, 9)}</li>
-    else return  <li><span>To: </span>{format(this.state.to_address, 9)}</li>
+    if(this.state.to_address === this.state.address) return <li><span>From: </span> <span className="history-item-blue">{format(this.state.from_address, 9)} </span></li>
+    else return  <li><span>To: </span><span className="history-item-blue">{format(this.state.to_address, 9)}</span></li>
 }
 
 
@@ -78,7 +78,7 @@ viewOnBlockExplorer(){
                   className="hoverable-expanded-history-item"
                 onMouseEnter={this.setToolTipHeight}
               onClick={this.viewOnBlockExplorer}>
-               Hash: {format(this.state.digest, 10)}
+          Hash: <span className="history-item-blue">{format(this.state.digest, 10)}</span>
               </span>
                 <span
                   id={`tooltip-${this.state.index}`}
@@ -86,7 +86,7 @@ viewOnBlockExplorer(){
          </li>
         {this.toOrFromListItem()}
         <li><span>Time: </span>{toLocaleDateString(this.state.created_date)}</li>
-        <li><span>Amount: </span><span  className={this.state.amount.isNeg()? "red" : "green"}>{toNonCanonicalFetDisplay(this.state.amount)}</span><span className={'expanded-history-item-status'}> N/A</span></li>
+        <li><span>Amount: </span><span  className={this.state.amount.isNeg()? "red" : "green"}>{toNonCanonicalFetDisplay(this.state.amount)}{" FET"}</span><span className={'expanded-history-item-status'}>{this.state.status}</span></li>
       </ul>
     </div>)
   }

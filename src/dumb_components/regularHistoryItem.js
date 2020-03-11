@@ -66,9 +66,9 @@ export default class RegularHistoryItem extends Component {
                   id={`regular-tooltip-${this.state.index}`}
                   className={`tooltiptext tooltiptext-expanded-history-item-positioning`}>View on BlockExplorer</span>
         <span
-        className={`history_right_value ${this.state.amount.isNeg()? "red" : "green"}`}>{toNonCanonicalFetDisplay(this.state.amount)}</span><br></br>
-        <span className="history_left_value light">{this.state.status}</span><span
-          className="history_right_value light">{toLocaleDateString(this.state.created_date)}</span>
+        className={`history_right_value ${this.state.amount.isNeg()? "red" : "green"}`}>{toNonCanonicalFetDisplay(this.state.amount)}{" FET"}</span><br></br>
+        <span className="history_left_value light history-item-grey">{this.state.status}</span><span
+          className="history_right_value light history-date-item history-item-grey">{toLocaleDateString(this.state.created_date)}</span>
       </div>
     )
   }
