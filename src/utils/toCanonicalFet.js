@@ -3,7 +3,6 @@ import { CANONICAL_DIFFERENCE } from '../constants'
 
 const numberOfSignificantDecimalPlaces = n => ((n % 1) != 0)? n.toString().split(".")[1].length : 0;
 
-
 /**
  * Converts regular fet (allowing for up to ten DP to canonical fet
  *
@@ -13,8 +12,9 @@ const numberOfSignificantDecimalPlaces = n => ((n % 1) != 0)? n.toString().split
  * @returns {BN}
  */
 const toCanonicalFet = (fet) => {
+  debugger;
   if (fet === 0) return new BN(0)
-  if(Number.isInteger) return new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
+  if(Number.isInteger(fet)) return new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
   const dps = numberOfSignificantDecimalPlaces(fet)
 
   if(dps > 10) throw new error("Fet cannot have more than 10 decimal places")
@@ -22,10 +22,11 @@ const toCanonicalFet = (fet) => {
   // just truncates the dps so take integer part direct from source
  const integer_part = new BN(fet).mul(new BN(CANONICAL_DIFFERENCE))
 
-  const multiplier = CANONICAL_DIFFERENCE.toString().length - dps
+  // const multiplier = CANONICAL_DIFFERENCE.toString().length -1 - dps
 
-  const remainder = (fet % 1).toFixed(10)
-  const remainder_part= new BN(remainder).mul(new BN("0".repeat(multiplier)))
+  const remainder = (fet % 1).toFixed(10).replace(".", "");
+  debugger;
+  const remainder_part= new BN(remainder)
   const x =  integer_part.add(remainder_part)
 
 

@@ -10,6 +10,7 @@ const toDecimalScientificNotationDisplay = (amount, sign_string) => {
 }
 
 const toDecimalDisplay = (amount, sign_string) => {
+  debugger;
   const largest_sig_figure_position = amount.toString().length
     let zeros = "0".repeat(10-largest_sig_figure_position)
        // we only show to 6 d.p.

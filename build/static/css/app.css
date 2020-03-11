@@ -835,6 +835,10 @@ display:block;
     padding-left: 7px;
 }
 
+#my-extension-root-inner .fade-send-buttons {
+    opacity: 0.5;
+}
+
 
 
 #my-extension-root-inner .loader {

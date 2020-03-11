@@ -194,12 +194,12 @@ export default class Send extends Component {
    * @param event
    */
   async handleAmountChange (event) {
-    const amount =  this.trunc10DP(event.target.value);
+    const amount = this.trunc10DP(event.target.value);
 
     if (this.state.percentage === null) return this.setState({ dollar: null, amount: event.target.value, amount_error_message: "", amount_error: false })
 
     // we don't wait for sufficient funds method by choice.
-    //await this.sufficientFunds(amount)
+    await this.sufficientFunds(amount)
 
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
     if (parseFloat(amount) === 0) return this.setState({ dollar: 0, amount: 0 })
@@ -416,7 +416,9 @@ export default class Send extends Component {
                   <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number" placeholder="0 FET" name="amount"
                          data-testid="send_amount"
                          id="amount" onChange={this.handleAmountChange}
-                         value={this.state.amount} ></input>
+                         value={this.state.amount}
+                         step="any"
+                  ></input>
                   <br></br>
                   <output  className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
                 </div>

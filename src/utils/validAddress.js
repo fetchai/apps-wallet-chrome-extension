@@ -12,10 +12,8 @@ const validAddress = (address) => {
   try {
    const d = new Address(address)
   } catch (e) {
-    debugger
     return false
   }
-  debugger
   return true
 }
 
