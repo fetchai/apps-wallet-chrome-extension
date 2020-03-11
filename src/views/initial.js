@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import { goTo } from '../services/router'
-import Create from './create'
-import Recover from './recover'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
 import Login from './login'
@@ -16,18 +14,18 @@ import { VERSION } from '../constants'
 
 export default class Initial extends Component {
 
-    constructor (props) {
+  constructor (props) {
     super(props)
-    }
+  }
 
   componentDidMount () {
     // if they have a saved key they should not be here so redirect them to Login.
-   if(Authentication.hasSavedKey()) goTo(Login)
+    if (Authentication.hasSavedKey()) goTo(Login)
   }
 
   render () {
     return (
-      <div id="my-extension-root-inner"  data-testid="initial">
+      <div id="my-extension-root-inner" data-testid="initial">
         <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
           <source src={getAssetURI('welcome.mp4')} type="video/mp4"/>
         </video>
@@ -36,10 +34,12 @@ export default class Initial extends Component {
         <span className='preview-build'>Preview Build: {VERSION}</span>
         <div className="overlay2">
           <div className="overlay3">
-            <button className='button-free-standing initial-recover-button' data-testid="recover_button99" onClick={goTo.bind(null, Terms, {next: 'recover'})}>
+            <button className='button-free-standing initial-recover-button' data-testid="recover_button99"
+                    onClick={goTo.bind(null, Terms, { next: 'recover' })}>
               Recover
             </button>
-            <button className='button-free-standing initial-create-button' data-testid="create_button" onClick={goTo.bind(null, Terms, {next: 'create'})}>
+            <button className='button-free-standing initial-create-button' data-testid="create_button"
+                    onClick={goTo.bind(null, Terms, { next: 'create' })}>
               Create
             </button>
             <span className='initial-terms-link' onClick={goTo.bind(null, Terms)}>View Terms and Conditions</span>

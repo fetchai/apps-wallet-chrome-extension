@@ -7,11 +7,9 @@ import './App.css'
 
 class App extends Component {
 
-
-
   render () {
 
-     window.hello = 9;
+    window.hello = 9
 
     return (
       <div className="App">

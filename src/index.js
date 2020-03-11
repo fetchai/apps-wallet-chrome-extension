@@ -8,17 +8,12 @@ import Authentication from './services/authentication'
 import Login from './views/login'
 import Account from './views/account'
 import Initial from './views/initial'
-import Settings from './views/settings'
-import Create from './views/create'
-import Recover from './views/recover'
-import Send from './views/send'
-import Terms from './views/terms'
 
 class Main extends React.Component {
   render () {
     let opening_page
 // browser uses this.
-  if (Authentication.isLoggedIn()) {
+    if (Authentication.isLoggedIn()) {
 //        if (true) {
       // eslint-disable-next-line react/jsx-no-undef
       opening_page = <Account/>

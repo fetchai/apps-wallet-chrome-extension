@@ -12,16 +12,14 @@ import { EXTENSION } from '../constants'
 function proxyToBackground (input, init) {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ input, init }, messageResponse => {
-      const [response, ] = messageResponse
-      if (status === null ) {
-        reject(null)
-      } else {
-        const body = response.body ? new Blob([response.body]) : undefined
-        resolve(new Response(body, {
-          status: response.status,
-          statusText: response.statusText,
-        }))
-      }
+      const [response,] = messageResponse
+      if (status === null) return reject(null)
+      const body = response.body ? new Blob([response.body]) : undefined
+      return resolve(new Response(body, {
+        status: response.status,
+        statusText: input,
+      }))
+
     })
   })
 }

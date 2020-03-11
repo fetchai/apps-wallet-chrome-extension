@@ -1,4 +1,4 @@
-const validJSONstring = (s) => {
+const validJSONstring = s => {
   try {
     JSON.parse(s)
     return true

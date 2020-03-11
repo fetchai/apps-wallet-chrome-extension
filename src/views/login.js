@@ -35,10 +35,6 @@ export default class Login extends Component {
     this.setState(change)
   }
 
-
-  // async componentDidMount () {
-  //   if(!)
-  // }
   /**
    * Processes login form submission. If the user_password is correct we set logged-in to true in local storage and redirect to account page.
    *
@@ -50,13 +46,13 @@ export default class Login extends Component {
       this.setState({ output: `Incorrect password`, login_error: true })
       return
     }
-    Storage.setLocalStorage(STORAGE_ENUM.LOGGED_IN, 'true')
+    localStorage.setItem(STORAGE_ENUM.LOGGED_IN, 'true')
     goTo(Account)
   }
 
   render () {
     return (
-      <div id="my-extension-root-inner"  data-testid="login">
+      <div id="my-extension-root-inner" data-testid="login">
         <video className="vid" playsInline="playsinline" autoPlay="autoplay" muted="muted" loop="loop">
           <source src={getAssetURI('welcome.mp4')} type="video/mp4"></source>
         </video>

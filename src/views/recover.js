@@ -1,6 +1,6 @@
 /*global chrome*/
 import React, { Component } from 'react'
-import { goBack, goTo } from '../services/router'
+import { goTo } from '../services/router'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/address'
 import Account from './account'
@@ -10,9 +10,7 @@ import Expand from 'react-expand-animated'
 import { TRANSITION_DURATION_MS } from '../constants'
 import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
-import Initial from './initial'
 import Terms from './terms'
-import { getAssetURI } from '../utils/getAsset'
 
 export default class Recover extends Component {
 
@@ -44,8 +42,7 @@ export default class Recover extends Component {
     }
   }
 
-
- async wipeFormErrors(){
+  async wipeFormErrors () {
     return new Promise(resolve => {
       this.setState({
         file_error: false,
@@ -55,16 +52,16 @@ export default class Recover extends Component {
     })
   }
 
-  hasError(){
-    return(
-    this.state.file_error ||
-    this.state.password_error ||
-    this.state.address_error)
+  hasError () {
+    return (
+      this.state.file_error ||
+      this.state.password_error ||
+      this.state.address_error)
   }
 
-  async openUploadFile(event){
+  async openUploadFile (event) {
     event.preventDefault()
-    getElementById("file").click()
+    getElementById('file').click()
   }
 
   async read_file (file) {
@@ -80,19 +77,19 @@ export default class Recover extends Component {
     })
   }
 
-async handleChange (event) {
+  async handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
     this.setState(change)
     await this.wipeFormErrors()
   }
 
- async handleFileChange (event) {
+  async handleFileChange (event) {
     this.setState({
       file: event.target.files[0],
       file_name: event.target.value
     })
-   await this.wipeFormErrors()
+    await this.wipeFormErrors()
   };
 
   /**
@@ -125,12 +122,12 @@ async handleChange (event) {
    */
   async validFile () {
 
-    if(this.state.file === "" || this.state.file === null){
+    if (this.state.file === '' || this.state.file === null) {
       this.setState({
         error_message: 'File required',
         file_error: true,
-            file: "",
-      file_name: ""
+        file: '',
+        file_name: ''
       })
       return false
     }
@@ -141,8 +138,8 @@ async handleChange (event) {
       this.setState({
         error_message: 'Unable to read file',
         file_error: true,
-            file: "",
-      file_name: ""
+        file: '',
+        file_name: ''
       })
       return false
     }
@@ -151,8 +148,8 @@ async handleChange (event) {
       this.setState({
         error_message: 'Incorrect file type',
         file_error: true,
-            file: "",
-      file_name: ""
+        file: '',
+        file_name: ''
       })
       return false
     }
@@ -265,7 +262,7 @@ async handleChange (event) {
             <form id="form" className={'recover-form'}>
               <legend className="recover-legend">Upload File with Password</legend>
               <button className={`recover-input   ${this.state.file_error ? 'red-upload-button' : 'upload-button'}`}
-                    onClick={this.openUploadFile}>{this.state.file_name === "" ? "" : "selected"}</button>
+                      onClick={this.openUploadFile}>{this.state.file_name === '' ? '' : 'selected'}</button>
               <input label='file' className="hide"
                      id="file" type="file" onChange={this.handleFileChange.bind(this)}></input>
               <input type="password"
@@ -278,12 +275,12 @@ async handleChange (event) {
                      id="address" type="text"
                      name="address" placeholder="Address (optional)"
                      value={this.state.address} onChange={this.handleChange.bind(this)}></input>
-              <output type="text" className={`recover-output ${this.hasError()? "red_error" : ""}`}
+              <output type="text" className={`recover-output ${this.hasError() ? 'red_error' : ''}`}
                       id="output">{this.state.error_message}</output>
               <div className="small-button-container">
                 <button type="button" className="recover-back-button" onClick={event => {
                   event.preventDefault()
-                 goTo(Terms, {next: 'recover'})
+                  goTo(Terms, { next: 'recover' })
                 }}>Back
                 </button>
                 <button type="submit" className="recover-upload-button"
@@ -300,17 +297,17 @@ async handleChange (event) {
             duration={TRANSITION_DURATION_MS}
             transitions={transitions}
           >
-            <div className={"recover-warning-container"}>
-            <p>Warning! Not providing your public address means that recovery won&apos;t error if your password is
-              incorrect. </p>
+            <div className={'recover-warning-container'}>
+              <p>Warning! Not providing your public address means that recovery won&apos;t error if your password is
+                incorrect. </p>
 
-            <p>It will instead
-              decrypt to a random incorrect address (probably without funds).</p>
+              <p>It will instead
+                decrypt to a random incorrect address (probably without funds).</p>
 
-            <p>If this happens don&apos;t panic but clear your local storage and try again.</p>
+              <p>If this happens don&apos;t panic but clear your local storage and try again.</p>
 
-            <p>Click &quot;Next&quot; to proceed
-              anyway or &quot;Back&quot; to return to the upload form.</p>
+              <p>Click &quot;Next&quot; to proceed
+                anyway or &quot;Back&quot; to return to the upload form.</p>
             </div>
             <div className="small-button-container">
               <button type="button" className="recover-back-button"

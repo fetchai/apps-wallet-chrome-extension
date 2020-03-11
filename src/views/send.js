@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import {
-  BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, DEFAULT_NETWORK, DOLLAR_PRICE,
+  BALANCE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI,
-  NETWORK_NAME,  STORAGE_ENUM
+  DOLLAR_PRICE_URI, NETWORKS_ENUM,
+  STORAGE_ENUM
 } from '../constants'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
@@ -14,17 +14,16 @@ import Account from './account'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import { API } from '../services/api'
-import { BN } from "bn.js"
+import { BN } from 'bn.js'
 import { capitalise } from '../utils/capitalise'
 import { toCanonicalFet } from '../utils/toCanonicalFet'
 
-
-const INVALID_ADDRESS_ERROR_MESSAGE = "Invalid address"
-const INSUFFICIENT_FUNDS_ERROR_MESSAGE = "Insufficient funds"
-const INCORRECT_PASSWORD_ERROR_MESSAGE = "Incorrect password"
-const TRANSFER_FAILED_ERROR_MESSAGE = "transfer failed"
-const NETWORK_ERROR_MESSAGE = "Network error"
-const CONFIRM_PASSWORD_PLACEHOLDER = "Confirm Password"
+const INVALID_ADDRESS_ERROR_MESSAGE = 'Invalid address'
+const INSUFFICIENT_FUNDS_ERROR_MESSAGE = 'Insufficient funds'
+const INCORRECT_PASSWORD_ERROR_MESSAGE = 'Incorrect password'
+const TRANSFER_FAILED_ERROR_MESSAGE = 'transfer failed'
+const NETWORK_ERROR_MESSAGE = 'Network error'
+const CONFIRM_PASSWORD_PLACEHOLDER = 'Confirm Password'
 
 /**
  * Corresponds to the send view.
@@ -34,12 +33,12 @@ export default class Send extends Component {
   constructor (props) {
     super(props)
     // eslint-disable-next-line react/prop-types
-    this.api = props.api;
-    this.address = Storage.getLocalStorage(STORAGE_ENUM.ADDRESS)
-    this.network = Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK)
+    this.api = props.api
+    this.address = localStorage.getItem(STORAGE_ENUM.ADDRESS)
+    this.network = localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK)
 
     this.sufficientFunds = this.sufficientFunds.bind(this)
-    this.transferController = this.transferController.bind(this)
+    this.transfer = this.transfer.bind(this)
     this.handleTransfer = this.handleTransfer.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleAmountChange = this.handleAmountChange.bind(this)
@@ -51,13 +50,13 @@ export default class Send extends Component {
     this.trunc10DP = this.trunc10DP.bind(this)
 
     this.state = {
-      network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK),
+      network: localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK),
       balance: null,
       password: '',
       to_address: '',
-      percentage: Storage.getLocalStorage(STORAGE_ENUM.DOLLAR_PRICE),
+      percentage: localStorage.getItem(STORAGE_ENUM.DOLLAR_PRICE),
       amount: null,
-      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
+      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
       copied: false,
       error: false,
       amount_error: false,
@@ -66,8 +65,6 @@ export default class Send extends Component {
       amount_error_message: '',
       transfer_error: true,
       transfer_message: '',
-      host: null,
-      port: null,
       transfer_disabled: false
     }
   }
@@ -89,12 +86,10 @@ export default class Send extends Component {
   async componentDidMount () {
     Authentication.Authenticate()
 
-  if(NETWORK_NAME === 'localhost'){
-        this.host = '127.0.0.1'
-    this.port = 8000
-    this.api = new API(this.host, this.port, 'http')
+   if (this.state.network === NETWORKS_ENUM.LOCALHOST) {
+      this.api = new API(8000, '127.0.0.1', 'http')
     } else {
-      this.api = await API.fromBootstrap(this.state.network);
+      this.api = await API.fromBootstrap(this.state.network)
     }
 
     this.fetchDollarPrice()
@@ -103,7 +98,7 @@ export default class Send extends Component {
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
   }
 
-    /**
+  /**
    * Fetch the account balance for address
    * stored in state. Upon result we also call method to recalculate the dollar display string.
    */
@@ -136,16 +131,12 @@ export default class Send extends Component {
    */
   handleDollarPriceResponse (response) {
 
-    if (response.status !== 200) {
-      console.log('Looks like there was a problem. Status Code: ' +
-        response.status)
-      return
-    }
+    if (response.status !== 200) return
+
 
     response.json().then((data) => {
       console.log(data)
 
-      // Dollar variable (and therefore state.dollar) represents the display dollar amount to show the user when typing in a FET amount.
       let dollar
 
       if (this.state.amount === null) {
@@ -171,20 +162,20 @@ export default class Send extends Component {
    * @returns {number | string}
    */
   calculateDollarDisplayAmount (amount, percentage) {
-    if(amount === "")  return "";
+    if (amount === '') return ''
     const total = amount * percentage
     return total.toFixed(2)
   }
 
   /**
-   * truncate input to 10 DP
+   * truncate input to 10 DP as decimal of only 10 decimals can be valid to convert to FET
    * @param amount
    * @returns {number}
    */
-   trunc10DP(amount){
-     // ensure that only ten decimal places are allowed on inputs.
+  trunc10DP (amount) {
+    // ensure that only ten decimal places are allowed on inputs.
     const remainder = (amount % 1).toFixed(10)
-    const integer_part = Math.trunc(amount);
+    const integer_part = Math.trunc(amount)
     return integer_part + Number(remainder)
   }
 
@@ -194,11 +185,15 @@ export default class Send extends Component {
    * @param event
    */
   async handleAmountChange (event) {
-    const amount = this.trunc10DP(event.target.value);
+    const amount = this.trunc10DP(event.target.value)
 
-    if (this.state.percentage === null) return this.setState({ dollar: null, amount: event.target.value, amount_error_message: "", amount_error: false })
+    if (this.state.percentage === null) return this.setState({
+      dollar: null,
+      amount: event.target.value,
+      amount_error_message: '',
+      amount_error: false
+    })
 
-    // we don't wait for sufficient funds method by choice.
     await this.sufficientFunds(amount)
 
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
@@ -211,17 +206,10 @@ export default class Send extends Component {
   }
 
 
-  /**
-   *
-   *
-   * @param event
-   * @returns {Promise<void>}
-   */
   async handleChange (event) {
     let change = {}
     change[event.target.name] = event.target.value
     this.setState(change)
-    // we don't bother async of these.
     await this.wipeFormErrors()
   }
 
@@ -234,23 +222,22 @@ export default class Send extends Component {
   async handleTransfer (event) {
     event.preventDefault()
     await this.wipeFormErrors()
-    // we set this flag which we use to see if we'll make transaction.
-    // error flags in state within individual validation methods are for display only.
+    // error flags in state within individual validation methods are for displaying individual error messegaes only.
     // this flag is the actual one.
     let error = false
 
     if (!validAddress(this.state.to_address)) {
       this.setState({ address_error: true })
       error = true
-   }
+    }
 
     if (this.state.amount !== null && !(await this.sufficientFunds(this.state.amount))) {
       error = true
     }
 
-    if(!this.state.password){
-            this.setState({ password_error: true })
-                 error = true
+    if (!this.state.password) {
+      this.setState({ password_error: true })
+      error = true
     } else if (!(await Authentication.correctPassword(this.state.password))) {
       this.setState({ password_error: true })
       error = true
@@ -259,17 +246,17 @@ export default class Send extends Component {
     if (error) return
     // now we send the transfer as no errors that cause us to not make transfer have occured.
 
-     await this.setTransferMessage(["Transfer Submitted", <img key = {1} src={getAssetURI('send_loading_loader.gif')} className="sending-loading-icon" alt="Fetch.ai Loading Icon"/>], false)
-     await this.transferController()
+    await this.setTransferMessage('Transfer Submitted', 'send_loading_loader.gif', false)
+    await this.transfer()
 
   }
 
   /**
-*checks status of transaction by polling tx digest and sets the transfer state.status to display to user accordingly,
-* so they can see when it is waiting, an then get quick response when it is done.
-*
-* Similar more genereic method in js SDK buts sets state as we poll.
- */
+   *checks status of transaction by polling tx digest and sets the transfer state.status to display to user accordingly,
+   * so they can see when it is waiting, an then get quick response when it is done.
+   *
+   * Similar more genereic method in js SDK buts sets state as we poll.
+   */
 
   async sync (tx_digest) {
     const start = Date.now()
@@ -281,19 +268,18 @@ export default class Send extends Component {
           status = await this.api.poll(tx_digest)
         } catch (e) {
           clearInterval(loop)
-          await this.setTransferMessage(NETWORK_ERROR_MESSAGE, true)
-          this.setState({transfer_disabled: false})
-          reject('API Error')
+          await this.setTransferMessage(NETWORK_ERROR_MESSAGE, null,true)
+          this.setState({ transfer_disabled: false })
+           return reject('API Error')
         }
 
-
-        await this.setTransferMessage(["Transfer Pending", <img key = {1} src={getAssetURI('send_progress_loader.gif')} className="sending-loading-icon" alt="Fetch.ai Loading Icon"/>], false)
+        await this.setTransferMessage('Transfer Pending', 'send_progress_loader.gif' , false)
 
         if (/Executed|Submitted/.test(status)) {
           clearInterval(loop)
-          await this.setTransferMessage(["Transfer Executed", <img key = {1} src={getAssetURI('send_executed_loader.gif')} className="sending-loading-icon" alt="Fetch.ai Loading Icon"/>], false)
-          setTimeout(this.setTransferMessage.bind(null, "Transfer Executed", false), 3000)
-          this.setState({transfer_disabled: false})
+          await this.setTransferMessage('Transfer Executed', 'send_executed_loader.gif', false)
+          setTimeout(this.setTransferMessage.bind(null, 'Transfer Executed', null, false), 3000)
+          this.setState({ transfer_disabled: false })
           resolve(status)
         }
 
@@ -301,8 +287,8 @@ export default class Send extends Component {
 
         if (elapsed_time > limit) {
           clearInterval(loop)
-          await this.setTransferMessage(`Transaction timed-out, status: ${status} `, true)
-          this.setState({transfer_disabled: false})
+          await this.setTransferMessage(`Transaction timed-out, status: ${status} `, null, true)
+          this.setState({ transfer_disabled: false })
           reject(status)
         }
 
@@ -312,12 +298,18 @@ export default class Send extends Component {
 
   /**
    * awaits set state change of transfer error status
-   *
+   * 
    * @param transfer_message
+   * @param loader_name name of loading icon, which if passed is then added a loading icon gif. 
    * @param transfer_error
    * @returns {Promise<unknown>}
    */
-  async setTransferMessage (transfer_message, transfer_error = false) {
+  async setTransferMessage (transfer_message, loader_name = null,  transfer_error = false) {
+
+     transfer_message = (loader_name !== null) ? [transfer_message,
+          <img key={1} src={getAssetURI(loader_name)} className="sending-loading-icon"
+               alt="Fetch.ai Loading Icon"/>] : transfer_message
+
     return new Promise(resolve => {
       this.setState({ transfer_message: transfer_message, transfer_error: transfer_error }, resolve)
     })
@@ -328,74 +320,67 @@ export default class Send extends Component {
    *
    * @returns {false|Promise<string>}
    */
-  async transferController () {
-    // we only disabled this button after click until result shown. to stop somebody accidentally clicking twice quickly.
-    this.setState({transfer_disabled: true})
-    const json_str = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
-     const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
-   // const entity = Entity.from_hex('6e8339a0c6d51fc58b4365bf2ce18ff2698d2b8c40bb13fcef7e1ba05df18e4b')
+  async transfer () {
+    this.setState({ transfer_disabled: true })
+    const json_str = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
+    const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
     let error = false
     const txs = await this.api.transfer(entity, this.state.to_address, toCanonicalFet(this.state.amount)).catch(() => error = true)
-    if (error | txs === false) {
+    if (error || txs === false) {
       this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE })
-      return;
+      return
     }
-          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE}))
+    await this.sync(txs).catch(() => this.setState({
+      transfer_error: true,
+      transfer_message: TRANSFER_FAILED_ERROR_MESSAGE
+    }))
   }
 
   /**
    * Checks if we have sufficient funds to transfer transfer_amount + 1
    *
    *
-   * @returns {Promise<boolean>}
-   */
-  async sufficientFunds (amount) {
-    // this suggests a bad network request
-    if (this.state.balance === false) {
-      this.setState({ amount_error_message: NETWORK_ERROR_MESSAGE, amount_error: true })
-      return false
-    }
-
-    // rare: if no network request returned yet
-    if (this.state.balance === null) {
-      this.setState({ amount_error_message: NETWORK_ERROR_MESSAGE, amount_error: true })
-      return false
-    }
-
-    /**
      * We check if a transaction is possible ie amount less than min fee (1) plus amount. The transacation still may fail
      * if fee for transaction hits (fee limit (DEFAULT_FEE_LIMT + amount > balance) but we still allow them to try at this stage
      * since we cannot tell how close actual fees on network are to fee limit so we just use value of 1 since there will always be a
      * fee
      *
-     */
-
-      const canonical_amount = toCanonicalFet(amount)
-    const canonical_amount_plus_min_fee = canonical_amount.add(new BN(1))
-
-    if (new BN(this.state.balance).lt(canonical_amount_plus_min_fee)) {
-      this.setState({ amount_error_message: INSUFFICIENT_FUNDS_ERROR_MESSAGE, amount_error: true})
+   *
+   * @returns {Promise<boolean>}
+   */
+  async sufficientFunds (amount) {
+    // this suggests a bad network request
+    if (this.state.balance === false || this.state.balance === null) {
+      this.setState({ amount_error_message: NETWORK_ERROR_MESSAGE, amount_error: true })
       return false
     }
 
-     this.setState({ amount_error_message: "" , amount_error: false})
+    const canonical_amount = toCanonicalFet(amount)
+    const canonical_amount_plus_min_fee = canonical_amount.add(new BN(1))
+
+    if (new BN(this.state.balance).lt(canonical_amount_plus_min_fee)) {
+      this.setState({ amount_error_message: INSUFFICIENT_FUNDS_ERROR_MESSAGE, amount_error: true })
+      return false
+    }
+
+    this.setState({ amount_error_message: '', amount_error: false })
     return true
   }
 
   render () {
     return (
-      <div id="my-extension-root-inner" className="OverlayMain"  data-testid="send">
+      <div id="my-extension-root-inner" className="OverlayMain" data-testid="send">
         <div className="OverlayMainInner">
           <div className='send_title'>
             <div className='address_title_inner'>
-             <h3 className="send-title">Send</h3>
+              <h3 className="send-title">Send</h3>
             </div>
             <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={goTo.bind(null, Account)}/>
           </div>
           <hr></hr>
-           <div className={'send-connected-to-network'}>
-                Connected to {capitalise(this.state.network)}
-              </div>
+          <div className={'send-connected-to-network'}>
+            Connected to {capitalise(this.state.network)}
+          </div>
           <form onSubmit={this.handleTransfer} className="send-form">
             <div className="send_form_row">
 
@@ -413,14 +398,16 @@ export default class Send extends Component {
               <div
                 className={`send_form_row_output_wrapper send_form_input ${this.state.amount_error ? 'red_error' : ''}`}>
                 <div className="amount_stack_wrapper">
-                  <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number" placeholder="0 FET" name="amount"
+                  <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number"
+                         placeholder="0 FET" name="amount"
                          data-testid="send_amount"
                          id="amount" onChange={this.handleAmountChange}
                          value={this.state.amount}
                          step="any"
                   ></input>
                   <br></br>
-                  <output  className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
+                  <output
+                    className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
                 </div>
               </div>
 
@@ -428,26 +415,31 @@ export default class Send extends Component {
             <output type="text" data-testid="amount_error_output"
                     className={`red_error send-amount-error`}>{this.state.amount_error_message}</output>
             <div className="send_form_row send_form_row_password">
-              <input className={`send_form_password_input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`} type="password"
-                     name="password"
-                     placeholder={CONFIRM_PASSWORD_PLACEHOLDER}
-                      data-testid="send_password"
-                     onChange={this.handleChange.bind(this)} value={this.state.password}
-                     id="password"></input>
+              <input
+                className={`send_form_password_input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`}
+                type="password"
+                name="password"
+                placeholder={CONFIRM_PASSWORD_PLACEHOLDER}
+                data-testid="send_password"
+                onChange={this.handleChange.bind(this)} value={this.state.password}
+                id="password"></input>
             </div>
             <output type="text"
                     className='red_error password-error'
-                     data-testid="password_error_output"
+                    data-testid="password_error_output"
             >{this.state.password_error ? INCORRECT_PASSWORD_ERROR_MESSAGE : ''}</output>
             <output type="text"
-                     data-testid="transfer_error_output"
+                    data-testid="transfer_error_output"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">
-              <button className={`send-left-button ${this.state.transfer_disabled? "fade-send-buttons" : ""}`} onClick={goTo.bind(null, Account)}>
+              <button className={`send-left-button ${this.state.transfer_disabled ? 'fade-send-buttons' : ''}`}
+                      onClick={goTo.bind(null, Account)}>
                 Cancel
               </button>
-              <button  data-testid="send_submit"
-                className={`send-right-button disabled-pointer ${this.state.transfer_disabled? "fade-send-buttons" : ""}`} disabled={this.state.transfer_disabled} type="submit" value="Send">Send</button>
+              <button data-testid="send_submit"
+                      className={`send-right-button disabled-pointer ${this.state.transfer_disabled ? 'fade-send-buttons' : ''}`}
+                      disabled={this.state.transfer_disabled} type="submit" value="Send">Send
+              </button>
             </div>
           </form>
         </div>

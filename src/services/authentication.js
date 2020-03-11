@@ -6,12 +6,12 @@ import { goTo } from '../services/router'
 import Login from '../views/login'
 import Initial from '../views/initial'
 import { digest } from '../utils/digest'
-import { DEFAULT_NETWORK, STORAGE_ENUM} from '../constants'
+import { DEFAULT_NETWORK, STORAGE_ENUM } from '../constants'
 
 export default class Authentication {
 
   static isLoggedIn () {
-    const logged_in = Storage.getLocalStorage(STORAGE_ENUM.LOGGED_IN)
+    const logged_in = localStorage.getItem(STORAGE_ENUM.LOGGED_IN)
     return Boolean(JSON.parse(logged_in))
   }
 
@@ -24,18 +24,18 @@ export default class Authentication {
    * @param file_str
    */
   static storeNewUser (entity, file_str) {
-    Storage.setLocalStorage(STORAGE_ENUM.KEY_FILE, file_str)
-    Storage.setLocalStorage(STORAGE_ENUM.ADDRESS, new Address(digest(entity.public_key_bytes())).toString())
-    Storage.setLocalStorage(STORAGE_ENUM.LOGGED_IN, 'true')
-    Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, DEFAULT_NETWORK)
+    localStorage.setItem(STORAGE_ENUM.KEY_FILE, file_str)
+    localStorage.setItem(STORAGE_ENUM.ADDRESS, new Address(digest(entity.public_key_bytes())).toString())
+    localStorage.setItem(STORAGE_ENUM.LOGGED_IN, 'true')
+    localStorage.setItem(STORAGE_ENUM.SELECTED_NETWORK, DEFAULT_NETWORK)
   }
 
   static hasSavedKey () {
-    return Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE) !== null
+    return localStorage.getItem(STORAGE_ENUM.KEY_FILE) !== null
   }
 
   static logOut () {
-    Storage.setLocalStorage(STORAGE_ENUM.LOGGED_IN, 'false')
+    localStorage.setItem(STORAGE_ENUM.LOGGED_IN, 'false')
   }
 
   /**
@@ -46,8 +46,8 @@ export default class Authentication {
    * @returns {Promise<boolean>}
    */
   static async correctPassword (password) {
-    const key_file = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
-    const address = Storage.getLocalStorage(STORAGE_ENUM.ADDRESS)
+    const key_file = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
+    const address = localStorage.getItem(STORAGE_ENUM.ADDRESS)
 
     let valid_flag = true
     let entity

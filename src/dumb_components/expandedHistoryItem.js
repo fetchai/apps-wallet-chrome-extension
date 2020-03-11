@@ -38,28 +38,28 @@ export default class ExpandedHistoryItem extends Component {
   /**
    *sreturns  li  as either to or from depening on if we are recieving or sending.
    */
-  toOrFromListItem(){
-    if(this.state.to_address === this.state.address) return <li><span>From: </span> <span className="history-item-blue">{format(this.state.from_address, 9)} </span></li>
-    else return  <li><span>To: </span><span className="history-item-blue">{format(this.state.to_address, 9)}</span></li>
-}
+  toOrFromListItem () {
+    if (this.state.to_address === this.state.address) return <li><span>From: </span> <span
+      className="history-item-blue">{format(this.state.from_address, 9)} </span></li>
+    else return <li><span>To: </span><span className="history-item-blue">{format(this.state.to_address, 9)}</span></li>
+  }
 
+  viewOnBlockExplorer () {
+    let link = document.createElement('a')
+    link.href = this.state.block_explorer_url + this.state.digest
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    link.click()
+  }
 
-viewOnBlockExplorer(){
-     let link=document.createElement("a");
-      link.href=this.state.block_explorer_url + this.state.digest;
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
-      link.click();
-}
-
-  setToolTipHeight(event){
-      event.stopPropagation()
-     const element = event.target
+  setToolTipHeight (event) {
+    event.stopPropagation()
+    const element = event.target
     const bounding_client_rect = element.getBoundingClientRect()
     const tooltip = getElementById(`tooltip-${this.state.index}`)
     let top = bounding_client_rect.top
-     top = top -5
-     tooltip.style.top = `${top}px`;
+    top = top - 5
+    tooltip.style.top = `${top}px`
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -75,18 +75,20 @@ viewOnBlockExplorer(){
                  onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}>
       <ul className={'large-history-item-list'}>
         <li><span
-                  className="hoverable-expanded-history-item"
-                onMouseEnter={this.setToolTipHeight}
-              onClick={this.viewOnBlockExplorer}>
+          className="hoverable-expanded-history-item"
+          onMouseEnter={this.setToolTipHeight}
+          onClick={this.viewOnBlockExplorer}>
           Hash: <span className="history-item-blue">{format(this.state.digest, 10)}</span>
               </span>
-                <span
-                  id={`tooltip-${this.state.index}`}
-                  className={`tooltiptext tooltiptext-expanded-history-item-positioning`}>View on BlockExplorer</span>
-         </li>
+          <span
+            id={`tooltip-${this.state.index}`}
+            className={`tooltiptext tooltiptext-expanded-history-item-positioning`}>View on BlockExplorer</span>
+        </li>
         {this.toOrFromListItem()}
         <li><span>Time: </span>{toLocaleDateString(this.state.created_date)}</li>
-        <li><span>Amount: </span><span  className={this.state.amount.isNeg()? "red" : "green"}>{toNonCanonicalFetDisplay(this.state.amount)}{" FET"}</span><span className={'expanded-history-item-status'}>{this.state.status}</span></li>
+        <li><span>Amount: </span><span
+          className={this.state.amount.isNeg() ? 'red' : 'green'}>{toNonCanonicalFetDisplay(this.state.amount)}{' FET'}</span><span
+          className={'expanded-history-item-status'}>{this.state.status}</span></li>
       </ul>
     </div>)
   }

@@ -10,7 +10,6 @@ import Login from './views/login'
 import Frame, { FrameContextConsumer } from 'react-frame-component'
 import Account from './views/account'
 
-
 //side note: todo run install `npm install --ignore-scripts` before publication to stop npm worms
 
 class Main extends React.Component {
@@ -18,7 +17,7 @@ class Main extends React.Component {
 
     let opening_page
 
-        if(Authentication.isLoggedIn()) {
+    if (Authentication.isLoggedIn()) {
       opening_page = <Account/>
     } else if (Authentication.hasSavedKey()) {
       opening_page = <Login/>
@@ -53,6 +52,11 @@ const x = document.getElementById('my-extension-root')
 // we give our iframe an ID
 const iframe = x.children[0]
 iframe.id = 'my-frame'
+
+const html = iframe.contentWindow.document.getElementsByTagName('html')[0]
+debugger;
+
+html.id = 'iframe-html'
 
 app.style.display = 'none'
 

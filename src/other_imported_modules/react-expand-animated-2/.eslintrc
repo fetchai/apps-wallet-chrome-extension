@@ -1,6 +1,10 @@
 {
-  "extends": ["airbnb"],
-  "plugins": ["jest"],
+  "extends": [
+    "airbnb"
+  ],
+  "plugins": [
+    "jest"
+  ],
   "rules": {
     "semi": 0,
     "import/no-extraneous-dependencies": 0,

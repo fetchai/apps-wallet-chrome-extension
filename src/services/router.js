@@ -16,8 +16,7 @@ class StackItem {
 let stack = []
 let component
 
-
-function clear() {
+function clear () {
   stack = []
 }
 

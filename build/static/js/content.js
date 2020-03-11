@@ -131,7 +131,7 @@ module.exports = __webpack_require__(263);
 // const NETWORK_NAME = 'devnet'
 // name to assign to downloadable key file on the end-users system.
 var KEY_FILE_NAME='private_key.json';var VERSION='1.0.0';// flag to change when running as extension or in browser.
-var EXTENSION=false;// fee limit for transactions.
+var EXTENSION=true;// fee limit for transactions.
 var DEFAULT_FEE_LIMIT=20;// uris we use for requests for data
 var DOLLAR_PRICE_URI='https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/';var ACCOUNT_HISTORY_URI="https://blockexplorer.geuwe2a-NETWORKNAME.fetch-ai.com/api/v1/accounts/ACCOUNTADDRESS/transfers";var BOOTSTRAP_REQUEST_URI="https://bootstrap.fetch.ai/endpoints/?network=";// the intervals in MS we poll for data at
 var DOLLAR_PRICE_CHECK_INTERVAL_MS=5000;var BALANCE_CHECK_INTERVAL_MS=1000;var TRANSACTION_HISTORY_CHECK_INTERVAL_MS=5000;// the multiple difference between regular FET and canonical FET
@@ -6832,7 +6832,7 @@ var react_infinite_scroller = __webpack_require__(252);
 var react_infinite_scroller_default = /*#__PURE__*/__webpack_require__.n(react_infinite_scroller);
 
 // EXTERNAL MODULE: ./src/utils/fetchRescource.js
-var fetchRescource = __webpack_require__(32);
+var fetchRescource = __webpack_require__(29);
 
 // CONCATENATED MODULE: ./src/utils/toLocaleDateString.js
 /**
@@ -6844,7 +6844,7 @@ var fetchRescource = __webpack_require__(32);
 // https://stackoverflow.com/questions/49982572/how-to-remove-comma-between-date-and-time-on-tolocalestring-in-js
 var dateOptions={day:'2-digit',month:'short'};var timeOptions={hour12:true,hour:'2-digit',minute:'2-digit'};return new Date(str).toLocaleString('en',dateOptions)+' '+new Date(str).toLocaleString('en',timeOptions);};
 // CONCATENATED MODULE: ./src/utils/toNonCanonicalFetDisplay.js
-/**
+var RIGHTWARDS_ZEROS=/^|0+$/;/**
  * Scientific e notation for very small amounts
  *
  * @param amount
@@ -6857,17 +6857,18 @@ var dateOptions={day:'2-digit',month:'short'};var timeOptions={hour12:true,hour:
  * @param sign_string
  * @returns {string}
  */var lessThanOnetoDecimalDisplay=function lessThanOnetoDecimalDisplay(amount,sign_string){var largest_sig_figure_position=amount.toString().length;var zeros="0".repeat(10-largest_sig_figure_position);// we only show to 6 d.p.
-var l=6-zeros.length;return sign_string+"0."+zeros+amount.toString().substring(0,l);};/**
+var l=6-zeros.length;// strip rightwards zeros
+var string=amount.toString();var regexp=RegExp(RIGHTWARDS_ZEROS,'g');string=string.replace(regexp,'');return sign_string+"0."+zeros+string.substring(0,l);};/**
  * Converts canonical fet to non canonical fet but as a string for displaying to user.
  *
  *
  * @param canonical fet BN or string
  * @returns {string} to display to user.
- */var toNonCanonicalFetDisplay_toNonCanonicalFetDisplay=function toNonCanonicalFetDisplay(fet){var amount=new bn["BN"](fet);if(amount.isZero()){return"0aaa";}var sign="";if(amount.isNeg()){// we cannot divide with negs using BN library so we invert then do calc then add sign
+ */var toNonCanonicalFetDisplay_toNonCanonicalFetDisplay=function toNonCanonicalFetDisplay(fet){var amount=new bn["BN"](fet);if(amount.isZero()){return"0";}var sign="";if(amount.isNeg()){// we cannot divide with negs using BN library so we invert then do calc then add sign
 amount=amount.neg();sign="-";}var largest_sig_figure_position=amount.toString().length;// scientific notation for small amounts of FET, less than can be shown with 6 decimal places.
 if(largest_sig_figure_position<5)return toDecimalScientificNotationDisplay(amount,sign);// put decimal point in correct point of display string for decimal amounts of regular FET
 if(largest_sig_figure_position<11)return lessThanOnetoDecimalDisplay(amount,sign);// we must have regular of 1 FET or more to represent like this
-var hundred_times_greater_than_canonical_fet_amount=amount.div(new bn["BN"](constants["d" /* CANONICAL_DIFFERENCE */])).mul(new bn["BN"](100));var string=hundred_times_greater_than_canonical_fet_amount.toString();// so we add in a decimal point to get it from 100 times greater to actual fet amount by placing in decimal with substrings
+var hundred_times_greater_than_canonical_fet_amount=amount.div(new bn["BN"](constants["d" /* CANONICAL_DIFFERENCE */]/100));var string=hundred_times_greater_than_canonical_fet_amount.toString();// so we add in a decimal point to get it from 100 times greater to actual fet amount by placing in decimal with substrings
 return sign+string.substring(0,string.length-2)+"."+string.substring(string.length-2);};
 // EXTERNAL MODULE: ./src/utils/getElementById.js
 var getElementById = __webpack_require__(28);
@@ -6880,7 +6881,7 @@ var getElementById = __webpack_require__(28);
 var index=props.index,created_date=props.created_date,clicked=props.clicked,digest=props.digest,status=props.status,toggle_clicked=props.toggle_clicked,amount=props.amount;_this.state={// eslint-disable-next-line react/prop-types
 block_explorer_url:props.block_explorer_url,digest:digest,amount:amount,status:status,created_date:created_date,clicked:clicked,index:index,toggle_clicked:toggle_clicked};return _this;}Object(createClass["a" /* default */])(RegularHistoryItem,[{key:"viewOnBlockExplorer",value:function viewOnBlockExplorer(){var link=document.createElement("a");link.href=this.state.block_explorer_url+this.state.digest;link.target='_blank';link.rel='noopener noreferrer';link.click();}},{key:"setToolTipHeight",value:function setToolTipHeight(event){event.stopPropagation();var element=event.target;var bounding_client_rect=element.getBoundingClientRect();var tooltip=Object(getElementById["a" /* getElementById */])("regular-tooltip-".concat(this.state.index));var top=bounding_client_rect.top;top=top-5;tooltip.style.top="".concat(top,"px");}},{key:"UNSAFE_componentWillReceiveProps",value:function UNSAFE_componentWillReceiveProps(nextProps){// eslint-disable-next-line react/prop-types
 if(nextProps.clicked!==this.props.clicked){// eslint-disable-next-line react/prop-types
-this.setState({clicked:nextProps.clicked});}}},{key:"render",value:function render(){var _this2=this;return react_default.a.createElement("div",{className:"history_item history-pointer ".concat(this.state.clicked?'hide':''),onClick:function onClick(event){_this2.state.toggle_clicked(event,_this2.state.index);}},react_default.a.createElement("span",{className:"history_left_value hoverable-expanded-history-item",onClick:this.viewOnBlockExplorer,onMouseEnter:this.setToolTipHeight},format(this.state.digest,10)),react_default.a.createElement("span",{id:"regular-tooltip-".concat(this.state.index),className:"tooltiptext tooltiptext-expanded-history-item-positioning"},"View on BlockExplorer"),react_default.a.createElement("span",{className:"history_right_value ".concat(this.state.amount.isNeg()?"red":"green")},toNonCanonicalFetDisplay_toNonCanonicalFetDisplay(this.state.amount)),react_default.a.createElement("br",null),react_default.a.createElement("span",{className:"history_left_value light"},this.state.status),react_default.a.createElement("span",{className:"history_right_value light history-date-item"},toLocaleDateString(this.state.created_date)));}}]);return RegularHistoryItem;}(react["Component"]);
+this.setState({clicked:nextProps.clicked});}}},{key:"render",value:function render(){var _this2=this;return react_default.a.createElement("div",{className:"history_item history-pointer ".concat(this.state.clicked?'hide':''),onClick:function onClick(event){_this2.state.toggle_clicked(event,_this2.state.index);}},react_default.a.createElement("span",{className:"history_left_value hoverable-expanded-history-item",onClick:this.viewOnBlockExplorer,onMouseEnter:this.setToolTipHeight},format(this.state.digest,10)),react_default.a.createElement("span",{id:"regular-tooltip-".concat(this.state.index),className:"tooltiptext tooltiptext-expanded-history-item-positioning"},"View on BlockExplorer"),react_default.a.createElement("span",{className:"history_right_value ".concat(this.state.amount.isNeg()?"red":"green")},toNonCanonicalFetDisplay_toNonCanonicalFetDisplay(this.state.amount)," FET"),react_default.a.createElement("br",null),react_default.a.createElement("span",{className:"history_left_value light history-item-grey"},this.state.status),react_default.a.createElement("span",{className:"history_right_value light history-date-item history-item-grey"},toLocaleDateString(this.state.created_date)));}}]);return RegularHistoryItem;}(react["Component"]);
 // CONCATENATED MODULE: ./src/dumb_components/expandedHistoryItem.js
 /**
  * When clicked a different history item is shown, with different extra data
@@ -6888,9 +6889,9 @@ this.setState({clicked:nextProps.clicked});}}},{key:"render",value:function rend
  */var expandedHistoryItem_ExpandedHistoryItem=/*#__PURE__*/function(_Component){Object(inherits["a" /* default */])(ExpandedHistoryItem,_Component);function ExpandedHistoryItem(props){var _this;Object(classCallCheck["a" /* default */])(this,ExpandedHistoryItem);_this=Object(possibleConstructorReturn["a" /* default */])(this,Object(getPrototypeOf["a" /* default */])(ExpandedHistoryItem).call(this,props));// eslint-disable-next-line react/prop-types
 var index=props.index,created_date=props.created_date,clicked=props.clicked,digest=props.digest,status=props.status,toggle_clicked=props.toggle_clicked,block_explorer_url=props.block_explorer_url,from_address=props.from_address,to_address=props.to_address,amount=props.amount,address=props.address;_this.setToolTipHeight=_this.setToolTipHeight.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.toOrFromListItem=_this.toOrFromListItem.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.viewOnBlockExplorer=_this.viewOnBlockExplorer.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.state={block_explorer_url:block_explorer_url,digest:digest,address:address,from_address:from_address,to_address:to_address,amount:amount,status:status,created_date:created_date,clicked:clicked,index:index,toggle_clicked:toggle_clicked};return _this;}/**
    *sreturns  li  as either to or from depening on if we are recieving or sending.
-   */Object(createClass["a" /* default */])(ExpandedHistoryItem,[{key:"toOrFromListItem",value:function toOrFromListItem(){if(this.state.to_address===this.state.address)return react_default.a.createElement("li",null,react_default.a.createElement("span",null,"From: "),format(this.state.from_address,9));else return react_default.a.createElement("li",null,react_default.a.createElement("span",null,"To: "),format(this.state.to_address,9));}},{key:"viewOnBlockExplorer",value:function viewOnBlockExplorer(){var link=document.createElement("a");link.href=this.state.block_explorer_url+this.state.digest;link.target='_blank';link.rel='noopener noreferrer';link.click();}},{key:"setToolTipHeight",value:function setToolTipHeight(event){event.stopPropagation();var element=event.target;var bounding_client_rect=element.getBoundingClientRect();var tooltip=Object(getElementById["a" /* getElementById */])("tooltip-".concat(this.state.index));var top=bounding_client_rect.top;top=top-5;tooltip.style.top="".concat(top,"px");}},{key:"UNSAFE_componentWillReceiveProps",value:function UNSAFE_componentWillReceiveProps(nextProps){// eslint-disable-next-line react/prop-types
+   */Object(createClass["a" /* default */])(ExpandedHistoryItem,[{key:"toOrFromListItem",value:function toOrFromListItem(){if(this.state.to_address===this.state.address)return react_default.a.createElement("li",null,react_default.a.createElement("span",null,"From: ")," ",react_default.a.createElement("span",{className:"history-item-blue"},format(this.state.from_address,9)," "));else return react_default.a.createElement("li",null,react_default.a.createElement("span",null,"To: "),react_default.a.createElement("span",{className:"history-item-blue"},format(this.state.to_address,9)));}},{key:"viewOnBlockExplorer",value:function viewOnBlockExplorer(){var link=document.createElement("a");link.href=this.state.block_explorer_url+this.state.digest;link.target='_blank';link.rel='noopener noreferrer';link.click();}},{key:"setToolTipHeight",value:function setToolTipHeight(event){event.stopPropagation();var element=event.target;var bounding_client_rect=element.getBoundingClientRect();var tooltip=Object(getElementById["a" /* getElementById */])("tooltip-".concat(this.state.index));var top=bounding_client_rect.top;top=top-5;tooltip.style.top="".concat(top,"px");}},{key:"UNSAFE_componentWillReceiveProps",value:function UNSAFE_componentWillReceiveProps(nextProps){// eslint-disable-next-line react/prop-types
 if(nextProps.clicked!==this.props.clicked){// eslint-disable-next-line react/prop-types
-this.setState({clicked:nextProps.clicked});}}},{key:"render",value:function render(){var _this2=this;return react_default.a.createElement("div",{className:"history_item large_history_item history-pointer ".concat(this.state.clicked?'':'hide'),onClick:function onClick(event){_this2.state.toggle_clicked(event,_this2.state.index);}},react_default.a.createElement("ul",{className:'large-history-item-list'},react_default.a.createElement("li",null,react_default.a.createElement("span",{className:"hoverable-expanded-history-item",onMouseEnter:this.setToolTipHeight,onClick:this.viewOnBlockExplorer},"Hash: ",format(this.state.digest,10)),react_default.a.createElement("span",{id:"tooltip-".concat(this.state.index),className:"tooltiptext tooltiptext-expanded-history-item-positioning"},"View on BlockExplorer")),this.toOrFromListItem(),react_default.a.createElement("li",null,react_default.a.createElement("span",null,"Time: "),toLocaleDateString(this.state.created_date)),react_default.a.createElement("li",null,react_default.a.createElement("span",null,"Amount: "),react_default.a.createElement("span",{className:this.state.amount.isNeg()?"red":"green"},toNonCanonicalFetDisplay_toNonCanonicalFetDisplay(this.state.amount)),react_default.a.createElement("span",{className:'expanded-history-item-status'}))));}}]);return ExpandedHistoryItem;}(react["Component"]);
+this.setState({clicked:nextProps.clicked});}}},{key:"render",value:function render(){var _this2=this;return react_default.a.createElement("div",{className:"history_item large_history_item history-pointer ".concat(this.state.clicked?'':'hide'),onClick:function onClick(event){_this2.state.toggle_clicked(event,_this2.state.index);}},react_default.a.createElement("ul",{className:'large-history-item-list'},react_default.a.createElement("li",null,react_default.a.createElement("span",{className:"hoverable-expanded-history-item",onMouseEnter:this.setToolTipHeight,onClick:this.viewOnBlockExplorer},"Hash: ",react_default.a.createElement("span",{className:"history-item-blue"},format(this.state.digest,10))),react_default.a.createElement("span",{id:"tooltip-".concat(this.state.index),className:"tooltiptext tooltiptext-expanded-history-item-positioning"},"View on BlockExplorer")),this.toOrFromListItem(),react_default.a.createElement("li",null,react_default.a.createElement("span",null,"Time: "),toLocaleDateString(this.state.created_date)),react_default.a.createElement("li",null,react_default.a.createElement("span",null,"Amount: "),react_default.a.createElement("span",{className:this.state.amount.isNeg()?"red":"green"},toNonCanonicalFetDisplay_toNonCanonicalFetDisplay(this.state.amount)," FET"),react_default.a.createElement("span",{className:'expanded-history-item-status'},this.state.status))));}}]);return ExpandedHistoryItem;}(react["Component"]);
 // CONCATENATED MODULE: ./src/utils/historyURL.js
 /**
  * return block explorer url (with accounts path) based on whichever network is users selected network.
@@ -6901,14 +6902,13 @@ this.setState({clicked:nextProps.clicked});}}},{key:"render",value:function rend
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
  * is displayed from the accounts page when "view all" button is clicked by expanding a div.
- */var history_History=/*#__PURE__*/function(_Component){Object(inherits["a" /* default */])(History,_Component);function History(props){var _this;Object(classCallCheck["a" /* default */])(this,History);_this=Object(possibleConstructorReturn["a" /* default */])(this,Object(getPrototypeOf["a" /* default */])(History).call(this,props));_this.toggleClicked=_this.toggleClicked.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.hideAllLargeHistoryItems=_this.hideAllLargeHistoryItems.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.fetchAnotherPageOfHistory=_this.fetchAnotherPageOfHistory.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.filterResults=_this.filterResults.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.merge_without_duplicates=_this.merge_without_duplicates.bind(Object(assertThisInitialized["a" /* default */])(_this));// eslint-disable-next-line react/prop-types
+ */var history_History=/*#__PURE__*/function(_Component){Object(inherits["a" /* default */])(History,_Component);function History(props){var _this;Object(classCallCheck["a" /* default */])(this,History);_this=Object(possibleConstructorReturn["a" /* default */])(this,Object(getPrototypeOf["a" /* default */])(History).call(this,props));_this.toggleClicked=_this.toggleClicked.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.hideAllLargeHistoryItems=_this.hideAllLargeHistoryItems.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.fetchAnotherPageOfHistory=_this.fetchAnotherPageOfHistory.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.filterResults=_this.filterResults.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.merge_without_duplicates=_this.merge_without_duplicates.bind(Object(assertThisInitialized["a" /* default */])(_this));_this.fetchFirstPage=_this.fetchFirstPage.bind(Object(assertThisInitialized["a" /* default */])(_this));// eslint-disable-next-line react/prop-types
 _this.setHistoryCount=props.setHistoryCount;_this.state={// eslint-disable-next-line react/prop-types
 show_history:props.show_history,address:storage["a" /* Storage */].getLocalStorage(constants["p" /* STORAGE_ENUM */].ADDRESS),blockexplorer_url:blockExplorerURL_blockExplorerURL("transactions/"),items:20,// an array containing page numbers of all fetched pages of transaction history
 loaded_page_numbers:[0],has_more_items:true,results:[]};return _this;}Object(createClass["a" /* default */])(History,[{key:"UNSAFE_componentWillReceiveProps",value:function UNSAFE_componentWillReceiveProps(nextProps){// eslint-disable-next-line react/prop-types
 if(nextProps.show_history!==this.props.show_history){// eslint-disable-next-line react/prop-types
-this.setState({show_history:nextProps.show_history});}}},{key:"componentDidMount",value:function(){var _componentDidMount=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee(){return regenerator_default.a.wrap(function _callee$(_context){while(1){switch(_context.prev=_context.next){case 0:if(typeof window.fetchai_history!=='undefined'){this.setState({results:window.fetchai_history,blockexplorer_url:blockExplorerURL_blockExplorerURL("transactions/")});this.setHistoryCount(window.fetchai_history.length);}// so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
-//await this.fetchAnotherPageOfHistory(true)
-case 1:case"end":return _context.stop();}}},_callee,this);}));function componentDidMount(){return _componentDidMount.apply(this,arguments);}return componentDidMount;}()},{key:"unclick",value:function unclick(element){element.clicked=false;return element;}},{key:"hideAllLargeHistoryItems",value:function hideAllLargeHistoryItems(){this.setState({results:this.state.results.map(this.unclick)});}/**
+this.setState({show_history:nextProps.show_history});}}},{key:"componentDidMount",value:function(){var _componentDidMount=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee(){return regenerator_default.a.wrap(function _callee$(_context){while(1){switch(_context.prev=_context.next){case 0:if(typeof window.fetchai_history!=='undefined'){this.setState({results:window.fetchai_history,blockexplorer_url:blockExplorerURL_blockExplorerURL("transactions/")});this.setHistoryCount(window.fetchai_history.length);}// poll the first page continually checking for new transactions.
+setInterval(this.fetchFirstPage,3000);case 2:case"end":return _context.stop();}}},_callee,this);}));function componentDidMount(){return _componentDidMount.apply(this,arguments);}return componentDidMount;}()},{key:"unclick",value:function unclick(element){element.clicked=false;return element;}},{key:"hideAllLargeHistoryItems",value:function hideAllLargeHistoryItems(){this.setState({results:this.state.results.map(this.unclick)});}/**
    * This is specific to our list of history items and at the index of the clicked history item it changes the clicked property,
    * of the history item at the given index in the state. This is used to show large history when clicked, and small item when not clicked.
    *
@@ -6929,23 +6929,26 @@ this.setState({results:results});}/*
   *                                     by scroll height since  we must factor in that it will close and adjust height further.
    */},{key:"scrollCorrection",value:function scrollCorrection(event,already_open_above){var element=event.target;var DESIRED_TOP=342;var bounding_client_rect=element.getBoundingClientRect();var DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM=120;// we have  a different calculation if one above it is already open.
 if(already_open_above&&bounding_client_rect.top>DESIRED_TOP+DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM){var correction=bounding_client_rect.top-(DESIRED_TOP+DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM);var scroll_top=Object(getElementById["a" /* getElementById */])('history-container').scrollTop;Object(getElementById["a" /* getElementById */])('history-container').scrollTop=scroll_top+correction;}else if(bounding_client_rect.top>DESIRED_TOP){var _correction=bounding_client_rect.top-DESIRED_TOP;var _scroll_top=Object(getElementById["a" /* getElementById */])('history-container').scrollTop;Object(getElementById["a" /* getElementById */])('history-container').scrollTop=_scroll_top+_correction;}}/**
+  * use this method to constantly poll first page of history for
+   *
+   * @returns {Promise<void>}
+   */},{key:"fetchFirstPage",value:function(){var _fetchFirstPage=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee2(){var _this2=this;var url;return regenerator_default.a.wrap(function _callee2$(_context2){while(1){switch(_context2.prev=_context2.next){case 0:url=historyURL_historyURL(this.state.address,1);Object(fetchRescource["a" /* fetchResource */])(url).then(function(response){_this2.handlePageFetchResponse(response);});case 2:case"end":return _context2.stop();}}},_callee2,this);}));function fetchFirstPage(){return _fetchFirstPage.apply(this,arguments);}return fetchFirstPage;}()/**
    * This fetches a page of history and adds relavent properties to results array of state.
    * If we recieve invalid page (result.detail "Invalid page") then we return early and set has_more_items to false to
    * quit loading more. If response is not 200 we just return unless flag is passed, in which case we loop until we get a http 200 we can parse.
    *
    * @returns {Promise<void>}
-   */},{key:"fetchAnotherPageOfHistory",value:function(){var _fetchAnotherPageOfHistory=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee2(){var _this2=this;var url;return regenerator_default.a.wrap(function _callee2$(_context2){while(1){switch(_context2.prev=_context2.next){case 0:url=historyURL_historyURL(this.state.address,Math.max.apply(Math,_toConsumableArray(this.state.loaded_page_numbers))+1);Object(fetchRescource["a" /* fetchResource */])(url).then(function(response){_this2.handlePageFetchResponse(response);});case 2:case"end":return _context2.stop();}}},_callee2,this);}));function fetchAnotherPageOfHistory(){return _fetchAnotherPageOfHistory.apply(this,arguments);}return fetchAnotherPageOfHistory;}()/**
+   */},{key:"fetchAnotherPageOfHistory",value:function(){var _fetchAnotherPageOfHistory=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee3(){var _this3=this;var url;return regenerator_default.a.wrap(function _callee3$(_context3){while(1){switch(_context3.prev=_context3.next){case 0:url=historyURL_historyURL(this.state.address,Math.max.apply(Math,_toConsumableArray(this.state.loaded_page_numbers))+1);Object(fetchRescource["a" /* fetchResource */])(url).then(function(response){_this3.handlePageFetchResponse(response);});case 2:case"end":return _context3.stop();}}},_callee3,this);}));function fetchAnotherPageOfHistory(){return _fetchAnotherPageOfHistory.apply(this,arguments);}return fetchAnotherPageOfHistory;}()/**
    * Processes the response to the fetching of another page. Saves results in state.
    *
    * @param response
    * @param retry
-   */},{key:"handlePageFetchResponse",value:function handlePageFetchResponse(response,retry){var _this3=this;var loaded_page_number=parseInt(response.url.split("?page=")[1]);// 200 and 404 are expected returns
+   */},{key:"handlePageFetchResponse",value:function handlePageFetchResponse(response,retry){var _this4=this;var loaded_page_number=constants["k" /* EXTENSION */]?parseInt(response.statusText.split("?page=")[1]):parseInt(response.url.split("?page=")[1]);// 200 and 404 are expected returns
 if(response.status!==200&&response.status!==404&&response.status!==500){this.setHistoryCount(0,loaded_page_number);setTimeout(this.fetchAnotherPageOfHistory.bind(null),1000);return;};// whilst api is buggy assuming 404 and 500 means no results
 if(response.status==500||response.status==404){this.setHistoryCount(0,loaded_page_number);this.setState({has_more_items:false});return;}response.json().then(function(result){// reduce memory by only storing needed properties from api result
-var next=_this3.filterResults(result);var updated_results;// lets cache first page on window for quicker remounts of component.
+var next=_this4.filterResults(result);var updated_results;// lets cache first page on window for quicker remounts of component.
 if(loaded_page_number===1){//todo maybe swap to iframe window from global window
-window.fetchai_history=next;_this3.setHistoryCount(next.length,loaded_page_number);}updated_results=_this3.merge_without_duplicates(_this3.state.results,next);if(loaded_page_number===2)debugger;// we just set current page as last selected page.
-var loaded_page_numbers=_this3.state.loaded_page_numbers;loaded_page_numbers.push(loaded_page_number);_this3.setState({results:updated_results,loaded_page_numbers:loaded_page_numbers});});}/**
+window.fetchai_history=next;_this4.setHistoryCount(next.length,loaded_page_number);}updated_results=_this4.merge_without_duplicates(_this4.state.results,next);var loaded_page_numbers=_this4.state.loaded_page_numbers;if(!loaded_page_numbers.includes(loaded_page_number))loaded_page_numbers.push(loaded_page_number);_this4.setState({results:updated_results,loaded_page_numbers:loaded_page_numbers});});}/**
    * merge but do not put in ones with hashes already in the list.
    *
    * @param results1
@@ -6955,8 +6958,8 @@ var loaded_page_numbers=_this3.state.loaded_page_numbers;loaded_page_numbers.pus
    *
    * @param result
    * @returns {*}
-   */},{key:"filterResults",value:function filterResults(result){var _this4=this;return result.results.map(function(el){var amount=new bn["BN"](el.amount);// we decide here if amount is positive or negative
-if(el.from_address===_this4.state.address){amount=amount.neg();}return{id:el.id,status:el.status,digest:el.tx,from_address:el.from_address,to_address:el.to_address,amount:amount,fee:el.fee,created_date:el.created_date,clicked:false};});}/**
+   */},{key:"filterResults",value:function filterResults(result){var _this5=this;return result.results.map(function(el){var amount=new bn["BN"](el.amount);// we decide here if amount is positive or negative
+if(el.from_address===_this5.state.address){amount=amount.neg();}var status;if(amount===0){status="unknown";}else{status="Executed";}return{id:el.id,status:status,digest:el.tx,from_address:el.from_address,to_address:el.to_address,amount:amount,fee:el.fee,created_date:el.created_date,clicked:false};});}/**
    * Iterate over items and return list of history items to show in our infinitely scrolling div.
    *
    * @returns {[]}
@@ -6998,7 +7001,7 @@ setTimeout(this.scrollHistoryTop,constants["r" /* TRANSITION_DURATION_MS */]);}/
 this.refs.history.hideAllLargeHistoryItems();}/**
    * Fetch the account balance for address
    * stored in state. Upon result we also call method to recalculate the dollar display string.
-   */},{key:"balance",value:function(){var _balance=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee4(){var balance;return regenerator_default.a.wrap(function _callee4$(_context4){while(1){switch(_context4.prev=_context4.next){case 0:if(!(this.api===false)){_context4.next=2;break;}return _context4.abrupt("return");case 2:_context4.next=4;return this.api.balance(this.state.address);case 4:balance=_context4.sent;if(!(balance===false)){_context4.next=7;break;}return _context4.abrupt("return");case 7:this.setState({balance:new bn["BN"](balance)},this.calculateDollarBalance);case 8:case"end":return _context4.stop();}}},_callee4,this);}));function balance(){return _balance.apply(this,arguments);}return balance;}()},{key:"render",value:function render(){var transitions=['height','opacity','background'];return react_default.a.createElement("div",{id:"my-extension-root-inner",className:"OverlayMain","data-testid":"account"},react_default.a.createElement("div",{className:"OverlayMainInner"},react_default.a.createElement("img",{className:"absolute-burger",src:Object(getAsset["a" /* getAssetURI */])('burger_icon.svg'),onClick:router["b" /* goTo */].bind(null,settings["a" /* default */])}),react_default.a.createElement(Expand_default.a,{open:!this.state.show_history,duration:constants["r" /* TRANSITION_DURATION_MS */],transitions:transitions},react_default.a.createElement("div",{className:"settings_title"},react_default.a.createElement("div",{className:"address_title_inner"},react_default.a.createElement("h1",{className:"account_address"},"Account address"),react_default.a.createElement("br",null),react_default.a.createElement("span",{className:"hoverable-address",onClick:this.handleCopyToClipboard},format(this.state.address)),react_default.a.createElement("span",{className:"tooltiptext tooltiptext-header-positioning"},this.state.copied?constants["e" /* COPIED_MESSAGE */]:constants["f" /* COPY_ADDRESS_TO_CLIPBOARD_MESSAGE */]))),react_default.a.createElement("hr",null),react_default.a.createElement("div",{className:'send-connected-to-network'},"Connected to ",Object(capitalise["a" /* capitalise */])(this.state.network)),react_default.a.createElement("div",{className:"balance_container"},react_default.a.createElement("img",{className:"plus",alt:"fetch circular logo",src:Object(getAsset["a" /* getAssetURI */])('fetch_circular_icon.svg')}),react_default.a.createElement("br",null),this.state.bootstrap_error?react_default.a.createElement("span",{className:"bootstrap-error"},"Failed to connect to network",' ',"FET"):'',bn["BN"].isBN(this.state.balance)?react_default.a.createElement("span",{className:"fet-balance"},toNonCanonicalFetDisplay_toNonCanonicalFetDisplay(this.state.balance),'  FET'):'',' ',react_default.a.createElement("br",null),react_default.a.createElement("span",{className:"account-dollar-balance"},this.state.dollar_balance&&this.state.dollar_balance!==0?[this.state.dollar_balance.toFixed(2).toLocaleString(),' USD']:'')),react_default.a.createElement("div",{className:"small-button-container"},react_default.a.createElement("button",{className:"account-receive-button",onClick:router["b" /* goTo */].bind(null,download_Download)},"Receive"),react_default.a.createElement("button",{className:"account-send-button",onClick:router["b" /* goTo */].bind(null,send["a" /* default */],{api:this.api})},"Send"))),this.state.history_first_page_count>0?react_default.a.createElement(Expand_default.a,{open:this.state.show_history,duration:constants["r" /* TRANSITION_DURATION_MS */],transitions:transitions,partial:true},react_default.a.createElement("h1",{className:this.state.show_history?'history-header':'history-header-collapsed  account_address'},"History"),react_default.a.createElement("hr",{className:"history-hr"}),react_default.a.createElement("div",{id:"history-container",className:"".concat(this.state.show_history?'history-container':'history-container-collapsed')},react_default.a.createElement(history_History,{ref:"history",setHistoryCount:this.setHistoryCount,show_history:this.state.show_history}),' ')):[react_default.a.createElement("h1",{key:1,className:"account_address history-header-collapsed"},"History"),react_default.a.createElement("hr",{key:2,className:"history-hr"}),react_default.a.createElement("div",{key:3,className:"empty-history"},react_default.a.createElement("p",null,"No Transactions"))],this.state.history_first_page_count>2?react_default.a.createElement("button",{className:"account-toggle-history-button toggle-history-button",onClick:this.toggleHistory},this.state.show_history?'Hide':'View All'):''));}}]);return Account;}(react["Component"]);
+   */},{key:"balance",value:function(){var _balance=Object(asyncToGenerator["a" /* default */])(/*#__PURE__*/regenerator_default.a.mark(function _callee4(){var balance;return regenerator_default.a.wrap(function _callee4$(_context4){while(1){switch(_context4.prev=_context4.next){case 0:if(!(this.api===false)){_context4.next=2;break;}return _context4.abrupt("return");case 2:_context4.next=4;return this.api.balance(this.state.address);case 4:balance=_context4.sent;if(!(balance===false)){_context4.next=7;break;}return _context4.abrupt("return");case 7:this.setState({balance:new bn["BN"](balance)},this.calculateDollarBalance);case 8:case"end":return _context4.stop();}}},_callee4,this);}));function balance(){return _balance.apply(this,arguments);}return balance;}()},{key:"render",value:function render(){var transitions=['height','opacity','background'];return react_default.a.createElement("div",{id:"my-extension-root-inner",className:"OverlayMain","data-testid":"account"},react_default.a.createElement("div",{className:"OverlayMainInner"},react_default.a.createElement("img",{className:"absolute-burger",src:Object(getAsset["a" /* getAssetURI */])('burger_icon.svg'),onClick:router["b" /* goTo */].bind(null,settings["a" /* default */])}),react_default.a.createElement(Expand_default.a,{open:!this.state.show_history,duration:constants["r" /* TRANSITION_DURATION_MS */],transitions:transitions},react_default.a.createElement("div",{className:"settings_title"},react_default.a.createElement("div",{className:"address_title_inner"},react_default.a.createElement("h1",{className:"account_address"},"Account address"),react_default.a.createElement("br",null),react_default.a.createElement("span",{className:"hoverable-address",onClick:this.handleCopyToClipboard},format(this.state.address)),react_default.a.createElement("span",{className:"tooltiptext tooltiptext-header-positioning"},this.state.copied?constants["e" /* COPIED_MESSAGE */]:constants["f" /* COPY_ADDRESS_TO_CLIPBOARD_MESSAGE */]))),react_default.a.createElement("hr",null),react_default.a.createElement("div",{className:'send-connected-to-network'},"Connected to ",Object(capitalise["a" /* capitalise */])(this.state.network)),react_default.a.createElement("div",{className:"balance_container"},react_default.a.createElement("img",{className:"plus",alt:"fetch circular logo",src:Object(getAsset["a" /* getAssetURI */])('fetch_circular_icon.svg')}),react_default.a.createElement("br",null),this.state.bootstrap_error?react_default.a.createElement("span",{className:"bootstrap-error"},"Failed to connect to network",' ',"FET"):'',bn["BN"].isBN(this.state.balance)?react_default.a.createElement("span",{className:"fet-balance"},toNonCanonicalFetDisplay_toNonCanonicalFetDisplay(this.state.balance),'  FET'):'',' ',react_default.a.createElement("br",null),react_default.a.createElement("span",{className:"account-dollar-balance"},this.state.dollar_balance&&this.state.dollar_balance!==0?[this.state.dollar_balance.toFixed(2).toLocaleString(),' USD']:'')),react_default.a.createElement("div",{className:"small-button-container"},react_default.a.createElement("button",{className:"account-receive-button",onClick:router["b" /* goTo */].bind(null,download_Download)},"Receive"),react_default.a.createElement("button",{className:"account-send-button",onClick:router["b" /* goTo */].bind(null,send["a" /* default */],{api:this.api})},"Send"))),this.state.history_first_page_count>0?react_default.a.createElement(Expand_default.a,{open:this.state.show_history,duration:constants["r" /* TRANSITION_DURATION_MS */],transitions:transitions,partial:true},react_default.a.createElement("h1",{className:this.state.show_history?'history-header':'history-header-collapsed  account_address'},"History"),react_default.a.createElement("hr",{className:"history-hr"}),react_default.a.createElement("div",{id:"history-container",className:"".concat(this.state.show_history?'history-container':'history-container-collapsed')},react_default.a.createElement(history_History,{ref:"history",setHistoryCount:this.setHistoryCount,show_history:this.state.show_history}),' ')):[react_default.a.createElement("h1",{key:1,className:"account_address history-header-collapsed"},"History"),react_default.a.createElement("hr",{key:2,className:"history-hr"}),react_default.a.createElement("div",{key:3,className:"empty-history"},react_default.a.createElement("p",null,"No Transactions"))],this.state.history_first_page_count>2?react_default.a.createElement("button",{className:"account-toggle-history-button toggle-history-button",onClick:this.toggleHistory},this.state.show_history?'Hide':'View All'):this.state.history_first_page_count));}}]);return Account;}(react["Component"]);
 
 /***/ }),
 /* 27 */
@@ -7368,6 +7371,28 @@ module.exports = {
 
 /***/ }),
 /* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return fetchResource; });
+/* harmony import */ var _home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(96);
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/*global chrome*//**
+ * Extensions cannot make CORs requests in content scripts therefore such requests are made in background script and results passed to content script.
+ * This has same API as HTML5 Fetch Api https://www.chromium.org/Home/chromium-security/extension-content-script-fetches so we can easily switch to run in browser.
+ *
+ * @param input
+ * @returns {Promise<unknown>}
+ */function proxyToBackground(input,init){return new Promise(function(resolve,reject){chrome.runtime.sendMessage({input:input,init:init},function(messageResponse){var _messageResponse=Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(messageResponse,1),response=_messageResponse[0];if(status===null)return reject(null);var body=response.body?new Blob([response.body]):undefined;return resolve(new Response(body,{status:response.status,statusText:input}));});});}/**
+ * This is the switch that allows us to run in browser making requests, or background script we pass them to background.
+ *
+ * @param input
+ * @param init
+ * @returns {*}
+ */function fetchResource(input,init){return _constants__WEBPACK_IMPORTED_MODULE_1__[/* EXTENSION */ "k"]?proxyToBackground(input,init):fetch(input,init);}
+
+/***/ }),
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = assert;
@@ -7384,7 +7409,7 @@ assert.equal = function assertEqual(l, r, msg) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7392,7 +7417,7 @@ assert.equal = function assertEqual(l, r, msg) {
 
 var utils = exports;
 var BN = __webpack_require__(41);
-var minAssert = __webpack_require__(29);
+var minAssert = __webpack_require__(30);
 var minUtils = __webpack_require__(162);
 
 utils.assert = minAssert;
@@ -7510,7 +7535,7 @@ utils.intFromLE = intFromLE;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7634,28 +7659,6 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-
-/***/ }),
-/* 32 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return fetchResource; });
-/* harmony import */ var _home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(96);
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/*global chrome*//**
- * Extensions cannot make CORs requests in content scripts therefore such requests are made in background script and results passed to content script.
- * This has same API as HTML5 Fetch Api https://www.chromium.org/Home/chromium-security/extension-content-script-fetches so we can easily switch to run in browser.
- *
- * @param input
- * @returns {Promise<unknown>}
- */function proxyToBackground(input,init){return new Promise(function(resolve,reject){chrome.runtime.sendMessage({input:input,init:init},function(messageResponse){var _messageResponse=Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(messageResponse,1),response=_messageResponse[0];if(status===null){reject(null);}else{var body=response.body?new Blob([response.body]):undefined;resolve(new Response(body,{status:response.status,statusText:response.statusText}));}});});}/**
- * This is the switch that allows us to run in browser making requests, or background script we pass them to background.
- *
- * @param input
- * @param init
- * @returns {*}
- */function fetchResource(input,init){return _constants__WEBPACK_IMPORTED_MODULE_1__[/* EXTENSION */ "k"]?proxyToBackground(input,init):fetch(input,init);}
 
 /***/ }),
 /* 33 */
@@ -8307,7 +8310,7 @@ function objectToString(o) {
 "use strict";
 
 
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 var inherits = __webpack_require__(6);
 
 exports.inherits = inherits;
@@ -23151,7 +23154,7 @@ Object.keys(_identity).forEach(function (key) {
 /* harmony import */ var _home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_asyncToGenerator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
 /* harmony import */ var _home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(9);
 /* harmony import */ var _home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(11);
-/* harmony import */ var _utils_fetchRescource__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(32);
+/* harmony import */ var _utils_fetchRescource__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(29);
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(2);
 /* harmony import */ var fetchai_ledger_api_dist_fetchai_ledger__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(251);
 /* harmony import */ var fetchai_ledger_api_dist_fetchai_ledger__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(fetchai_ledger_api_dist_fetchai_ledger__WEBPACK_IMPORTED_MODULE_7__);
@@ -23266,7 +23269,7 @@ module.exports = function createHash (alg) {
 
 
 var utils = __webpack_require__(37);
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 function BlockHash() {
   this.pending = null;
@@ -24118,7 +24121,7 @@ module.exports = EVP_BytesToKey
 
 
 var BN = __webpack_require__(41);
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var getNAF = utils.getNAF;
 var getJSF = utils.getJSF;
 var assert = utils.assert;
@@ -24614,7 +24617,7 @@ function decrypt (data, password) {
 
 
 var BN = __webpack_require__(42);
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var getNAF = utils.getNAF;
 var getJSF = utils.getJSF;
 var assert = utils.assert;
@@ -27023,7 +27026,7 @@ exports.sha512 = __webpack_require__(144)
 "use strict";
 
 
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 function Cipher(options) {
   this.options = options;
@@ -27335,7 +27338,7 @@ function getr(priv) {
 var elliptic = exports;
 
 elliptic.version = __webpack_require__(309).version;
-elliptic.utils = __webpack_require__(30);
+elliptic.utils = __webpack_require__(31);
 elliptic.rand = __webpack_require__(108);
 elliptic.curve = __webpack_require__(163);
 elliptic.curves = __webpack_require__(111);
@@ -27356,7 +27359,7 @@ var curves = exports;
 
 var hash = __webpack_require__(112);
 var curve = __webpack_require__(163);
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 
 var assert = utils.assert;
 
@@ -31024,7 +31027,7 @@ var curves = exports;
 
 var hash = __webpack_require__(115);
 var curve = __webpack_require__(183);
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 
 var assert = utils.assert;
 
@@ -32781,7 +32784,7 @@ Object.keys(_bytearray).forEach(function (key) {
 
 "use strict";
 Object.defineProperty(exports,"__esModule",{value:true});exports["default"]=void 0;var _react=_interopRequireWildcard(__webpack_require__(400));var _propTypes=_interopRequireDefault(__webpack_require__(403));var _GROUP,_PropTypes$shape;function _interopRequireDefault(obj){return obj&&obj.__esModule?obj:{"default":obj};}function _getRequireWildcardCache(){if(typeof WeakMap!=="function")return null;var cache=new WeakMap();_getRequireWildcardCache=function _getRequireWildcardCache(){return cache;};return cache;}function _interopRequireWildcard(obj){if(obj&&obj.__esModule){return obj;}if(obj===null||_typeof(obj)!=="object"&&typeof obj!=="function"){return{"default":obj};}var cache=_getRequireWildcardCache();if(cache&&cache.has(obj)){return cache.get(obj);}var newObj={};var hasPropertyDescriptor=Object.defineProperty&&Object.getOwnPropertyDescriptor;for(var key in obj){if(Object.prototype.hasOwnProperty.call(obj,key)){var desc=hasPropertyDescriptor?Object.getOwnPropertyDescriptor(obj,key):null;if(desc&&(desc.get||desc.set)){Object.defineProperty(newObj,key,desc);}else{newObj[key]=obj[key];}}}newObj["default"]=obj;if(cache){cache.set(obj,newObj);}return newObj;}function _typeof(obj){"@babel/helpers - typeof";if(typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"){_typeof=function _typeof(obj){return typeof obj;};}else{_typeof=function _typeof(obj){return obj&&typeof Symbol==="function"&&obj.constructor===Symbol&&obj!==Symbol.prototype?"symbol":typeof obj;};}return _typeof(obj);}function ownKeys(object,enumerableOnly){var keys=Object.keys(object);if(Object.getOwnPropertySymbols){var symbols=Object.getOwnPropertySymbols(object);if(enumerableOnly)symbols=symbols.filter(function(sym){return Object.getOwnPropertyDescriptor(object,sym).enumerable;});keys.push.apply(keys,symbols);}return keys;}function _objectSpread(target){for(var i=1;i<arguments.length;i++){var source=arguments[i]!=null?arguments[i]:{};if(i%2){ownKeys(Object(source),true).forEach(function(key){_defineProperty(target,key,source[key]);});}else if(Object.getOwnPropertyDescriptors){Object.defineProperties(target,Object.getOwnPropertyDescriptors(source));}else{ownKeys(Object(source)).forEach(function(key){Object.defineProperty(target,key,Object.getOwnPropertyDescriptor(source,key));});}}return target;}function _classCallCheck(instance,Constructor){if(!(instance instanceof Constructor)){throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target,props){for(var i=0;i<props.length;i++){var descriptor=props[i];descriptor.enumerable=descriptor.enumerable||false;descriptor.configurable=true;if("value"in descriptor)descriptor.writable=true;Object.defineProperty(target,descriptor.key,descriptor);}}function _createClass(Constructor,protoProps,staticProps){if(protoProps)_defineProperties(Constructor.prototype,protoProps);if(staticProps)_defineProperties(Constructor,staticProps);return Constructor;}function _possibleConstructorReturn(self,call){if(call&&(_typeof(call)==="object"||typeof call==="function")){return call;}return _assertThisInitialized(self);}function _getPrototypeOf(o){_getPrototypeOf=Object.setPrototypeOf?Object.getPrototypeOf:function _getPrototypeOf(o){return o.__proto__||Object.getPrototypeOf(o);};return _getPrototypeOf(o);}function _assertThisInitialized(self){if(self===void 0){throw new ReferenceError("this hasn't been initialised - super() hasn't been called");}return self;}function _inherits(subClass,superClass){if(typeof superClass!=="function"&&superClass!==null){throw new TypeError("Super expression must either be null or a function");}subClass.prototype=Object.create(superClass&&superClass.prototype,{constructor:{value:subClass,writable:true,configurable:true}});if(superClass)_setPrototypeOf(subClass,superClass);}function _setPrototypeOf(o,p){_setPrototypeOf=Object.setPrototypeOf||function _setPrototypeOf(o,p){o.__proto__=p;return o;};return _setPrototypeOf(o,p);}function _defineProperty(obj,key,value){if(key in obj){Object.defineProperty(obj,key,{value:value,enumerable:true,configurable:true,writable:true});}else{obj[key]=value;}return obj;}// In firefox, setTimeout with duration 0 too short for browser notice the changes in dom
-var initialTransitDuration=20;var PHASE={CLOSE:'close',CLOSING:'closing',CLOSED:'closed',OPEN:'open',OPENING:'opening',OPENED:'opened'};var GROUP=(_GROUP={},_defineProperty(_GROUP,PHASE.CLOSE,PHASE.CLOSE),_defineProperty(_GROUP,PHASE.CLOSED,PHASE.CLOSE),_defineProperty(_GROUP,PHASE.OPENING,PHASE.CLOSE),_defineProperty(_GROUP,PHASE.CLOSING,PHASE.OPEN),_defineProperty(_GROUP,PHASE.OPEN,PHASE.OPEN),_defineProperty(_GROUP,PHASE.OPENED,PHASE.OPEN),_GROUP);var Expand=/*#__PURE__*/function(_Component){_inherits(Expand,_Component);function Expand(props){var _this;_classCallCheck(this,Expand);_this=_possibleConstructorReturn(this,_getPrototypeOf(Expand).call(this,props));_defineProperty(_assertThisInitialized(_this),"getClientHeight",function(){return _this.refWrapper.scrollHeight;});_defineProperty(_assertThisInitialized(_this),"getClosedHeight",function(){return _this.props.partial?{height:'105px',opacity:1,overflow:'hidden'}:{height:0,opacity:0,overflow:'hidden'};});_defineProperty(_assertThisInitialized(_this),"getDefaultExpandStyle",function(){var status=_this.state.status;switch(status){case PHASE.OPENING:case PHASE.CLOSE:case PHASE.CLOSED:return _this.getClosedHeight();case PHASE.OPENED:case PHASE.CLOSING:return{height:_this.getClientHeight(),opacity:1,overflow:'hidden'};default:return{height:'auto',opacity:1,overflow:'unset'};}});_defineProperty(_assertThisInitialized(_this),"getExpandStyle",function(){return _objectSpread({},_this.getDefaultExpandStyle(),{},_this.props.styles[GROUP[_this.state.status]]);});_defineProperty(_assertThisInitialized(_this),"getTransition",function(attribute){return"".concat(attribute," ").concat(_this.props.duration,"ms ").concat(_this.props.easing);});_defineProperty(_assertThisInitialized(_this),"updateStatus",function(status){return _this.setState({status:status});});_defineProperty(_assertThisInitialized(_this),"delay",function(fn,time){_this.timeout=setTimeout(fn,time);});_defineProperty(_assertThisInitialized(_this),"clearDelay",function(){if(_this.timeout){clearTimeout(_this.timeout);}});_defineProperty(_assertThisInitialized(_this),"transit",function(entering,entered,enter){var duration=_this.props.duration;_this.updateStatus(entering);_this.delay(function(){_this.updateStatus(entered);_this.delay(function(){_this.updateStatus(enter);},duration);},initialTransitDuration);});_defineProperty(_assertThisInitialized(_this),"toggle",function(open){_this.clearDelay();if(open){_this.transit(PHASE.OPENING,PHASE.OPENED,PHASE.OPEN);}else{_this.transit(PHASE.CLOSING,PHASE.CLOSED,PHASE.CLOSE);}});_defineProperty(_assertThisInitialized(_this),"setRef",function(ref){_this.refWrapper=ref;});_this.state={status:_this.props.open?PHASE.OPEN:PHASE.CLOSE};return _this;}_createClass(Expand,[{key:"componentDidUpdate",value:function componentDidUpdate(prevProps/* prevState */){if(prevProps.open!==this.props.open){this.toggle(this.props.open);}}},{key:"componentWillUnmount",value:function componentWillUnmount(){this.clearDelay();}},{key:"getStyle",value:function getStyle(){var transition=this.props.transitions.map(this.getTransition).join(',');return _objectSpread({},this.getExpandStyle(),{transition:transition});}},{key:"render",value:function render(){var _this$props=this.props,className=_this$props.className,children=_this$props.children,Tag=_this$props.tag;var childProps={className:className,style:this.getStyle(),ref:this.setRef};return _react["default"].createElement(Tag,childProps,children);}}]);return Expand;}(_react.Component);Expand.propTypes={children:_propTypes["default"].node.isRequired,open:_propTypes["default"].bool,duration:_propTypes["default"].number,easing:_propTypes["default"].string,className:_propTypes["default"].string,tag:_propTypes["default"].string,transitions:_propTypes["default"].arrayOf(_propTypes["default"].string),styles:_propTypes["default"].shape((_PropTypes$shape={},_defineProperty(_PropTypes$shape,PHASE.OPEN,_propTypes["default"].object),_defineProperty(_PropTypes$shape,PHASE.CLOSE,_propTypes["default"].object),_PropTypes$shape))};Expand.defaultProps={open:false,duration:400,easing:'ease-in-out',className:'',tag:'div',transitions:['height','opacity'],styles:{}};var _default=Expand;exports["default"]=_default;
+var initialTransitDuration=20;var PHASE={CLOSE:'close',CLOSING:'closing',CLOSED:'closed',OPEN:'open',OPENING:'opening',OPENED:'opened'};var GROUP=(_GROUP={},_defineProperty(_GROUP,PHASE.CLOSE,PHASE.CLOSE),_defineProperty(_GROUP,PHASE.CLOSED,PHASE.CLOSE),_defineProperty(_GROUP,PHASE.OPENING,PHASE.CLOSE),_defineProperty(_GROUP,PHASE.CLOSING,PHASE.OPEN),_defineProperty(_GROUP,PHASE.OPEN,PHASE.OPEN),_defineProperty(_GROUP,PHASE.OPENED,PHASE.OPEN),_GROUP);var Expand=/*#__PURE__*/function(_Component){_inherits(Expand,_Component);function Expand(props){var _this;_classCallCheck(this,Expand);_this=_possibleConstructorReturn(this,_getPrototypeOf(Expand).call(this,props));_defineProperty(_assertThisInitialized(_this),"getClientHeight",function(){return _this.refWrapper.scrollHeight;});_defineProperty(_assertThisInitialized(_this),"getClosedHeight",function(){return _this.props.partial?{height:'100px',opacity:1,overflow:'hidden'}:{height:0,opacity:0,overflow:'hidden'};});_defineProperty(_assertThisInitialized(_this),"getDefaultExpandStyle",function(){var status=_this.state.status;switch(status){case PHASE.OPENING:case PHASE.CLOSE:case PHASE.CLOSED:return _this.getClosedHeight();case PHASE.OPENED:case PHASE.CLOSING:return{height:_this.getClientHeight(),opacity:1,overflow:'hidden'};default:return{height:'auto',opacity:1,overflow:'unset'};}});_defineProperty(_assertThisInitialized(_this),"getExpandStyle",function(){return _objectSpread({},_this.getDefaultExpandStyle(),{},_this.props.styles[GROUP[_this.state.status]]);});_defineProperty(_assertThisInitialized(_this),"getTransition",function(attribute){return"".concat(attribute," ").concat(_this.props.duration,"ms ").concat(_this.props.easing);});_defineProperty(_assertThisInitialized(_this),"updateStatus",function(status){return _this.setState({status:status});});_defineProperty(_assertThisInitialized(_this),"delay",function(fn,time){_this.timeout=setTimeout(fn,time);});_defineProperty(_assertThisInitialized(_this),"clearDelay",function(){if(_this.timeout){clearTimeout(_this.timeout);}});_defineProperty(_assertThisInitialized(_this),"transit",function(entering,entered,enter){var duration=_this.props.duration;_this.updateStatus(entering);_this.delay(function(){_this.updateStatus(entered);_this.delay(function(){_this.updateStatus(enter);},duration);},initialTransitDuration);});_defineProperty(_assertThisInitialized(_this),"toggle",function(open){_this.clearDelay();if(open){_this.transit(PHASE.OPENING,PHASE.OPENED,PHASE.OPEN);}else{_this.transit(PHASE.CLOSING,PHASE.CLOSED,PHASE.CLOSE);}});_defineProperty(_assertThisInitialized(_this),"setRef",function(ref){_this.refWrapper=ref;});_this.state={status:_this.props.open?PHASE.OPEN:PHASE.CLOSE};return _this;}_createClass(Expand,[{key:"componentDidUpdate",value:function componentDidUpdate(prevProps/* prevState */){if(prevProps.open!==this.props.open){this.toggle(this.props.open);}}},{key:"componentWillUnmount",value:function componentWillUnmount(){this.clearDelay();}},{key:"getStyle",value:function getStyle(){var transition=this.props.transitions.map(this.getTransition).join(',');return _objectSpread({},this.getExpandStyle(),{transition:transition});}},{key:"render",value:function render(){var _this$props=this.props,className=_this$props.className,children=_this$props.children,Tag=_this$props.tag;var childProps={className:className,style:this.getStyle(),ref:this.setRef};return _react["default"].createElement(Tag,childProps,children);}}]);return Expand;}(_react.Component);Expand.propTypes={children:_propTypes["default"].node.isRequired,open:_propTypes["default"].bool,duration:_propTypes["default"].number,easing:_propTypes["default"].string,className:_propTypes["default"].string,tag:_propTypes["default"].string,transitions:_propTypes["default"].arrayOf(_propTypes["default"].string),styles:_propTypes["default"].shape((_PropTypes$shape={},_defineProperty(_PropTypes$shape,PHASE.OPEN,_propTypes["default"].object),_defineProperty(_PropTypes$shape,PHASE.CLOSE,_propTypes["default"].object),_PropTypes$shape))};Expand.defaultProps={open:false,duration:400,easing:'ease-in-out',className:'',tag:'div',transitions:['height','opacity'],styles:{}};var _default=Expand;exports["default"]=_default;
 
 /***/ }),
 /* 133 */
@@ -32877,7 +32880,7 @@ var account = __webpack_require__(26);
 var getAsset = __webpack_require__(20);
 
 // EXTERNAL MODULE: ./src/utils/fetchRescource.js
-var fetchRescource = __webpack_require__(32);
+var fetchRescource = __webpack_require__(29);
 
 // EXTERNAL MODULE: ./src/services/api.js
 var api = __webpack_require__(70);
@@ -35764,7 +35767,7 @@ exports.padSplit = function padSplit(num, size, group) {
 "use strict";
 
 
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 var inherits = __webpack_require__(6);
 
 var utils = __webpack_require__(152);
@@ -39937,7 +39940,7 @@ exports.g1_256 = g1_256;
 var utils = __webpack_require__(37);
 var common = __webpack_require__(73);
 var shaCommon = __webpack_require__(164);
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 var sum32 = utils.sum32;
 var sum32_4 = utils.sum32_4;
@@ -40048,7 +40051,7 @@ SHA256.prototype._digest = function digest(enc) {
 
 var utils = __webpack_require__(37);
 var common = __webpack_require__(73);
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 var rotr64_hi = utils.rotr64_hi;
 var rotr64_lo = utils.rotr64_lo;
@@ -62725,7 +62728,7 @@ exports.EDE = __webpack_require__(287);
 "use strict";
 
 
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 var inherits = __webpack_require__(6);
 
 var proto = {};
@@ -62797,7 +62800,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
 "use strict";
 
 
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 var inherits = __webpack_require__(6);
 
 var Cipher = __webpack_require__(105);
@@ -70790,7 +70793,7 @@ module.exports = {"_args":[["elliptic@6.5.2","/home/douglas/react-chrome-extensi
 "use strict";
 
 
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var BN = __webpack_require__(41);
 var inherits = __webpack_require__(6);
 var Base = __webpack_require__(82);
@@ -71738,7 +71741,7 @@ var BN = __webpack_require__(41);
 var inherits = __webpack_require__(6);
 var Base = __webpack_require__(82);
 
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 
 function MontCurve(conf) {
   Base.call(this, 'mont', conf);
@@ -71919,7 +71922,7 @@ Point.prototype.getX = function getX() {
 "use strict";
 
 
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var BN = __webpack_require__(41);
 var inherits = __webpack_require__(6);
 var Base = __webpack_require__(82);
@@ -72686,7 +72689,7 @@ var sh = [
 
 
 var utils = __webpack_require__(37);
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 function Hmac(hash, key, enc) {
   if (!(this instanceof Hmac))
@@ -73527,7 +73530,7 @@ module.exports = {
 
 var BN = __webpack_require__(41);
 var HmacDRBG = __webpack_require__(322);
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var curves = __webpack_require__(111);
 var rand = __webpack_require__(108);
 var assert = utils.assert;
@@ -73775,7 +73778,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
 
 var hash = __webpack_require__(112);
 var utils = __webpack_require__(162);
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 function HmacDRBG(options) {
   if (!(this instanceof HmacDRBG))
@@ -73894,7 +73897,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
 
 
 var BN = __webpack_require__(41);
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var assert = utils.assert;
 
 function KeyPair(ec, options) {
@@ -74020,7 +74023,7 @@ KeyPair.prototype.inspect = function inspect() {
 
 var BN = __webpack_require__(41);
 
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var assert = utils.assert;
 
 function Signature(options, enc) {
@@ -74161,7 +74164,7 @@ Signature.prototype.toDER = function toDER(enc) {
 
 var hash = __webpack_require__(112);
 var curves = __webpack_require__(111);
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
 var KeyPair = __webpack_require__(326);
@@ -74284,7 +74287,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
 "use strict";
 
 
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
 var cachedProperty = utils.cachedProperty;
@@ -74387,7 +74390,7 @@ module.exports = KeyPair;
 
 
 var BN = __webpack_require__(41);
-var utils = __webpack_require__(30);
+var utils = __webpack_require__(31);
 var assert = utils.assert;
 var cachedProperty = utils.cachedProperty;
 var parseBytes = utils.parseBytes;
@@ -78382,7 +78385,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
 var Reporter = __webpack_require__(75).Reporter;
 var EncoderBuffer = __webpack_require__(75).EncoderBuffer;
 var DecoderBuffer = __webpack_require__(75).DecoderBuffer;
-var assert = __webpack_require__(29);
+var assert = __webpack_require__(30);
 
 // Supported tags
 var tags = [
@@ -88464,7 +88467,7 @@ module.exports = CipherBase
 var elliptic = exports;
 
 elliptic.version = __webpack_require__(370).version;
-elliptic.utils = __webpack_require__(31);
+elliptic.utils = __webpack_require__(32);
 elliptic.rand = __webpack_require__(182);
 elliptic.curve = __webpack_require__(183);
 elliptic.curves = __webpack_require__(114);
@@ -88499,7 +88502,7 @@ module.exports = {"_args":[["elliptic@6.5.2","/home/douglas/react-chrome-extensi
 "use strict";
 
 
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var BN = __webpack_require__(42);
 var inherits = __webpack_require__(19);
 var Base = __webpack_require__(84);
@@ -89447,7 +89450,7 @@ var BN = __webpack_require__(42);
 var inherits = __webpack_require__(19);
 var Base = __webpack_require__(84);
 
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 
 function MontCurve(conf) {
   Base.call(this, 'mont', conf);
@@ -89628,7 +89631,7 @@ Point.prototype.getX = function getX() {
 "use strict";
 
 
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var BN = __webpack_require__(42);
 var inherits = __webpack_require__(19);
 var Base = __webpack_require__(84);
@@ -91236,7 +91239,7 @@ module.exports = {
 
 var BN = __webpack_require__(42);
 var HmacDRBG = __webpack_require__(384);
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var curves = __webpack_require__(114);
 var rand = __webpack_require__(182);
 var assert = utils.assert;
@@ -91603,7 +91606,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
 
 
 var BN = __webpack_require__(42);
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var assert = utils.assert;
 
 function KeyPair(ec, options) {
@@ -91729,7 +91732,7 @@ KeyPair.prototype.inspect = function inspect() {
 
 var BN = __webpack_require__(42);
 
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var assert = utils.assert;
 
 function Signature(options, enc) {
@@ -91870,7 +91873,7 @@ Signature.prototype.toDER = function toDER(enc) {
 
 var hash = __webpack_require__(115);
 var curves = __webpack_require__(114);
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
 var KeyPair = __webpack_require__(388);
@@ -91993,7 +91996,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
 "use strict";
 
 
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var assert = utils.assert;
 var parseBytes = utils.parseBytes;
 var cachedProperty = utils.cachedProperty;
@@ -92096,7 +92099,7 @@ module.exports = KeyPair;
 
 
 var BN = __webpack_require__(42);
-var utils = __webpack_require__(31);
+var utils = __webpack_require__(32);
 var assert = utils.assert;
 var cachedProperty = utils.cachedProperty;
 var parseBytes = utils.parseBytes;
@@ -111533,7 +111536,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_account__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(26);
 /*global chrome*/ /* src/content.js *///side note: todo run install `npm install --ignore-scripts` before publication to stop npm worms
 var Main=/*#__PURE__*/function(_React$Component){Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_4__[/* default */ "a"])(Main,_React$Component);function Main(){Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(this,Main);return Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(this,Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"])(Main).apply(this,arguments));}Object(_home_douglas_react_chrome_extension_node_modules_babel_preset_react_app_node_modules_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])(Main,[{key:"render",value:function render(){var opening_page;if(_services_authentication__WEBPACK_IMPORTED_MODULE_10__[/* default */ "b"].isLoggedIn()){opening_page=react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_views_account__WEBPACK_IMPORTED_MODULE_13__[/* default */ "a"],null);}else if(_services_authentication__WEBPACK_IMPORTED_MODULE_10__[/* default */ "b"].hasSavedKey()){opening_page=react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_views_login__WEBPACK_IMPORTED_MODULE_11__[/* default */ "a"],null);}else{opening_page=react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_views_initial__WEBPACK_IMPORTED_MODULE_9__[/* default */ "a"],null);}return react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(react_frame_component__WEBPACK_IMPORTED_MODULE_12___default.a,{head:[react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement("link",{key:1,type:"text/css",rel:"stylesheet",href:chrome.runtime.getURL('/static/css/content.css')})],initialContent:"<!DOCTYPE html><html><head></head><body style=\"margin:0px\"><div class=\"frame-root\"></div></body></html>"},react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(react_frame_component__WEBPACK_IMPORTED_MODULE_12__["FrameContextConsumer"],null,function(_ref){var document=_ref.document,window=_ref.window;return react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(_services_router__WEBPACK_IMPORTED_MODULE_8__[/* default */ "a"],null,opening_page);}));}}]);return Main;}(react__WEBPACK_IMPORTED_MODULE_5___default.a.Component);var app=document.createElement('div');app.id='my-extension-root';document.body.appendChild(app);react_dom__WEBPACK_IMPORTED_MODULE_6___default.a.render(react__WEBPACK_IMPORTED_MODULE_5___default.a.createElement(Main,null),app);var x=document.getElementById('my-extension-root');// we give our iframe an ID
-var iframe=x.children[0];iframe.id='my-frame';app.style.display='none';chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){if(request.message==='clicked_browser_action'){toggle();}});function toggle(){if(app.style.display==='none'){app.style.display='block';}else{app.style.display='none';}}
+var iframe=x.children[0];iframe.id='my-frame';var html=iframe.contentWindow.document.getElementsByTagName('html')[0];debugger;html.id="iframe-html";app.style.display='none';chrome.runtime.onMessage.addListener(function(request,sender,sendResponse){if(request.message==='clicked_browser_action'){toggle();}});function toggle(){if(app.style.display==='none'){app.style.display='block';}else{app.style.display='none';}}
 
 /***/ }),
 /* 555 */

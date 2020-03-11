@@ -5,23 +5,18 @@ import Account from './account'
 import { Authentication } from '../services/authentication'
 import Expand from 'react-expand-animated'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
-import {
-  DEFAULT_NETWORK,
-  NETWORKS_ENUM, STORAGE_ENUM,
-  TRANSITION_DURATION_MS,
-  VERSION
-} from '../constants'
+import { DEFAULT_NETWORK, NETWORKS_ENUM, STORAGE_ENUM, TRANSITION_DURATION_MS, VERSION } from '../constants'
 import { Storage } from '../services/storage'
 import Login from './login'
 import { getAssetURI } from '../utils/getAsset'
 import { capitalise } from '../utils/capitalise'
 
-const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required';
-const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required';
-const INCORRECT_PASSWORD_ERROR_MESSAGE = 'Incorrect password';
-const WEAK_PASSWORD_ERROR_MESSAGE = "Weak password: password requires 14 characters including a number and an uppercase, lowercase and special character";
-const PASSWORD_NOT_CHANGED_ERROR_MESSAGE = 'New password equals current password';
-const PASSWORDS_DONT_MATCH_ERROR_MESSAGE = 'Passwords must match';
+const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required'
+const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required'
+const INCORRECT_PASSWORD_ERROR_MESSAGE = 'Incorrect password'
+const WEAK_PASSWORD_ERROR_MESSAGE = 'Weak password: password requires 14 characters including a number and an uppercase, lowercase and special character'
+const PASSWORD_NOT_CHANGED_ERROR_MESSAGE = 'New password equals current password'
+const PASSWORDS_DONT_MATCH_ERROR_MESSAGE = 'Passwords must match'
 /**
  * Corresponds to the settings page.
  *
@@ -40,7 +35,7 @@ export default class Settings extends Component {
     this.hasError = this.hasError.bind(this)
 
     this.state = {
-      network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK) || DEFAULT_NETWORK,
+      network: localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK),
       collapsible_1: false,
       collapsible_2: false,
       collapsible_3: false,
@@ -56,38 +51,36 @@ export default class Settings extends Component {
   }
 
   async wipeFormErrors (clear_output = false) {
-     let password, new_password_confirm, new_password, output;
+    let password, new_password_confirm, new_password, output
 
     if (clear_output) {
-      password = '';
-      new_password_confirm = '';
-      new_password = '';
-      output = "";
+      password = ''
+      new_password_confirm = ''
+      new_password = ''
+      output = ''
 
       return new Promise(resolve => this.setState({
-      password_confirm_error: false,
-      password_error: false,
-      new_password_error: false,
-      output: output,
-      password: password,
-      new_password_confirm: new_password_confirm,
-      new_password: new_password,
-    }, resolve))
+        password_confirm_error: false,
+        password_error: false,
+        new_password_error: false,
+        output: output,
+        password: password,
+        new_password_confirm: new_password_confirm,
+        new_password: new_password,
+      }, resolve))
 
     } else {
 
-       return new Promise(resolve => this.setState({
-      password_confirm_error: false,
-      password_error: false,
-      new_password_error: false
-    }, resolve))
+      return new Promise(resolve => this.setState({
+        password_confirm_error: false,
+        password_error: false,
+        new_password_error: false
+      }, resolve))
     }
-
 
   }
 
-
-  hasError(){
+  hasError () {
     return (this.state.password_confirm_error ||
       this.state.password_error ||
       this.state.new_password_error)
@@ -97,14 +90,13 @@ export default class Settings extends Component {
     Authentication.Authenticate()
   }
 
+  async handleNetworkChange (event) {
+    const selected_network = event.target.value
 
-  async handleNetworkChange(event){
-    const selected_network = event.target.value;
-
-      await this.handleChange(event)
-      // clear cached values on window object
-    delete  window.fetchai_history
-       Storage.setLocalStorage(STORAGE_ENUM.SELECTED_NETWORK, selected_network)
+    await this.handleChange(event)
+    // clear cached values on window object
+    delete window.fetchai_history
+    localStorage.setItem(STORAGE_ENUM.SELECTED_NETWORK, selected_network)
   }
 
   async handleChange (event) {
@@ -140,7 +132,7 @@ export default class Settings extends Component {
    * @returns {Promise<boolean>}
    */
   async newPasswordValidate () {
-    if (!this.state.new_password.length){
+    if (!this.state.new_password.length) {
       this.setState({ new_password_error: true, output: NEW_PASSWORD_REQUIRED_ERROR_MESSAGE })
       return false
     }
@@ -211,11 +203,11 @@ export default class Settings extends Component {
     event.preventDefault()
     await this.wipeFormErrors()
 
-     if (!(await this.correctPassword())) return
-     if (!(await this.newPasswordValidate())) return
-     if (!this.passwordConfirmValidate()) return
+    if (!(await this.correctPassword())) return
+    if (!(await this.newPasswordValidate())) return
+    if (!this.passwordConfirmValidate()) return
 
-     this.update_password()
+    this.update_password()
 
   }
 
@@ -227,10 +219,10 @@ export default class Settings extends Component {
    */
   async update_password () {
     //IMPORTANT NOTE: relies on original password being checked for correctness before invoking this, else it will lead to key loss
-    const orig_key_file = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
+    const orig_key_file = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
     const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
     const key_file = await entity._to_json_object(this.state.new_password)
-    Storage.setLocalStorage(STORAGE_ENUM.KEY_FILE, JSON.stringify(key_file))
+    localStorage.setItem(STORAGE_ENUM.KEY_FILE, JSON.stringify(key_file))
     this.setState({
         password: '',
         new_password_confirm: '',
@@ -256,7 +248,7 @@ export default class Settings extends Component {
     const transitions = ['height', 'opacity', 'background']
 
     return (
-      <div id="my-extension-root-inner" className="OverlayMain"  data-testid="settings">
+      <div id="my-extension-root-inner" className="OverlayMain" data-testid="settings">
         <div className="OverlayMainInner">
           <div className='address_title'>
             <h1 className="settings-header">Settings</h1>
@@ -275,9 +267,12 @@ export default class Settings extends Component {
               <div className="input_container">
                 <label htmlFor="conversion">Choose<br></br>Network</label>
                 <div className="select_container">
-                  <select  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select" name="network">
-                    <option selected={this.state.network == NETWORKS_ENUM.TESTNET} value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
-                    <option selected={this.state.network == NETWORKS_ENUM.MAINNET} value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
+                  <select onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select"
+                          name="network">
+                    <option selected={this.state.network == NETWORKS_ENUM.TESTNET}
+                            value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
+                    <option selected={this.state.network == NETWORKS_ENUM.MAINNET}
+                            value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
                   </select>
                 </div>
               </div>
@@ -318,7 +313,7 @@ export default class Settings extends Component {
               </button>
               <output type="text"
                       data-testid="settings_output"
-                      className={`change_password_input change_password_output change_password_error ${this.hasError() ? "red_error" : ""}`}
+                      className={`change_password_input change_password_output change_password_error ${this.hasError() ? 'red_error' : ''}`}
                       id="output">{this.state.output}</output>
             </form>
           </Expand>

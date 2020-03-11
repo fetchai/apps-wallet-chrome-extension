@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { STORAGE_ENUM } from '../constants'
+import { EXTENSION, STORAGE_ENUM } from '../constants'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
@@ -9,7 +9,7 @@ import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
 import { getElementById } from '../utils/getElementById'
 import { blockExplorerURL } from '../utils/blockExplorerURL'
 import { historyURL } from '../utils/historyURL'
-import {BN} from 'bn.js'
+import { BN } from 'bn.js'
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -34,8 +34,8 @@ export default class History extends Component {
     this.state = {
       // eslint-disable-next-line react/prop-types
       show_history: props.show_history,
-      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
-      blockexplorer_url: blockExplorerURL("transactions/"),
+      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
+      blockexplorer_url: blockExplorerURL('transactions/'),
       items: 20,
       // an array containing page numbers of all fetched pages of transaction history
       loaded_page_numbers: [0],
@@ -44,7 +44,7 @@ export default class History extends Component {
     }
   }
 
-    UNSAFE_componentWillReceiveProps (nextProps) {
+  UNSAFE_componentWillReceiveProps (nextProps) {
     // eslint-disable-next-line react/prop-types
     if (nextProps.show_history !== this.props.show_history) {
       // eslint-disable-next-line react/prop-types
@@ -52,11 +52,10 @@ export default class History extends Component {
     }
   }
 
-
   async componentDidMount () {
 
     if (typeof window.fetchai_history !== 'undefined') {
-      this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL("transactions/") })
+      this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL('transactions/') })
       this.setHistoryCount(window.fetchai_history.length)
     }
 
@@ -82,7 +81,7 @@ export default class History extends Component {
   toggleClicked (event, index) {
 
     // don't toggle between history items when closed
-    if(!this.state.show_history) return;
+    if (!this.state.show_history) return
 
     let results = this.state.results
     const clicked_status = results[index].clicked
@@ -129,16 +128,13 @@ export default class History extends Component {
     }
   }
 
-
-    /**
-   * This fetches a page of history and adds relavent properties to results array of state.
-   * If we recieve invalid page (result.detail "Invalid page") then we return early and set has_more_items to false to
-   * quit loading more. If response is not 200 we just return unless flag is passed, in which case we loop until we get a http 200 we can parse.
+  /**
+   * use this method to constantly poll first page of history for
    *
    * @returns {Promise<void>}
    */
   async fetchFirstPage () {
-    const url = historyURL(this.state.address,   1)
+    const url = historyURL(this.state.address, 1)
     fetchResource(url).then((response) => { this.handlePageFetchResponse(response)})
   }
 
@@ -162,28 +158,30 @@ export default class History extends Component {
    */
   handlePageFetchResponse (response, retry) {
 
-     const loaded_page_number = parseInt(response.url.split("?page=")[1])
+    const loaded_page_number = (EXTENSION) ?
+      parseInt(response.statusText.split('?page=')[1]) :
+      parseInt(response.url.split('?page=')[1])
 
     // 200 and 404 are expected returns
     if (response.status !== 200 && response.status !== 404 && response.status !== 500) {
-        this.setHistoryCount(0, loaded_page_number)
-        setTimeout(this.fetchAnotherPageOfHistory.bind(null), 1000)
-       return
-      }
+      this.setHistoryCount(0, loaded_page_number)
+      setTimeout(this.fetchAnotherPageOfHistory.bind(null), 1000)
+      return
+    }
 
-   ;
+
     // whilst api is buggy assuming 404 and 500 means no results
 
-    if(response.status == 500 || response.status == 404){
-         this.setHistoryCount(0, loaded_page_number)
-         this.setState({ has_more_items: false })
-        return
+    if (response.status == 500 || response.status == 404) {
+      this.setHistoryCount(0, loaded_page_number)
+      this.setState({ has_more_items: false })
+      return
     }
 
     response.json().then((result) => {
 
       // reduce memory by only storing needed properties from api result
-     const next = this.filterResults(result)
+      const next = this.filterResults(result)
 
       let updated_results
       // lets cache first page on window for quicker remounts of component.
@@ -193,14 +191,11 @@ export default class History extends Component {
         this.setHistoryCount(next.length, loaded_page_number)
       }
 
-        updated_results = this.merge_without_duplicates(this.state.results, next)
+      updated_results = this.merge_without_duplicates(this.state.results, next)
 
+      const loaded_page_numbers = this.state.loaded_page_numbers
 
-
-const loaded_page_numbers  =  this.state.loaded_page_numbers
-
-      if(!loaded_page_numbers.includes(loaded_page_number)) loaded_page_numbers.push(loaded_page_number)
-
+      if (!loaded_page_numbers.includes(loaded_page_number)) loaded_page_numbers.push(loaded_page_number)
 
       this.setState({ results: updated_results, loaded_page_numbers: loaded_page_numbers })
     })
@@ -212,14 +207,14 @@ const loaded_page_numbers  =  this.state.loaded_page_numbers
    * @param results1
    * @param results2
    */
-  merge_without_duplicates(results1, results2){
-    const res = results1;
+  merge_without_duplicates (results1, results2) {
+    const res = results1
 
     results2.forEach((el) => {
-      if(!results1.some(el2 => el2.id === el.id)) res.push(el)
+      if (!results1.some(el2 => el2.id === el.id)) res.push(el)
     })
 
-    return res;
+    return res
   }
 
   /**
@@ -228,34 +223,34 @@ const loaded_page_numbers  =  this.state.loaded_page_numbers
    * @param result
    * @returns {*}
    */
-  filterResults(result){
+  filterResults (result) {
     return result.results.map(el => {
-        let amount = new BN(el.amount);
+      let amount = new BN(el.amount)
 
-        // we decide here if amount is positive or negative
-        if(el.from_address === this.state.address){
-          amount = amount.neg()
-        }
+      // we decide here if amount is positive or negative
+      if (el.from_address === this.state.address) {
+        amount = amount.neg()
+      }
 
-        let status;
-        if(amount === 0){
-          status = "unknown"
-        } else {
-          status = "Executed"
-        }
+      let status
+      if (amount === 0) {
+        status = 'unknown'
+      } else {
+        status = 'Executed'
+      }
 
-        return {
-          id: el.id,
-          status: status,
-          digest: el.tx,
-          from_address: el.from_address,
-          to_address: el.to_address,
-          amount: amount,
-          fee: el.fee,
-          created_date: el.created_date,
-          clicked: false
-        }
-      })
+      return {
+        id: el.id,
+        status: status,
+        digest: el.tx,
+        from_address: el.from_address,
+        to_address: el.to_address,
+        amount: amount,
+        fee: el.fee,
+        created_date: el.created_date,
+        clicked: false
+      }
+    })
   }
 
   /**
@@ -273,7 +268,7 @@ const loaded_page_numbers  =  this.state.loaded_page_numbers
                                      digest={this.state.results[i].digest}
                                      status={this.state.results[i].status}
                                      amount={this.state.results[i].amount}
-                                     block_explorer_url ={this.state.blockexplorer_url}
+                                     block_explorer_url={this.state.blockexplorer_url}
                                      created_date={this.state.results[i].created_date}
                                      toggle_clicked={this.toggleClicked}
                                      index={i}/>)
@@ -285,7 +280,7 @@ const loaded_page_numbers  =  this.state.loaded_page_numbers
                                       address={this.state.address}
                                       to_address={this.state.results[i].to_address}
                                       amount={this.state.results[i].amount}
-                                      block_explorer_url ={this.state.blockexplorer_url}
+                                      block_explorer_url={this.state.blockexplorer_url}
                                       fee={this.state.results[i].fee}
                                       created_date={this.state.results[i].created_date}
                                       toggle_clicked={this.toggleClicked}
@@ -299,7 +294,8 @@ const loaded_page_numbers  =  this.state.loaded_page_numbers
       <InfiniteScroll
         loadMore={this.fetchAnotherPageOfHistory.bind(this)}
         hasMore={this.state.has_more_items}
-        loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon" className={this.state.results.length > 0? "loader" : "mini-loader"}/>}
+        loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon"
+                     className={this.state.results.length > 0 ? 'loader' : 'mini-loader'}/>}
         useWindow={false}
       >
         {this.showItems()}{' '}

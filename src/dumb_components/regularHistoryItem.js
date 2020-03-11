@@ -31,22 +31,22 @@ export default class RegularHistoryItem extends Component {
     }
   }
 
-  viewOnBlockExplorer(){
-     let link=document.createElement("a");
-      link.href=this.state.block_explorer_url + this.state.digest;
-      link.target = '_blank'
-      link.rel = 'noopener noreferrer'
-      link.click();
-}
+  viewOnBlockExplorer () {
+    let link = document.createElement('a')
+    link.href = this.state.block_explorer_url + this.state.digest
+    link.target = '_blank'
+    link.rel = 'noopener noreferrer'
+    link.click()
+  }
 
-   setToolTipHeight(event){
-      event.stopPropagation()
-     const element = event.target
+  setToolTipHeight (event) {
+    event.stopPropagation()
+    const element = event.target
     const bounding_client_rect = element.getBoundingClientRect()
     const tooltip = getElementById(`regular-tooltip-${this.state.index}`)
     let top = bounding_client_rect.top
-     top = top -5
-     tooltip.style.top = `${top}px`;
+    top = top - 5
+    tooltip.style.top = `${top}px`
   }
 
   UNSAFE_componentWillReceiveProps (nextProps) {
@@ -61,12 +61,13 @@ export default class RegularHistoryItem extends Component {
     return (
       <div className={`history_item history-pointer ${this.state.clicked ? 'hide' : ''}`}
            onClick={(event) => { this.state.toggle_clicked(event, this.state.index)}}><span
-        className="history_left_value hoverable-expanded-history-item" onClick={this.viewOnBlockExplorer} onMouseEnter={this.setToolTipHeight} >{format(this.state.digest, 10)}</span>
+        className="history_left_value hoverable-expanded-history-item" onClick={this.viewOnBlockExplorer}
+        onMouseEnter={this.setToolTipHeight}>{format(this.state.digest, 10)}</span>
         <span
-                  id={`regular-tooltip-${this.state.index}`}
-                  className={`tooltiptext tooltiptext-expanded-history-item-positioning`}>View on BlockExplorer</span>
+          id={`regular-tooltip-${this.state.index}`}
+          className={`tooltiptext tooltiptext-expanded-history-item-positioning`}>View on BlockExplorer</span>
         <span
-        className={`history_right_value ${this.state.amount.isNeg()? "red" : "green"}`}>{toNonCanonicalFetDisplay(this.state.amount)}{" FET"}</span><br></br>
+          className={`history_right_value ${this.state.amount.isNeg() ? 'red' : 'green'}`}>{toNonCanonicalFetDisplay(this.state.amount)}{' FET'}</span><br></br>
         <span className="history_left_value light history-item-grey">{this.state.status}</span><span
           className="history_right_value light history-date-item history-item-grey">{toLocaleDateString(this.state.created_date)}</span>
       </div>

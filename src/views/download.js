@@ -1,10 +1,6 @@
 import React, { Component } from 'react'
 import qrCode from 'qrcode-generator'
-import {
-  COPIED_MESSAGE,
-  COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
-  KEY_FILE_NAME, STORAGE_ENUM
-} from '../constants'
+import { COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE, KEY_FILE_NAME, STORAGE_ENUM } from '../constants'
 import { goTo } from '../services/router'
 import Account from './account'
 import { Storage } from '../services/storage'
@@ -28,15 +24,12 @@ export default class Download extends Component {
 
     this.state = {
       block_explorer_url: blockExplorerURL(),
-      address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
+      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
       QR: '',
       hover_1: false,
       copied: false
     }
   }
-
-
-
 
   async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
@@ -70,7 +63,7 @@ export default class Download extends Component {
    */
 
   async download () {
-    const json_str = Storage.getLocalStorage(STORAGE_ENUM.KEY_FILE)
+    const json_str = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
     const element = document.createElement('a')
     const file = new Blob([json_str], { type: 'text/plain' })
     element.href = URL.createObjectURL(file)
@@ -86,34 +79,35 @@ export default class Download extends Component {
 
   render () {
     return (
-        <div id="my-extension-root-inner" className="OverlayMain"  data-testid="download">
-          <div className="OverlayMainInner">
-            <div className='settings_title'>
-              <div className='address_title_inner'>
-                <h1 className="account_address">Account address</h1>
-                <br></br>
-                <span className="hoverable-address"
-                      onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
-                <span
-                  className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
-              </div>
-              <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
-            </div>
-            <hr></hr>
-            <div className="qr_container">
-              {this.state.QR ? <img src={this.state.QR} className='qr'/> : ''}
-              <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
+      <div id="my-extension-root-inner" className="OverlayMain" data-testid="download">
+        <div className="OverlayMainInner">
+          <div className='settings_title'>
+            <div className='address_title_inner'>
+              <h1 className="account_address">Account address</h1>
+              <br></br>
+              <span className="hoverable-address"
+                    onClick={this.handleCopyToClipboard}>{format(this.state.address)}</span>
               <span
-                className="tooltiptext tooltiptext-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
-              <a className='download-button fetch-link'  target="_blank" rel="noopener noreferrer" href={`${this.state.block_explorer_url}${this.state.address}`}>
-                View on Block Explorer
-              </a>
-              <button className='download-button download-private-key-button' onClick={this.download}>
-                Export Private Key
-              </button>
+                className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
             </div>
+            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
+          </div>
+          <hr></hr>
+          <div className="qr_container">
+            {this.state.QR ? <img src={this.state.QR} className='qr'/> : ''}
+            <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
+            <span
+              className="tooltiptext tooltiptext-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
+            <a className='download-button fetch-link' target="_blank" rel="noopener noreferrer"
+               href={`${this.state.block_explorer_url}${this.state.address}`}>
+              View on Block Explorer
+            </a>
+            <button className='download-button download-private-key-button' onClick={this.download}>
+              Export Private Key
+            </button>
           </div>
         </div>
+      </div>
     )
   }
 }

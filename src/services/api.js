@@ -45,7 +45,7 @@ export class API {
   static getBootstrapAddress (network) {
     const promise = new Promise(async (resolve, reject) => {
       const response = await fetchResource(BOOTSTRAP_REQUEST_URI + network).catch(() => reject(false))
-      if (typeof response === "undefined" || response.status < 200 || response.status > 300) return reject(false)
+      if (typeof response === 'undefined' || response.status < 200 || response.status > 300) return reject(false)
       const data = await response.json().catch(() => reject(false))
       resolve(data[0].address)
     })
@@ -59,7 +59,6 @@ export class API {
    * @returns {Promise<API.balance|TokenApi.balance|Account.balance|((address: AddressLike) => Promise<>)|*|null|boolean>}
    */
   async balance (address) {
-
     const body = {
       method: 'post',
       body: JSON.stringify({ address: address })
@@ -72,15 +71,13 @@ export class API {
 
     if (error) return false
 
-    if (typeof response === "undefined" || 200 < response.status || response.status > 300)
+    if (typeof response === 'undefined' || 200 < response.status || response.status > 300)
       return false
 
     const data = await response.json()
 
     return data.balance
   }
-
-
 
   /**
    * Gets block number.
@@ -97,12 +94,10 @@ export class API {
 
     if (error) return false
 
-    if (typeof response === "undefined" || 200 < response.status || response.status > 300) {
+    if (typeof response === 'undefined' || 200 < response.status || response.status > 300) {
       return false
     }
-
     const obj = await response.json()
-
     return obj['chain'][0].blockNumber
   }
 
@@ -129,7 +124,7 @@ export class API {
       error = true
     })
 
-    if (error || typeof response === "undefined" || response.status !== 200) return false
+    if (error || typeof response === 'undefined' || response.status !== 200) return false
     const data = await response.json().catch(() => error = true)
     if (error) return false
 
@@ -144,9 +139,9 @@ export class API {
 
     const body = {
       method: 'post',
-       headers: { 'Content-Type': 'application/json' },
-       body: JSON.stringify({
-         ver: '1.2',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ver: '1.2',
         data: encoded_tx.toString('base64')
       })
     }
@@ -157,7 +152,7 @@ export class API {
 
     if (error) return false
 
-    if (typeof response === "undefined" || 200 < response.status || response.status > 300) return false
+    if (typeof response === 'undefined' || 200 < response.status || response.status > 300) return false
 
     const json = await response.json().catch(() => error = true)
 
@@ -186,7 +181,6 @@ export class API {
     }), 'ascii')
 
     tx.data(encoded)
-     debugger
     return tx
   }
 }

@@ -1,4 +1,3 @@
-
 // const NETWORK_NAME = 'devnet'
 // name to assign to downloadable key file on the end-users system.
 const KEY_FILE_NAME = 'private_key.json'
@@ -25,36 +24,30 @@ const TRANSACTION_HISTORY_CHECK_INTERVAL_MS = 5000
 const CANONICAL_DIFFERENCE = 10000000000
 
 // copy hover messages
-const COPIED_MESSAGE = "Copied!";
-const COPY_ADDRESS_TO_CLIPBOARD_MESSAGE = "Copy Address to clipboard";
-
+const COPIED_MESSAGE = 'Copied!'
+const COPY_ADDRESS_TO_CLIPBOARD_MESSAGE = 'Copy Address to clipboard'
 
 // default time given to transition an element, usually the collapsables
 const TRANSITION_DURATION_MS = 500
 
-
 // exhaustive list of keys with which properties are saved in local storage
-const STORAGE_ENUM = Object.freeze({"LOGGED_IN": 'logged_in',
-  "ADDRESS": 'address',
-  "KEY_FILE": 'key_file',
-  "DOLLAR_PRICE": 'dollar_price',
-  "SELECTED_NETWORK": 'selected_network'})
+const STORAGE_ENUM = Object.freeze({
+  'LOGGED_IN': 'logged_in',
+  'ADDRESS': 'address',
+  'KEY_FILE': 'key_file',
+  'DOLLAR_PRICE': 'dollar_price',
+  'SELECTED_NETWORK': 'selected_network'
+})
 
 // urls for block explorers (/accounts dir)
 const TESTNET_BLOCKEXPLORER = 'https://explore-testnet.fetch.ai/'
 const MAINNET_BLOCKEXPLORER = 'https://explore.fetch.ai/'
 
-
-
 // network names (must be same as strings returned by bootstraps list networks, other than localhost)
-const NETWORKS_ENUM = Object.freeze({"TESTNET": 'testnet', "MAINNET": 'mainnet', "LOCALHOST": 'localhost'})
+const NETWORKS_ENUM = Object.freeze({ 'TESTNET': 'testnet', 'MAINNET': 'mainnet', 'LOCALHOST': 'localhost' })
 
 // default network to give to them use on create and recover.
-const DEFAULT_NETWORK = NETWORKS_ENUM.TESTNET;
-
-// name of network to connect to as an over-ride for development only. doesn't
-// mater what this is set to unless is set to localhost.
-const NETWORK_NAME = NETWORKS_ENUM.TESTNET;
+const DEFAULT_NETWORK = NETWORKS_ENUM.TESTNET
 
 export {
   CANONICAL_DIFFERENCE,
@@ -67,7 +60,6 @@ export {
   ACCOUNT_HISTORY_URI,
   TRANSACTION_HISTORY_CHECK_INTERVAL_MS,
   TRANSITION_DURATION_MS,
-  NETWORK_NAME,
   KEY_FILE_NAME,
   VERSION,
   EXTENSION,
