@@ -5,7 +5,7 @@ const KEY_FILE_NAME = 'private_key.json'
 const VERSION = '1.0.0'
 
 // flag to change when running as extension or in browser.
-const EXTENSION = false
+const EXTENSION = true
 // fee limit for transactions.
 const DEFAULT_FEE_LIMIT = 20
 
