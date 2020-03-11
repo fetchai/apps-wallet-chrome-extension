@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
-import { DEFAULT_NETWORK, STORAGE_ENUM } from '../constants'
+import { STORAGE_ENUM } from '../constants'
 import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
@@ -20,6 +20,7 @@ export default class History extends Component {
 
   constructor (props) {
     super(props)
+
     this.toggleClicked = this.toggleClicked.bind(this)
     this.hideAllLargeHistoryItems = this.hideAllLargeHistoryItems.bind(this)
     this.fetchAnotherPageOfHistory = this.fetchAnotherPageOfHistory.bind(this)
@@ -30,12 +31,23 @@ export default class History extends Component {
     this.setHistoryCount = props.setHistoryCount
 
     this.state = {
+      // eslint-disable-next-line react/prop-types
+      show_history: props.show_history,
       address: Storage.getLocalStorage(STORAGE_ENUM.ADDRESS),
-      blockexplorer_url: blockExplorerURL(),
+      blockexplorer_url: blockExplorerURL("transactions/"),
       items: 20,
-      current_page: 1,
+      // an array containing page numbers of all fetched pages of transaction history
+      loaded_page_numbers: [0],
       has_more_items: true,
       results: []
+    }
+  }
+
+    UNSAFE_componentWillReceiveProps (nextProps) {
+    // eslint-disable-next-line react/prop-types
+    if (nextProps.show_history !== this.props.show_history) {
+      // eslint-disable-next-line react/prop-types
+      this.setState({ show_history: nextProps.show_history })
     }
   }
 
@@ -43,7 +55,7 @@ export default class History extends Component {
   async componentDidMount () {
 
     if (typeof window.fetchai_history !== 'undefined') {
-      this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL() })
+      this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL("transactions/") })
       this.setHistoryCount(window.fetchai_history.length)
     }
     // so we save and reload the first page, for quicker UI, but when we get data from request we show that instead.
@@ -66,6 +78,9 @@ export default class History extends Component {
    * @param index
    */
   toggleClicked (event, index) {
+
+    // don't toggle between history items when closed
+    if(!this.state.show_history) return;
 
     let results = this.state.results
     const clicked_status = results[index].clicked
@@ -119,9 +134,9 @@ export default class History extends Component {
    *
    * @returns {Promise<void>}
    */
-  async fetchAnotherPageOfHistory (retry = false) {
-    const url = historyURL(this.state.address, this.state.current_page)
-    fetchResource(url).then((response) => { debugger; this.handlePageFetchResponse(response, retry)})
+  async fetchAnotherPageOfHistory () {
+    const url = historyURL(this.state.address, Math.max(...this.state.loaded_page_numbers) + 1)
+    fetchResource(url).then((response) => { this.handlePageFetchResponse(response)})
   }
 
   /**
@@ -132,21 +147,25 @@ export default class History extends Component {
    */
   handlePageFetchResponse (response, retry) {
 
+     const loaded_page_number = parseInt(response.url.split("?page=")[1])
+
     // 200 and 404 are expected returns
     if (response.status !== 200 && response.status !== 404 && response.status !== 500) {
-      if (retry === true) {
-        this.setHistoryCount(0, this.state.current_page)
-        setTimeout(this.fetchAnotherPageOfHistory.bind(null, retry), 1000)
+        this.setHistoryCount(0, loaded_page_number)
+        setTimeout(this.fetchAnotherPageOfHistory.bind(null), 1000)
+       return
       }
-      return
-    }
-   debugger;
+
+   ;
     // whilst api is buggy assuming 404 and 500 means no results
 
+
+
+
+
     if(response.status == 500 || response.status == 404){
-         this.setHistoryCount(0, this.state.current_page)
-          const next_page = this.state.current_page + 1
-         this.setState({ has_more_items: false, current_page: next_page  })
+         this.setHistoryCount(0, loaded_page_number)
+         this.setState({ has_more_items: false })
         return
     }
 
@@ -157,18 +176,22 @@ export default class History extends Component {
 
       let updated_results
       // lets cache first page on window for quicker remounts of component.
-      if (this.state.current_page === 1) {
+      if (loaded_page_number === 1) {
         //todo maybe swap to iframe window from global window
         window.fetchai_history = next
-        this.setHistoryCount(next.length, this.state.current_page)
+        this.setHistoryCount(next.length, loaded_page_number)
       }
         updated_results = this.merge_without_duplicates(this.state.results, next)
 
 
-     if(this.state.current_page >1 ) debugger;
 
-      const next_page = this.state.current_page + 1
-      this.setState({ results: updated_results, current_page: next_page })
+     if(loaded_page_number ===2 ) debugger;
+
+     // we just set current page as last selected page.
+
+const loaded_page_numbers  =  this.state.loaded_page_numbers
+      loaded_page_numbers.push(loaded_page_number)
+      this.setState({ results: updated_results, loaded_page_numbers: loaded_page_numbers })
     })
   }
 
@@ -188,6 +211,12 @@ export default class History extends Component {
     return res;
   }
 
+  /**
+   * we select the relevant results only.
+   *
+   * @param result
+   * @returns {*}
+   */
   filterResults(result){
     return result.results.map(el => {
         let amount = new BN(el.amount);
@@ -226,6 +255,7 @@ export default class History extends Component {
                                      digest={this.state.results[i].digest}
                                      status={this.state.results[i].status}
                                      amount={this.state.results[i].amount}
+                                     block_explorer_url ={this.state.blockexplorer_url}
                                      created_date={this.state.results[i].created_date}
                                      toggle_clicked={this.toggleClicked}
                                      index={i}/>)
@@ -237,7 +267,7 @@ export default class History extends Component {
                                       address={this.state.address}
                                       to_address={this.state.results[i].to_address}
                                       amount={this.state.results[i].amount}
-                                      blockexplorer_url ={this.state.blockexplorer_url}
+                                      block_explorer_url ={this.state.blockexplorer_url}
                                       fee={this.state.results[i].fee}
                                       created_date={this.state.results[i].created_date}
                                       toggle_clicked={this.toggleClicked}

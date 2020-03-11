@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { BN } from 'bn.js'
 import Expand from '../other_imported_modules/react-expand-animated-2/build/Expand'
 import {
-  BALANCE_CHECK_INTERVAL_MS, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
+  BALANCE_CHECK_INTERVAL_MS, CANONICAL_DIFFERENCE, COPIED_MESSAGE, COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
   DOLLAR_PRICE_URI, NETWORK_NAME, STORAGE_ENUM,
   TRANSITION_DURATION_MS,
@@ -22,6 +22,7 @@ import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
 import Storage from '../services/storage'
 import { capitalise } from '../utils/capitalise'
+import { toNonCanonicalFetDisplay } from '../utils/toNonCanonicalFetDisplay'
 
 /**
  * This corresponds to the account page. The account page comprises this component and the History component.
@@ -125,11 +126,11 @@ export default class Account extends Component {
     const balance = this.state.balance
     let dollar_balance
 
-
     if (this.state.percentage === 0 || balance.isZero()) {
       dollar_balance = 0
     } else {
-      dollar_balance = balance.toNumber() * this.state.percentage
+      // we multiply and then divide by 100 since BN cannot process ohterwise.
+      dollar_balance = balance.mul(new BN(this.state.percentage*1000)).div(new BN(CANONICAL_DIFFERENCE)).toNumber()/1000.
     }
     this.setState({ dollar_balance: dollar_balance })
   }
@@ -216,10 +217,8 @@ export default class Account extends Component {
                 {BN.isBN(this.state.balance)
                   ? (
                     <span className="fet-balance">
-                    {this.state.balance.toNumber().toLocaleString()}
-                      {' '}
-
-                      {this.state.balance.toNumber().toLocaleString().length < 14 ? "FET" : ""}
+                    {toNonCanonicalFetDisplay(this.state.balance)}
+                      {'  FET'}
                   </span>
                   ) : ''}
                 {' '}
@@ -250,12 +249,11 @@ export default class Account extends Component {
                   partial={true}
                 >
                     <h1 className={this.state.show_history ? 'history-header' : 'history-header-collapsed  account_address'}>History</h1>
-
                     <hr className="history-hr"/>
                   <div id="history-container"
                        className={`${this.state.show_history ? 'history-container' : 'history-container-collapsed'}`}>
                       {/* eslint-disable-next-line react/no-string-refs */}
-                    <History ref="history" setHistoryCount={this.setHistoryCount}/>{' '}
+                    <History ref="history" setHistoryCount={this.setHistoryCount} show_history = {this.state.show_history}/>{' '}
                   </div>
                 </Expand>
               )

@@ -825,9 +825,21 @@ display:block;
 #my-extension-root-inner .history-container-collapsed {
     height: 400px;
     overflow: hidden;
-    pointer-events: none;
+    /*pointer-events: none;*/
     cursor: default;
 }
+#my-extension-root-inner .sending-loading-icon {
+        width: 24px;
+    margin-top: -1px;
+    padding-top: -28px;
+    padding-left: 7px;
+}
+
+#my-extension-root-inner .fade-send-buttons {
+    opacity: 0.5;
+}
+
+
 
 #my-extension-root-inner .loader {
     margin-left: 45px;
@@ -856,6 +868,10 @@ display:block;
     display: none;
     transition: opacity 5s ease-out;
     opacity: 0;
+}
+
+#my-extension-root-inner .hidden {
+    display: none;
 }
 
 #my-extension-root-inner .light {
@@ -906,8 +922,14 @@ display:block;
     display: block;
 }
 #my-extension-root-inner .send-transfer-status {
- height: 15px;
+  height: 15px;
+    line-height: 20px;
     display: block;
+    line-height: 20px;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /*#my-extension-root-inner .send_buttons {*/

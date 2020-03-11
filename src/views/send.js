@@ -10,13 +10,13 @@ import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
 import Storage from '../services/storage'
 import { goTo } from '../services/router'
-import Settings from './settings'
 import Account from './account'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import { API } from '../services/api'
 import { BN } from "bn.js"
 import { capitalise } from '../utils/capitalise'
+import { toCanonicalFet } from '../utils/toCanonicalFet'
 
 
 const INVALID_ADDRESS_ERROR_MESSAGE = "Invalid address"
@@ -48,6 +48,7 @@ export default class Send extends Component {
     this.sync = this.sync.bind(this)
     this.setTransferMessage = this.setTransferMessage.bind(this)
     this.balance = this.balance.bind(this)
+    this.trunc10DP = this.trunc10DP.bind(this)
 
     this.state = {
       network: Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK),
@@ -170,10 +171,21 @@ export default class Send extends Component {
    * @returns {number | string}
    */
   calculateDollarDisplayAmount (amount, percentage) {
-
     if(amount === "")  return "";
     const total = amount * percentage
     return total.toFixed(2)
+  }
+
+  /**
+   * truncate input to 10 DP
+   * @param amount
+   * @returns {number}
+   */
+   trunc10DP(amount){
+     // ensure that only ten decimal places are allowed on inputs.
+    const remainder = (amount % 1).toFixed(10)
+    const integer_part = Math.trunc(amount);
+    return integer_part + Number(remainder)
   }
 
   /**
@@ -182,12 +194,12 @@ export default class Send extends Component {
    * @param event
    */
   async handleAmountChange (event) {
-    const amount = event.target.value;
+    const amount =  this.trunc10DP(event.target.value);
 
     if (this.state.percentage === null) return this.setState({ dollar: null, amount: event.target.value, amount_error_message: "", amount_error: false })
 
     // we don't wait for sufficient funds method by choice.
-    await this.sufficientFunds(amount)
+    //await this.sufficientFunds(amount)
 
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
     if (parseFloat(amount) === 0) return this.setState({ dollar: 0, amount: 0 })
@@ -197,6 +209,7 @@ export default class Send extends Component {
       amount: amount
     })
   }
+
 
   /**
    *
@@ -245,6 +258,8 @@ export default class Send extends Component {
 
     if (error) return
     // now we send the transfer as no errors that cause us to not make transfer have occured.
+
+     await this.setTransferMessage(["Transfer Submitted", <img key = {1} src={getAssetURI('send_loading_loader.gif')} className="sending-loading-icon" alt="Fetch.ai Loading Icon"/>], false)
      await this.transferController()
 
   }
@@ -271,11 +286,13 @@ export default class Send extends Component {
           reject('API Error')
         }
 
-        await this.setTransferMessage(`Transfer status: ${status} `)
+
+        await this.setTransferMessage(["Transfer Pending", <img key = {1} src={getAssetURI('send_progress_loader.gif')} className="sending-loading-icon" alt="Fetch.ai Loading Icon"/>], false)
 
         if (/Executed|Submitted/.test(status)) {
           clearInterval(loop)
-          await this.setTransferMessage(`Success! Transaction ${status} `, false)
+          await this.setTransferMessage(["Transfer Executed", <img key = {1} src={getAssetURI('send_executed_loader.gif')} className="sending-loading-icon" alt="Fetch.ai Loading Icon"/>], false)
+          setTimeout(this.setTransferMessage.bind(null, "Transfer Executed", false), 3000)
           this.setState({transfer_disabled: false})
           resolve(status)
         }
@@ -318,13 +335,12 @@ export default class Send extends Component {
      const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
    // const entity = Entity.from_hex('6e8339a0c6d51fc58b4365bf2ce18ff2698d2b8c40bb13fcef7e1ba05df18e4b')
     let error = false
-    const txs = await this.api.transfer(entity, this.state.to_address, this.state.amount).catch(() => error = true)
+    const txs = await this.api.transfer(entity, this.state.to_address, toCanonicalFet(this.state.amount)).catch(() => error = true)
     if (error | txs === false) {
-      debugger
-      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE + "todo delete" })
+      this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE })
       return;
     }
-          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE + "todo delete twice" }))
+          await this.sync(txs).catch(() => this.setState({ transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE}))
   }
 
   /**
@@ -353,8 +369,11 @@ export default class Send extends Component {
      * fee
      *
      */
-    debugger;
-    if (BN.isBN(this.state.balance) && this.state.balance.lt(new BN(new BN(amount).add(new BN(1))))) {
+
+      const canonical_amount = toCanonicalFet(amount)
+    const canonical_amount_plus_min_fee = canonical_amount.add(new BN(1))
+
+    if (new BN(this.state.balance).lt(canonical_amount_plus_min_fee)) {
       this.setState({ amount_error_message: INSUFFICIENT_FUNDS_ERROR_MESSAGE, amount_error: true})
       return false
     }
@@ -371,7 +390,7 @@ export default class Send extends Component {
             <div className='address_title_inner'>
              <h3 className="send-title">Send</h3>
             </div>
-            <img className='cross' src={getAssetURI('burger_icon.svg')} onClick={goTo.bind(null, Settings)}/>
+            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={goTo.bind(null, Account)}/>
           </div>
           <hr></hr>
            <div className={'send-connected-to-network'}>
@@ -397,7 +416,7 @@ export default class Send extends Component {
                   <input className={`amount_input  ${this.state.amount_error ? 'red_error' : ''}`} type="number" placeholder="0 FET" name="amount"
                          data-testid="send_amount"
                          id="amount" onChange={this.handleAmountChange}
-                         value={this.state.amount}></input>
+                         value={this.state.amount} ></input>
                   <br></br>
                   <output  className={this.state.amount_error ? 'red_error' : ''}>{typeof this.state.dollar !== 'undefined' && this.state.dollar !== null ? '$' + this.state.dollar + ' USD' : ''}</output>
                 </div>
@@ -422,11 +441,11 @@ export default class Send extends Component {
                      data-testid="transfer_error_output"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">
-              <button className="send-left-button" onClick={goTo.bind(null, Account)}>
+              <button className={`send-left-button ${this.state.transfer_disabled? "fade-send-buttons" : ""}`} onClick={goTo.bind(null, Account)}>
                 Cancel
               </button>
               <button  data-testid="send_submit"
-                className="send-right-button disabled-pointer" disabled={this.state.transfer_disabled} type="submit" value="Send">Send</button>
+                className={`send-right-button disabled-pointer ${this.state.transfer_disabled? "fade-send-buttons" : ""}`} disabled={this.state.transfer_disabled} type="submit" value="Send">Send</button>
             </div>
           </form>
         </div>

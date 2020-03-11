@@ -5,7 +5,7 @@ const KEY_FILE_NAME = 'private_key.json'
 const VERSION = '1.0.0'
 
 // flag to change when running as extension or in browser.
-const EXTENSION = true
+const EXTENSION = false
 // fee limit for transactions.
 const DEFAULT_FEE_LIMIT = 20
 
@@ -20,6 +20,9 @@ const BOOTSTRAP_REQUEST_URI = `https://bootstrap.fetch.ai/endpoints/?network=`
 const DOLLAR_PRICE_CHECK_INTERVAL_MS = 5000
 const BALANCE_CHECK_INTERVAL_MS = 1000
 const TRANSACTION_HISTORY_CHECK_INTERVAL_MS = 5000
+
+// the multiple difference between regular FET and canonical FET
+const CANONICAL_DIFFERENCE = 10000000000
 
 // copy hover messages
 const COPIED_MESSAGE = "Copied!";
@@ -38,8 +41,10 @@ const STORAGE_ENUM = Object.freeze({"LOGGED_IN": 'logged_in',
   "SELECTED_NETWORK": 'selected_network'})
 
 // urls for block explorers (/accounts dir)
-const TESTNET_BLOCKEXPLORER = 'https://explore-testnet.fetch.ai/accounts/'
-const MAINNET_BLOCKEXPLORER = 'https://explore.fetch.ai/accounts/'
+const TESTNET_BLOCKEXPLORER = 'https://explore-testnet.fetch.ai/'
+const MAINNET_BLOCKEXPLORER = 'https://explore.fetch.ai/'
+
+
 
 // network names (must be same as strings returned by bootstraps list networks, other than localhost)
 const NETWORKS_ENUM = Object.freeze({"TESTNET": 'testnet', "MAINNET": 'mainnet', "LOCALHOST": 'localhost'})
@@ -52,6 +57,7 @@ const DEFAULT_NETWORK = NETWORKS_ENUM.TESTNET;
 const NETWORK_NAME = NETWORKS_ENUM.TESTNET;
 
 export {
+  CANONICAL_DIFFERENCE,
   STORAGE_ENUM,
   NETWORKS_ENUM,
   TESTNET_BLOCKEXPLORER, MAINNET_BLOCKEXPLORER,

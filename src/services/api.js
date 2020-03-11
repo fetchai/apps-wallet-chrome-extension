@@ -3,9 +3,8 @@ import { BOOTSTRAP_REQUEST_URI, DEFAULT_FEE_LIMIT } from '../constants'
 import { Transaction } from 'fetchai-ledger-api/dist/fetchai/ledger'
 import { encode_transaction } from 'fetchai-ledger-api/dist/fetchai/ledger/serialization'
 import { BN } from 'bn.js'
-import { Address, Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
+import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto'
 import { Bootstrap } from 'fetchai-ledger-api/dist/fetchai/ledger/api/bootstrap'
-import { toNonCanonicalFet } from '../utils/toNonCanonicalFet'
 
 /**
  *
@@ -54,7 +53,7 @@ export class API {
   }
 
   /**
-   * Gets FEt Balance of account, or false if error. Not in canonical fet.
+   * Gets FEt Balance of account, or false if error. In canonical fet.
    *
    * @param address
    * @returns {Promise<API.balance|TokenApi.balance|Account.balance|((address: AddressLike) => Promise<>)|*|null|boolean>}
@@ -78,7 +77,7 @@ export class API {
 
     const data = await response.json()
 
-    return toNonCanonicalFet(data.balance)
+    return data.balance
   }
 
 
@@ -146,8 +145,8 @@ export class API {
     const body = {
       method: 'post',
        headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ver: '1.2',
+       body: JSON.stringify({
+         ver: '1.2',
         data: encoded_tx.toString('base64')
       })
     }

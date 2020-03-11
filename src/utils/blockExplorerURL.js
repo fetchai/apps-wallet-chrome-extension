@@ -11,10 +11,10 @@ import {
  */
 
 
-const blockExplorerURL = () => {
+const blockExplorerURL = ( url_bit = "accounts/") => {
      const network = Storage.getLocalStorage(STORAGE_ENUM.SELECTED_NETWORK)
-        if(network === NETWORKS_ENUM.TESTNET)  return TESTNET_BLOCKEXPLORER;
-        else if(network === NETWORKS_ENUM.MAINNET) return MAINNET_BLOCKEXPLORER;
+        if(network === NETWORKS_ENUM.TESTNET)  return TESTNET_BLOCKEXPLORER + url_bit;
+        else if(network === NETWORKS_ENUM.MAINNET) return MAINNET_BLOCKEXPLORER + url_bit;
         else if(network === NETWORKS_ENUM.LOCALHOST) return '';
         else throw new Error(`the network from storage : ${network} is not an expected network`)
   }
