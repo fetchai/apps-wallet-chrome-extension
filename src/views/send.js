@@ -111,6 +111,7 @@ export default class Send extends Component {
   componentWillUnmount () {
     clearInterval(this.dollar_price_fet_loop)
     clearInterval(this.balance_request_loop)
+    if(typeof this.sync_loop !== "undefined") clearInterval(this.sync_loop)
   }
 
   /**
@@ -164,7 +165,9 @@ export default class Send extends Component {
   calculateDollarDisplayAmount (amount, percentage) {
     if (amount === '') return ''
     const total = amount * percentage
-    return total.toFixed(2)
+    const ret = total.toFixed(2)
+    if (ret === "0.00") return "  <0.01"
+    return ret;
   }
 
   /**
@@ -262,12 +265,12 @@ export default class Send extends Component {
     const start = Date.now()
     const limit = 60 * 1000
     return new Promise((resolve, reject) => {
-      const loop = setInterval(async () => {
+      this.sync_loop = setInterval(async () => {
         let status
         try {
           status = await this.api.poll(tx_digest)
         } catch (e) {
-          clearInterval(loop)
+          clearInterval(this.sync_loop)
           await this.setTransferMessage(NETWORK_ERROR_MESSAGE, null,true)
           this.setState({ transfer_disabled: false })
            return reject('API Error')
@@ -276,9 +279,9 @@ export default class Send extends Component {
         await this.setTransferMessage('Transfer Pending', 'send_progress_loader.gif' , false)
 
         if (/Executed|Submitted/.test(status)) {
-          clearInterval(loop)
+          clearInterval(this.sync_loop)
           await this.setTransferMessage('Transfer Executed', 'send_executed_loader.gif', false)
-          setTimeout(this.setTransferMessage.bind(null, 'Transfer Executed', null, false), 2000)
+          setTimeout(this.setTransferMessage.bind(null, 'Transfer Executed', null, false), 2300)
           this.setState({ transfer_disabled: false })
           resolve(status)
         }
@@ -286,7 +289,7 @@ export default class Send extends Component {
         let elapsed_time = Date.now() - start
 
         if (elapsed_time > limit) {
-          clearInterval(loop)
+          clearInterval(this.sync_loop)
           await this.setTransferMessage(`Transaction timed-out, status: ${status} `, null, true)
           this.setState({ transfer_disabled: false })
           reject(status)

@@ -1,91 +1,46 @@
+# Fetch.AI Web Wallet Browser Extension
 
-Each file in views folder represents one  of 
-8 original wireframes + history ( the infinite scroll )
+You can find the latest version of the Fetch.AI Web Wallet Browser Extension on [The Chrome Web Store](ht<chrome store uri here>>/). 
 
-utils, views, services and dumb_components 
-are main folders
+The Fetch.AI Web Wallet is a Chrome browser extension for interacting with the Fetch.ai Ledger. Functionality includes creating accounts on the Ledger, working with existing accounts, 
+checking one's balance and transaction history on both Mainnet, and Testnet. It's functionality also includes the sending of funds, verifying the receipt of funds, and 
+providing relavent links within our [Block Explorer](https://explore.fetch.ai/) to see further transaction information
 
-react-expanded-animated is a public module I changed a bit
-and  must rename hence moving from node-modules
+### Running as a website locally yourself as a developer
 
-TO INSTALL
+$ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
+In src/constants.js change `const EXTENSION = false` to true
+$ npm run build && npm start
 
-in serialization/transaction version flag in node modules
-must be changed from 2 to 3 after running npm install, 
-then cd into node_modules and run npm run build. This
-is temp until I update which version of sdk it is running
-on. When I started it the sdk on npm has since been updated
-so i need to update which methods I am using.
+### Running as a website locally yourself as a developer
 
-It runs first index.js in browser or content.js in 
-extension
+$ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
+$ npm run build
 
-all css is content.css
+navigate to chrome://extensions, select "developer mode"; select "Load unpacked"; choose <approotdir>/build 
 
+### building from source files. 
 
-
-# Fetch.ai <todo name> Browser Extension
-
-This extension allows one to send and receive funds on the Fetch.ai Blockchain, create a Wallet, store funds 
-safely and check one's accounts balance. 
-
-## Installation
-### Instructions to run locally
-### To install this browser extension see the installation section below
-
-
->Make sure you have latest **NodeJs** version installed
-
-Clone repo
-
-```
-git clone <todo insert repo name>
-```
-Go to `<todo insert repo name>` directory run
-
-```
-npm install
-```
-
-In file `src/constants.js` set the value of const EXTENSION
-to true to run this program locally as a Chrome extension, and false to run it directly in the browser. 
-
-Build the extension
-
-```
-npm run build
-```
-
-Run in the browser
-
-```
-npm run start
-```
-
-To run as a chrome extension go to `chrome://extensions/` 
-
-Select `Load unpacked` and in the subsequent file menu choose the `build` folder inside `[PROJECT_HOME]`
-
-
-## Adding <app name>  to Chrome
-
-todo
-
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at <todo insert repo name>. 
-This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+$ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
+$ cd apps-wallet-chrome-extension
+$ npm install 
+ change line 20 VERSION variable from 2 to 3 in  <approotdir>/node_modules/fetchai-ledger-api/src/fetchai/ledger/serialization/transaction.js
+$ cd <approotdir>/node_modules/fetchai-ledger-api 
+$ npm install && npm run build
+$ cd <approotdir>/src/other_imported_modules/react-expand-animated-2
+$ npm install && npm run build
+$ cd <approotdir>
+$ npm run build
 
 ## License
 
-The repo is available as open source under the terms of the <todo verify liscence> [MIT License](http://opensource.org/licenses/MIT).
+This application is licensed under the Apache software license (see LICENSE file). Unless required by
+applicable law or agreed to in writing, software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
-
-/home/douglas/react-chrome-extension/node_modules/babel-core/lib/transformation/file/index.js
-
-  File.prototype.initOptions = function initOptions(opts) {
-    console.log(opts)
-    opts = {}
-    opts = new _optionManager2.default(this.log, this.pipeline).init(opts);
-
+Fetch.AI makes no representation or guarantee that this software (including any third-party libraries)
+will perform as intended or will be free of errors, bugs or faulty code. The software may fail which
+could completely or partially limit functionality or compromise computer systems. If you use or
+implement the ledger, you do so at your own risk. In no event will Fetch.ai be liable to any party
+for any damages whatsoever, even if it had been advised of the possibility of damage.
   

@@ -27,7 +27,6 @@
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/",
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*"
   ],
-  "default_popup": "public/index.html",
   "permissions": [
           "storage",
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/",

@@ -58,8 +58,14 @@ export default class History extends Component {
     }
 
     // poll the first page continually checking for new transactions.
-    setInterval(this.fetchFirstPage, 3000)
+    this.first_page_history_loop = setInterval(this.fetchFirstPage, 3000)
   }
+
+
+    componentWillUnmount () {
+    clearInterval(this.first_page_history_loop)
+  }
+
 
   unclick (element) {
     element.clicked = false

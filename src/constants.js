@@ -4,7 +4,7 @@ const KEY_FILE_NAME = 'private_key.json'
 const VERSION = '1.0.0'
 
 // flag to change when running as extension or in browser.
-const EXTENSION = true
+const EXTENSION = false
 // fee limit for transactions.
 const DEFAULT_FEE_LIMIT = 20
 
@@ -18,7 +18,6 @@ const BOOTSTRAP_REQUEST_URI = `https://bootstrap.fetch.ai/endpoints/?network=`
 // the intervals in MS we poll for data at
 const DOLLAR_PRICE_CHECK_INTERVAL_MS = 5000
 const BALANCE_CHECK_INTERVAL_MS = 1000
-const TRANSACTION_HISTORY_CHECK_INTERVAL_MS = 5000
 
 // the multiple difference between regular FET and canonical FET
 const CANONICAL_DIFFERENCE = 10000000000
@@ -58,7 +57,6 @@ export {
   DEFAULT_NETWORK,
   BOOTSTRAP_REQUEST_URI,
   ACCOUNT_HISTORY_URI,
-  TRANSACTION_HISTORY_CHECK_INTERVAL_MS,
   TRANSITION_DURATION_MS,
   KEY_FILE_NAME,
   VERSION,
