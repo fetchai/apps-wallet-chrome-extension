@@ -29,15 +29,31 @@
 }
 
 /* Change the white to any color ;) */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-textarea:-webkit-autofill,
-textarea:-webkit-autofill:hover,
-textarea:-webkit-autofill:focus,
-select:-webkit-autofill,
-select:-webkit-autofill:hover,
-select:-webkit-autofill:focus {
+#my-extension-root-inner input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+ #my-extension-root-inner input:-webkit-autofill:hover {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner textarea:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner textarea:-webkit-autofill:hover {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner textarea:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner select:-webkit-autofill:hover {
+    -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
+}
+#my-extension-root-inner select:-webkit-autofill:focus {
     -webkit-box-shadow: 0 0 0 30px #1c2846 inset !important;
 }
 
@@ -147,6 +163,7 @@ input::-webkit-inner-spin-button {
 }
 
 #my-extension-root-inner .qr {
+      padding-top: 10px;
     margin-top: 5px;
     width: 125px;
 }
@@ -159,7 +176,7 @@ input::-webkit-inner-spin-button {
 }
 
 #my-extension-root-inner .qr_caption {
-    padding-top: 10px;
+
     display: block;
     width: 260px;
     margin-left: 24px;
