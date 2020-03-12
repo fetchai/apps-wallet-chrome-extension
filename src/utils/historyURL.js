@@ -1,13 +1,10 @@
 import { ACCOUNT_HISTORY_URI, NETWORKS_ENUM, STORAGE_ENUM } from '../constants'
 
-import Storage from '../services/storage'
-
 /**
  * return block explorer url (with accounts path) based on whichever network is users selected network.
  *
  * @returns {string}
  */
-
 
 const historyURL = (address, page_number) => {
   const network = localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK)

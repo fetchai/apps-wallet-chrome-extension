@@ -24,7 +24,6 @@ import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
-import Storage from '../services/storage'
 import { capitalise } from '../utils/capitalise'
 import { toNonCanonicalFetDisplay } from '../utils/toNonCanonicalFetDisplay'
 
@@ -117,12 +116,12 @@ export default class Account extends Component {
     }
 
     const balance = this.state.balance
-
+let dollar_balance;
     if (this.state.percentage === 0 || balance.isZero()) {
-       let dollar_balance = 0
+        dollar_balance = 0
     } else {
       // we multiply and then divide by 100 since BN cannot process ohterwise.
-       let dollar_balance = balance.mul(new BN(this.state.percentage * 1000)).div(new BN(CANONICAL_DIFFERENCE)).toNumber() / 1000.
+        dollar_balance = balance.mul(new BN(this.state.percentage * 1000)).div(new BN(CANONICAL_DIFFERENCE)).toNumber() / 1000.
     }
     this.setState({ dollar_balance: dollar_balance })
   }
@@ -222,11 +221,9 @@ export default class Account extends Component {
                   : ''}</span>
             </div>
             <div className="small-button-container">
-              {/*<button className="small-button account-button" onClick={goTo.bind(null, Download)}>*/}
               <button className="account-receive-button" onClick={goTo.bind(null, Download)}>
                 Receive
               </button>
-              {/*<button className="small-button account-button" onClick={goTo.bind(null, Send, {api: this.api})}>*/}
               <button className="account-send-button" onClick={goTo.bind(null, Send, { api: this.api })}>
                 Send
               </button>
@@ -259,7 +256,7 @@ export default class Account extends Component {
             <button className="account-toggle-history-button toggle-history-button" onClick={this.toggleHistory}>
               {(this.state.show_history) ? 'Hide' : 'View All'}
             </button>
-            : this.state.history_first_page_count}
+            : ""}
         </div>
       </div>
     )

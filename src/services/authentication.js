@@ -1,7 +1,6 @@
 import React from 'react'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { Address } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/address'
-import { Storage } from './storage'
 import { goTo } from '../services/router'
 import Login from '../views/login'
 import Initial from '../views/initial'

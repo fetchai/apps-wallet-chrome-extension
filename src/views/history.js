@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import InfiniteScroll from 'react-infinite-scroller'
 import { EXTENSION, STORAGE_ENUM } from '../constants'
-import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import RegularHistoryItem from '../dumb_components/regularHistoryItem'
@@ -20,7 +19,6 @@ export default class History extends Component {
 
   constructor (props) {
     super(props)
-
     this.toggleClicked = this.toggleClicked.bind(this)
     this.hideAllLargeHistoryItems = this.hideAllLargeHistoryItems.bind(this)
     this.fetchAnotherPageOfHistory = this.fetchAnotherPageOfHistory.bind(this)
@@ -102,34 +100,9 @@ export default class History extends Component {
     this.setState({ results: results })
   }
 
-  /*
-  * When we wish to click to view large history history item, if small history
-  * item is at bottom of UI then large history item will only be partially displayed in view without this.
-  * This method checks the position of the small item and if it is too low then it scrolls to put big history
-  * item in correct position (otherwise would partially be obscured by overflowing bottom of div).
-  *
-  * @param already_open_above boolean - if we have one history item already open above our clicked then we must adjust shifting
-  *                                     by scroll height since  we must factor in that it will close and adjust height further.
-   */
-  scrollCorrection (event, already_open_above) {
-    const element = event.target
-    const DESIRED_TOP = 342
-    const bounding_client_rect = element.getBoundingClientRect()
-    const DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM = 120
-    // we have  a different calculation if one above it is already open.
-    if (already_open_above && (bounding_client_rect.top > (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM))) {
-      const correction = bounding_client_rect.top - (DESIRED_TOP + DIFFERENCE_IN_HEIGHT_BETWEEN_SMALL_AND_LARGE_HISTORY_ITEM)
-      const scroll_top = getElementById('history-container').scrollTop
-      getElementById('history-container').scrollTop = scroll_top + correction
-    } else if (bounding_client_rect.top > DESIRED_TOP) {
-      const correction = bounding_client_rect.top - DESIRED_TOP
-      const scroll_top = getElementById('history-container').scrollTop
-      getElementById('history-container').scrollTop = scroll_top + correction
-    }
-  }
-
   /**
-   * use this method to constantly poll first page of history for
+   * use this method to to get first page of history.
+   * This is polled for so we can filter in new results.
    *
    * @returns {Promise<void>}
    */
@@ -162,16 +135,7 @@ export default class History extends Component {
       parseInt(response.statusText.split('?page=')[1]) :
       parseInt(response.url.split('?page=')[1])
 
-    // 200 and 404 are expected returns
-    if (response.status !== 200 && response.status !== 404 && response.status !== 500) {
-      this.setHistoryCount(0, loaded_page_number)
-      setTimeout(this.fetchAnotherPageOfHistory.bind(null), 1000)
-      return
-    }
-
-
     // whilst api is buggy assuming 404 and 500 means no results
-
     if (response.status == 500 || response.status == 404) {
       this.setHistoryCount(0, loaded_page_number)
       this.setState({ has_more_items: false })
@@ -179,11 +143,7 @@ export default class History extends Component {
     }
 
     response.json().then((result) => {
-
-      // reduce memory by only storing needed properties from api result
       const next = this.filterResults(result)
-
-      let updated_results
       // lets cache first page on window for quicker remounts of component.
       if (loaded_page_number === 1) {
         //todo maybe swap to iframe window from global window
@@ -191,7 +151,7 @@ export default class History extends Component {
         this.setHistoryCount(next.length, loaded_page_number)
       }
 
-      updated_results = this.merge_without_duplicates(this.state.results, next)
+      let updated_results = this.merge_without_duplicates(this.state.results, next)
 
       const loaded_page_numbers = this.state.loaded_page_numbers
 
@@ -228,16 +188,8 @@ export default class History extends Component {
       let amount = new BN(el.amount)
 
       // we decide here if amount is positive or negative
-      if (el.from_address === this.state.address) {
-        amount = amount.neg()
-      }
-
-      let status
-      if (amount === 0) {
-        status = 'unknown'
-      } else {
-        status = 'Executed'
-      }
+      if (el.from_address === this.state.address) amount = amount.neg()
+      const status = (amount === 0) ? 'unknown' : 'Executed';
 
       return {
         id: el.id,

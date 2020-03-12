@@ -14,6 +14,7 @@ export default class RegularHistoryItem extends Component {
     super(props)
     this.setToolTipHeight = this.setToolTipHeight.bind(this)
     this.viewOnBlockExplorer = this.viewOnBlockExplorer.bind(this)
+    this.longAmountString = this.longAmountString.bind(this)
 
     // eslint-disable-next-line react/prop-types
     const { index, created_date, clicked, digest, status, toggle_clicked, amount } = props
@@ -30,6 +31,12 @@ export default class RegularHistoryItem extends Component {
       toggle_clicked: toggle_clicked
     }
   }
+
+
+  longAmountString() {
+    return toNonCanonicalFetDisplay(this.state.amount).length > 6
+  }
+
 
   viewOnBlockExplorer () {
     let link = document.createElement('a')
@@ -67,7 +74,7 @@ export default class RegularHistoryItem extends Component {
           id={`regular-tooltip-${this.state.index}`}
           className={`tooltiptext tooltiptext-expanded-history-item-positioning`}>View on BlockExplorer</span>
         <span
-          className={`history_right_value ${this.state.amount.isNeg() ? 'red' : 'green'}`}>{toNonCanonicalFetDisplay(this.state.amount)}{' FET'}</span><br></br>
+          className={`history_right_value ${this.state.amount.isNeg() ? 'red' : 'green'} ${this.longAmountString() ? 'history-item-long-amount' : ''}`}>{toNonCanonicalFetDisplay(this.state.amount)}{' FET'}</span><br></br>
         <span className="history_left_value light history-item-grey">{this.state.status}</span><span
           className="history_right_value light history-date-item history-item-grey">{toLocaleDateString(this.state.created_date)}</span>
       </div>

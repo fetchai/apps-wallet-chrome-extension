@@ -8,7 +8,7 @@ import {
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
-import Storage from '../services/storage'
+
 import { goTo } from '../services/router'
 import Account from './account'
 import { getAssetURI } from '../utils/getAsset'
@@ -278,7 +278,7 @@ export default class Send extends Component {
         if (/Executed|Submitted/.test(status)) {
           clearInterval(loop)
           await this.setTransferMessage('Transfer Executed', 'send_executed_loader.gif', false)
-          setTimeout(this.setTransferMessage.bind(null, 'Transfer Executed', null, false), 3000)
+          setTimeout(this.setTransferMessage.bind(null, 'Transfer Executed', null, false), 2000)
           this.setState({ transfer_disabled: false })
           resolve(status)
         }
@@ -432,7 +432,8 @@ export default class Send extends Component {
                     data-testid="transfer_error_output"
                     className={`send-transfer-status ${this.state.transfer_error ? 'red_error' : ''}`}>{this.state.transfer_message}</output>
             <div className="small-button-container">
-              <button className={`send-left-button ${this.state.transfer_disabled ? 'fade-send-buttons' : ''}`}
+              <button className={`send-left-button disabled-pointer ${this.state.transfer_disabled ? 'fade-send-buttons' : ''}`}
+                      disabled={this.state.transfer_disabled}
                       onClick={goTo.bind(null, Account)}>
                 Cancel
               </button>

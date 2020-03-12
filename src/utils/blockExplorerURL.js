@@ -1,6 +1,5 @@
 import { MAINNET_BLOCKEXPLORER, NETWORKS_ENUM, STORAGE_ENUM, TESTNET_BLOCKEXPLORER } from '../constants'
 
-import Storage from '../services/storage'
 
 /**
  * return block explorer url (with accounts path) based on whichever network is users selected network.

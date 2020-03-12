@@ -3,7 +3,6 @@ import React, { Component } from 'react'
 import { goTo } from '../services/router'
 import Account from './account'
 import Authentication from '../services/authentication'
-import { Storage } from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { STORAGE_ENUM, VERSION } from '../constants'
 

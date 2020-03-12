@@ -55,7 +55,6 @@ export default class Create extends Component {
    */
   async handleSubmit (event) {
     event.preventDefault()
-    debugger
     if (!this.state.user_password) {
            this.setState({
         error: true,

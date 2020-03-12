@@ -721,6 +721,10 @@ input::-webkit-inner-spin-button {
     line-height: 23px;
 }
 
+#my-extension-root-inner .history-item-long-amount {
+        font-size: 12px;
+}
+
 #my-extension-root-inner .send-left-button {
     display: inline;
     width: 49%;
@@ -742,7 +746,6 @@ input::-webkit-inner-spin-button {
     margin-left: 2px;
 }
 
-
 #my-extension-root-inner .history_item {
     margin-top: 9px;
     border-style: solid;
@@ -752,6 +755,7 @@ input::-webkit-inner-spin-button {
     padding-bottom: 5px;
     padding-top: 5px;
     font-size: 14px;
+    overflow:hidden;
 }
 
 #my-extension-root-inner .history-item-grey {
@@ -937,11 +941,11 @@ input::-webkit-inner-spin-button {
 }
 
 /* different placeholder css for different browsers */
-::-webkit-input-placeholder { /* Edge */
+::-webkit-input-placeholder {
     color: white;
 }
 
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
+:-ms-input-placeholder {
     color: white;
 }
 
@@ -1086,14 +1090,9 @@ input::-webkit-inner-spin-button {
     width: 100%;
 }
 
-#my-extension-root-inner .overlay3 {
-
-}
-
 #my-extension-root-inner #reddy {
     color: green;
 }
-
 
 #my-extension-root-inner .red {
     color: red;
@@ -1157,7 +1156,6 @@ input::-webkit-inner-spin-button {
     margin-left: 2px;
 }
 
-
 #my-extension-root-inner .vid {
     top: 0;
     float: left;
@@ -1176,7 +1174,6 @@ input::-webkit-inner-spin-button {
     display: inline-block;
     font-size: 16px;
 }
-
 
 #my-extension-root-inner .test99 * {
     opacity: 1;
