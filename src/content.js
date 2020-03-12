@@ -54,7 +54,6 @@ const iframe = x.children[0]
 iframe.id = 'my-frame'
 
 const html = iframe.contentWindow.document.getElementsByTagName('html')[0]
-debugger;
 
 html.id = 'iframe-html'
 
@@ -64,6 +63,7 @@ chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.message === 'clicked_browser_action') {
       toggle()
+      debugger
     }
   }
 )

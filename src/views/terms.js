@@ -62,11 +62,12 @@ export default class Terms extends Component {
             </ul>
             By accepting these terms and conditions, you are deemed to have accepted this. It will work with the
             Fetch.ai Mainnet, Testnet and a locally deployed network.
-            It is open-source, and you can examine the source-code for yourself at TODOWRITEGITHUBREPOLINK. For more
+            It is open-source, and you can examine the source-code for yourself on <a href="https://github.com/fetchai/apps-wallet-chrome-extension/" target="_blank"
+                                                      rel="noopener noreferrer">our Github</a> or for more
             information about Fetch.ai, please see <a href=" https://fetch.ai" target="_blank"
-                                                      rel="noopener noreferrer"> https://fetch.ai</a> for legal
-            information, see<a target="_blank" rel="noopener noreferrer"
-                               href="https://fetch.ai/legals/">https://fetch.ai/legals/</a>
+                                                      rel="noopener noreferrer">our website</a> and for legal
+            information, see our <a target="_blank" rel="noopener noreferrer"
+                               href="https://fetch.ai/legals/">legal section</a>
 
           </div>
           {this.state.next ? [<button key={1} className={'terms-back-button'}
