@@ -36,7 +36,7 @@ export default class Terms extends Component {
 
   render () {
     return (
-      <div id="my-extension-root-inner" className="OverlayMain" data-testid="create">
+      <div id="my-extension-root-inner" className="OverlayMain" data-testid="terms">
         <div className="OverlayMainInner">
           <h1 className="terms-header">Terms & Conditions</h1>
           <hr></hr>

@@ -47,8 +47,6 @@ function mockBasicChangePasswordEventHandlerMethods () {
 
     return new Promise((resolves) => {
 
-//willbe refactored
-
         if (req.includes(BOOTSTRAP_REQUEST_URI)) {
           return resolves({
             status: 200, json: () =>
@@ -77,7 +75,7 @@ function mockBasicChangePasswordEventHandlerMethods () {
 
 }
 
-describe(':Send', () => {
+describe.skip(':Send', () => {
 
   beforeAll(() => {
     global.chrome = chrome

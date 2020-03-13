@@ -38,8 +38,8 @@ function mockBasicChangePasswordEventHandlerMethods () {
   Entity._from_json_object = mock_from_json_object
   mock_from_json_object.mockReturnValue(Promise.resolve(undefined))
   jest.spyOn(Settings.prototype, 'wipeFormErrors').mockImplementation(() => {})
-}
 
+}
 describe.skip(':Settings', () => {
   beforeAll(() => {
     global.chrome = chrome

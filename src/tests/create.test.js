@@ -11,7 +11,6 @@ import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import History from '../views/history'
 import { digest } from '../utils/digest'
 import { API } from '../services/api'
-//import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 
 // beforeEach(() => {
 //   // Clear all instances and calls to constructor and all methods:
@@ -31,7 +30,7 @@ const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required'
 // global.localStorage = new Storage(null, { strict: true });
 // global.sessionStorage = new Storage(null, { strict: true });
 
-describe.skip(':Initial', () => {
+describe(':Initial', () => {
 
   //  mockWindowProperty('localStorage', {
   //   setItem: jest.fn(),

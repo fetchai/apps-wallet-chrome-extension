@@ -34,7 +34,7 @@ export default class Initial extends Component {
         <span className='preview-build'>Preview Build: {VERSION}</span>
         <div className="overlay2">
           <div className="overlay3">
-            <button className='button-free-standing initial-recover-button' data-testid="recover_button99"
+            <button className='button-free-standing initial-recover-button' data-testid="recover_button"
                     onClick={goTo.bind(null, Terms, { next: 'recover' })}>
               Recover
             </button>

@@ -6,35 +6,42 @@ The Fetch.AI Web Wallet is a Chrome browser extension for interacting with the F
 checking one's balance and transaction history on both Mainnet, and Testnet. It's functionality also includes the sending of funds, verifying the receipt of funds, and 
 providing relavent links within our [Block Explorer](https://explore.fetch.ai/) to see further transaction information
 
-### Running as a website locally yourself as a developer
+### Running as a Website locally
 
-$ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
-In src/constants.js change `const EXTENSION = false` to true
-$ npm run build && npm start
+- Install [Node.js](https://nodejs.org) version >== 10
+    - If you are using [nvm](https://github.com/creationix/nvm#installation) (recommended) running `nvm use` will automatically choose the right node version for you.
+- $ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
+- In src/constants.js change `const EXTENSION = false` to true
+- $ npm run build && npm start
 
-### Running as a website locally yourself as a developer
+### Running as a Browser Extension locally
 
-$ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
-$ npm run build
+- Install [Node.js](https://nodejs.org) version >== 10
+    - If you are using [nvm](https://github.com/creationix/nvm#installation) (recommended) running `nvm use` will automatically choose the right node version for you.
+- $ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
+- $ npm run build
+- Navigate to chrome://extensions, select "developer mode"; select "Load unpacked"; choose <approotdir>/build 
 
-navigate to chrome://extensions, select "developer mode"; select "Load unpacked"; choose <approotdir>/build 
+### Building from source files. 
 
-### building from source files. 
+####Note: Built files are included in this repo for ease of use: 
 
-$ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
-$ cd apps-wallet-chrome-extension
-$ npm install 
- change line 20 VERSION variable from 2 to 3 in  <approotdir>/node_modules/fetchai-ledger-api/src/fetchai/ledger/serialization/transaction.js
-$ cd <approotdir>/node_modules/fetchai-ledger-api 
-$ npm install && npm run build
-$ cd <approotdir>/src/other_imported_modules/react-expand-animated-2
-$ npm install && npm run build
-$ cd <approotdir>
-$ npm run build
+- Install [Node.js](https://nodejs.org) version >== 10
+    - If you are using [nvm](https://github.com/creationix/nvm#installation) (recommended) running `nvm use` will automatically choose the right node version for you.
+- $ git clone https://github.com/fetchai/apps-wallet-chrome-extension.git
+- $ cd apps-wallet-chrome-extension
+- $ npm install 
+- ensure line 20 `const VERSION = 2` equals 3 in  apps-wallet-chrome-extension/node_modules/fetchai-ledger-api/src/fetchai/ledger/serialization/transaction.js
+- $ cd apps-wallet-chrome-extension/node_modules/fetchai-ledger-api 
+- $ npm install && npm run build
+- $ cd apps-wallet-chrome-extension/src/other_imported_modules/react-expand-animated-2
+- $ npm install && npm run build
+- $ cd apps-wallet-chrome-extension
+- $ npm run build
 
-## License
+### License
 
-This application is licensed under the Apache software license (see LICENSE file). Unless required by
+This application is licensed under the Apache software license. Unless required by
 applicable law or agreed to in writing, software distributed under the License is distributed on an
 "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 

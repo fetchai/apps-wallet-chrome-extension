@@ -6,7 +6,7 @@ import { cleanup, fireEvent, render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Router, { clear } from '../services/router'
 
-describe.skip(':Initial', () => {
+describe(':Initial', () => {
 
   beforeAll(() => {
     global.chrome = chrome
@@ -17,19 +17,10 @@ describe.skip(':Initial', () => {
     clear()
   })
 
-  //
-  // test('initial renders without crashing', () => {
-  //   const div = document.createElement('div')
-  //   ReactDOM.render(<Router><Initial/></Router>, div)
-  //   debugger
-  //   ReactDOM.unmountComponentAtNode(div)
+  // test.skip('initial renders without crashing', () => {
+  //   const container = render(<Initial/>)
+  //   expect(container).toMatchSnapshot()
   // })
-  //
-
-  test.skip('initial renders without crashing', () => {
-    const container = render(<Initial/>)
-    expect(container).toMatchSnapshot()
-  })
 
   test.skip('initial snapshot test', () => {
     const component = renderer.create(<Initial/>)
@@ -58,7 +49,7 @@ describe.skip(':Initial', () => {
         cancelable: true,
       }))
     // tests the recover component is now mounted by router.
-    const app = getAllByTestId('recover')
+    const app = getAllByTestId('terms')
     expect(app.length).toBe(1)
   })
 
@@ -74,7 +65,7 @@ describe.skip(':Initial', () => {
       }))
 
     // tests the create component is now mounted.
-    const app = getAllByTestId('create')
+    const app = getAllByTestId('terms')
     expect(app.length).toBe(1)
   })
 

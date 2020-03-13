@@ -62,7 +62,6 @@ export default class Create extends Component {
       })
 return
     }
-
     if (!Entity._strong_password(this.state.user_password)) {
       this.setState({
         error: true,
