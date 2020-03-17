@@ -8,7 +8,7 @@ import {
   COPIED_MESSAGE,
   COPY_ADDRESS_TO_CLIPBOARD_MESSAGE,
   DOLLAR_PRICE_CHECK_INTERVAL_MS,
-  DOLLAR_PRICE_URI, NETWORKS_ENUM,
+  DOLLAR_PRICE_URI, LOCALHOST_ENUM, NETWORKS_ENUM,
   STORAGE_ENUM,
   TRANSITION_DURATION_MS,
 } from '../constants'
@@ -66,16 +66,14 @@ export default class Account extends Component {
    */
   setHistoryCount (history_first_page_count, page_number) {
     if (page_number !== 1) return
-
     this.setState({ history_first_page_count: history_first_page_count })
-
   }
 
   async componentDidMount () {
     Authentication.Authenticate()
 
     if (this.state.network === NETWORKS_ENUM.LOCALHOST) {
-      this.api = new API(8000, '127.0.0.1', 'http')
+      this.api = new API(LOCALHOST_ENUM.PORT, LOCALHOST_ENUM.IP, LOCALHOST_ENUM.PROTOCOL)
     } else {
       this.api = await API.fromBootstrap(this.state.network)
     }
@@ -116,7 +114,7 @@ export default class Account extends Component {
     }
 
     const balance = this.state.balance
-let dollar_balance;
+    let dollar_balance;
     if (this.state.percentage === 0 || balance.isZero()) {
         dollar_balance = 0
     } else {

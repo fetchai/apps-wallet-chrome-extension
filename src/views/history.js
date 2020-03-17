@@ -149,6 +149,13 @@ export default class History extends Component {
     }
 
     response.json().then((result) => {
+
+      if(result === "Account does not exist") {
+         this.setHistoryCount(0, loaded_page_number)
+         this.setState({ has_more_items: false })
+         return
+      }
+
       const next = this.filterResults(result)
       // lets cache first page on window for quicker remounts of component.
       if (loaded_page_number === 1) {
@@ -252,7 +259,7 @@ export default class History extends Component {
       <InfiniteScroll
         loadMore={this.fetchAnotherPageOfHistory.bind(this)}
         hasMore={this.state.has_more_items}
-        loader={<img src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon"
+        loader={<img key="loading_icon" src={getAssetURI('loading_Icon.gif')} alt="Fetch.ai Loading Icon"
                      className={this.state.results.length > 0 ? 'loader' : 'mini-loader'}/>}
         useWindow={false}
       >

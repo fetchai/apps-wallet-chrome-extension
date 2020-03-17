@@ -9,7 +9,9 @@ export const WEAK_PASSWORD = 'a_weak_password'
 export const EXAMPLE_ADDRESS = 'dTSCNwHBPoDdESpxj6NQkPDvX3DN1DFKGsUPZNVWDVDrfur4z'
 export const EXAMPLE_INVALID_ADDRESS = 'dTSCNwHBPoDdESpxj6NQkPDvX3DN1DFKGsUPZNVWDVDrfur4z9'
 export const EXAMPLE_ADDRESS_2 = '27L4TKQ9Q32HmGTzA32V25xwSjvKoHEPCZG5cMJ41scGTqaSdW'
-export const ENCRYPTED_KEY_FILE = '{"key_length":32,"init_vector":"LAunDQSK0yh1ixYStfBLdw==","password_salt":"jwhnMpDMp3kW/og8pZbiwA==","privateKey":"2Vdl4fr8gLlnuHEgwZrmeOsp4y6QLmHRlBeEj6qXPd0="}'
+export const ENCRYPTED_KEY_FILE = '{"key_length":32,"init_vector":"LAunDQSK0yh1ixYStfBLdw==","password_salt":"jwhnMpDMp3kW/og8pZbiwA==","privateKey":"2Vdl4fr8gLlnuHEgwZrmeOsp4y6QLmHRlBeEj6qXPd0=2Vdl4fr8gLlnuHEgwZrmeOsp4y6QLmHRlBeEj6qXPd0="}'
+export const INVALID_ENCRYPTED_KEY_FILE = '{"key_length":32,"init_vector":"","password_salt":"","privateKey":"2Vdl4fr8gLlnuHEgwZrmeOsp4y6QLmHRlBeEj6qXPd0=2Vdl4fr8gLlnuHEgwZrmeOsp4y6QLmHRlBeEj6qXPd0=(⌐□_□)"}'
+export const TX_DIGEST = "68fa027aea39f85b09ef92cfc1cc13ceec706c6aadc0b908b549d2e57d611516"
 
 /**
  * since sometimes jest doesn't wait for mocks, unsure why, this is accepted solution online to wait for all pending promises to flush

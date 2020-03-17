@@ -1,5 +1,5 @@
 /**
- * Note: copied but then changed a bit and adapted from elsewhere.
+ * todo add liscence Note: copied but then changed a bit and adapted from elsewhere.
  *
  * stores a stack of components in a closure, keeps one mounted at any one time.
  */

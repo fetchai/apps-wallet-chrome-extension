@@ -67,7 +67,11 @@ export class API {
     const url = `${this.protocol}://${this.host}:${this.port}/api/contract/fetch/token/balance`
 
     let error = false
+
+
     const response = await fetchResource(url, body).catch(() => error = true)
+
+
 
     if (error) return false
 
@@ -75,6 +79,12 @@ export class API {
       return false
 
     const data = await response.json()
+
+
+
+
+    console.log("balance is ")
+    console.log(data.balance)
 
     return data.balance
   }
@@ -120,6 +130,7 @@ export class API {
         'Content-Type': 'application/json'
       }
     }
+
     const response = await fetchResource(url, body).catch(() => {
       error = true
     })
@@ -127,15 +138,17 @@ export class API {
     if (error || typeof response === 'undefined' || response.status !== 200) return false
     const data = await response.json().catch(() => error = true)
     if (error) return false
-
     return data.status
   }
 
   async transfer (from, to, amount) {
-    const tx = await this.buildTransferTransaction(from, to, amount)
-    if (tx === false) return false
 
+    const tx = await this.buildTransferTransaction(from, to, amount)
+
+    if (tx === false) return false
+console.log("GOT TO HERE")
     const encoded_tx = await encode_transaction(tx, [from])
+console.log("GOT TO HERE2 ")
 
     const body = {
       method: 'post',
@@ -164,6 +177,7 @@ export class API {
   async buildTransferTransaction (from, to, amount) {
 
     let current_block = await this.getBlockNumber()
+
     // build up the basic transaction information
     let tx = new Transaction()
     const DEFAULT_BLOCK_VALIDITY_PERIOD = 100

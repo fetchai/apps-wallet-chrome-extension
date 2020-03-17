@@ -17,6 +17,7 @@ export default class Login extends Component {
     super(props)
     debugger;
 
+    console.log("hello")
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
 

@@ -6,8 +6,7 @@ import { cleanup, fireEvent, render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import Router, { clear } from '../services/router'
 
-describe(':Initial', () => {
-
+describe.skip(':Initial', () => {
   beforeAll(() => {
     global.chrome = chrome
   })
@@ -17,12 +16,7 @@ describe(':Initial', () => {
     clear()
   })
 
-  // test.skip('initial renders without crashing', () => {
-  //   const container = render(<Initial/>)
-  //   expect(container).toMatchSnapshot()
-  // })
-
-  test.skip('initial snapshot test', () => {
+  test('initial snapshot test', () => {
     const component = renderer.create(<Initial/>)
     let tree = component.toJSON()
     expect(tree).toMatchSnapshot()
@@ -56,25 +50,16 @@ describe(':Initial', () => {
   test('clicking on create button redirects to create component', () => {
     const { getByTestId, getAllByTestId } = render(<Router><Initial/></Router>)
     const button = getByTestId('create_button')
-
     fireEvent(
       button,
       new MouseEvent('click', {
         bubbles: true,
         cancelable: true,
       }))
-
     // tests the create component is now mounted.
     const app = getAllByTestId('terms')
     expect(app.length).toBe(1)
   })
-
-  test.skip('try test redirection in oncomponent mount', () => {
-    localStorage.setItem('x', 'y')
-    const x = localStorage.getItem('x')
-    console.log(' x is about : ' + x)
-  })
-
 })
 
 

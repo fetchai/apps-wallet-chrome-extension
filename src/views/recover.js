@@ -12,6 +12,16 @@ import Authentication from '../services/authentication'
 import { getElementById } from '../utils/getElementById'
 import Terms from './terms'
 
+const FILE_REQUIRED_ERROR_MESSAGE = "File required";
+const INCORRECT_PASSWORD_OR_ADDRESS_ERROR_MESSAGE = 'Incorrect Password or Address';
+const UNDECRYPTABLE_ERROR_MESSAGE = 'Unable to decrypt';
+const INVALID_ADDRESS_ERROR_MESSAGE = 'Invalid address';
+const INCORRECT_FILE_TYPE_ERROR_MESSAGE = 'Incorrect file type';
+const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required';
+const UNREADABLE_FILE_ERROR_MESSAGE = 'Unable to read file';
+const WEAK_PASSWORD_ERROR_MESSAGE = 'Incorrect Password: Password too weak (14 chars including letter, number, special character and uppercase letter';
+
+
 export default class Recover extends Component {
 
   constructor (props) {
@@ -67,13 +77,13 @@ export default class Recover extends Component {
   async read_file (file) {
     return new Promise((resolve, reject) => {
       let reader = new FileReader()
-      reader.readAsText(file, 'UTF-8')
       reader.onload = function (evt) {
         resolve(evt.target.result)
       }
       reader.onerror = function () {
         reject(null)
       }
+       reader.readAsText(file, 'UTF-8')
     })
   }
 
@@ -98,15 +108,15 @@ export default class Recover extends Component {
    * @returns {boolean}
    */
   validPassword () {
-    if (this.state.password === null || typeof this.state.password !== 'string' || this.state.password.length === 0) {
+    if (this.state.password === '' || typeof this.state.password !== 'string' || this.state.password.length === 0) {
       this.setState({
-        error_message: 'Password required',
+        error_message: PASSWORD_REQUIRED_ERROR_MESSAGE,
         password_error: true
       })
       return false
     } else if (!Entity._strong_password(this.state.password)) {
       this.setState({
-        error_message: 'Incorrect Password: Password too weak (14 chars including letter, number, special character and uppercase letter ',
+        error_message: WEAK_PASSWORD_ERROR_MESSAGE,
         password_error: true
       })
       return false
@@ -124,7 +134,7 @@ export default class Recover extends Component {
 
     if (this.state.file === '' || this.state.file === null) {
       this.setState({
-        error_message: 'File required',
+        error_message: FILE_REQUIRED_ERROR_MESSAGE,
         file_error: true,
         file: '',
         file_name: ''
@@ -132,11 +142,12 @@ export default class Recover extends Component {
       return false
     }
 
-    const file_str = await this.read_file(this.state.file)
+    let error = false
+    const file_str = await this.read_file(this.state.file).catch(() => error = true)
 
-    if (file_str === null) {
+    if (error || file_str === null) {
       this.setState({
-        error_message: 'Unable to read file',
+        error_message: UNREADABLE_FILE_ERROR_MESSAGE,
         file_error: true,
         file: '',
         file_name: ''
@@ -146,7 +157,7 @@ export default class Recover extends Component {
 
     if (!validJSONstring(file_str)) {
       this.setState({
-        error_message: 'Incorrect file type',
+        error_message: INCORRECT_FILE_TYPE_ERROR_MESSAGE,
         file_error: true,
         file: '',
         file_name: ''
@@ -166,7 +177,7 @@ export default class Recover extends Component {
   validAddress () {
     if (!validAddress(this.state.address)) {
       this.setState({
-        error_message: 'Invalid address',
+        error_message: INVALID_ADDRESS_ERROR_MESSAGE,
         address_error: true
       })
       return false
@@ -189,24 +200,31 @@ export default class Recover extends Component {
     let error_flag = false, entity, file_str
 
     if (!this.validPassword()) error_flag = true
-
+debugger
     if (!(await this.validFile())) error_flag = true
     else {
       file_str = await this.read_file(this.state.file)
+      debugger
       entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password).catch(() => {
         this.setState({
-          error_message: 'Unable to decrypt',
+          error_message: UNDECRYPTABLE_ERROR_MESSAGE,
           file_error: true
         })
         error_flag = true
       })
     }
-
+debugger
     //todo refactor this block for readbility,
     if (this.state.address && entity instanceof Entity) {
+
+      const r = new Address(entity).toString()
+
+if(this.state.address === "2Lhb4PwS7pyAcVWpE5rKBbqDUvGVUxWWfShwVUzTuZvDBuRcfx")  debugger;
+
+
       if (new Address(entity).toString() !== this.state.address) {
         this.setState({
-          error_message: 'Incorrect Password or Address',
+          error_message: INCORRECT_PASSWORD_OR_ADDRESS_ERROR_MESSAGE,
           address_error: true, password_error: true
         })
         error_flag = true
@@ -220,7 +238,6 @@ export default class Recover extends Component {
     } else if (!error_flag) {
       // show the confirmation dialog. //
       this.setState({ collapsible_1: false, collapsible_2: true })
-
     }
   }
 
@@ -264,26 +281,31 @@ export default class Recover extends Component {
               <button className={`recover-input   ${this.state.file_error ? 'red-upload-button' : 'upload-button'}`}
                       onClick={this.openUploadFile}>{this.state.file_name === '' ? '' : 'selected'}</button>
               <input label='file' className="hide"
+                     data-testid="file_input"
                      id="file" type="file" onChange={this.handleFileChange.bind(this)}></input>
               <input type="password"
+                     data-testid="password_input"
                      className={`recover-input ${this.state.password_error ? 'red_error red-lock-icon' : ''}`}
                      placeholder="Password" id="password"
                      name="password" value={this.state.password}
                      onChange={this.handleChange.bind(this)}></input>
               <input label='address'
+                     data-testid="address_input"
                      className={`recover-input recover-address ${this.state.address_error ? 'red_error red-lock-icon' : ''}`}
                      id="address" type="text"
                      name="address" placeholder="Address (optional)"
                      value={this.state.address} onChange={this.handleChange.bind(this)}></input>
               <output type="text" className={`recover-output ${this.hasError() ? 'red_error' : ''}`}
+                       data-testid="output_error"
                       id="output">{this.state.error_message}</output>
               <div className="small-button-container">
-                <button type="button" className="recover-back-button" onClick={event => {
+                <button type="button" className="recover-back-button" data-testid="back_button" onClick={event => {
                   event.preventDefault()
                   goTo(Terms, { next: 'recover' })
                 }}>Back
                 </button>
                 <button type="submit" className="recover-upload-button"
+                        data-testid="upload_button"
                         onClick={event => {
                           event.preventDefault()
                           this.handleSubmit()
@@ -297,7 +319,7 @@ export default class Recover extends Component {
             duration={TRANSITION_DURATION_MS}
             transitions={transitions}
           >
-            <div className={'recover-warning-container'}>
+            <div className={'recover-warning-container'} data-testid="warning_container">
               <p>Warning! Not providing your public address means that recovery won&apos;t error if your password is
                 incorrect. </p>
 
@@ -310,10 +332,10 @@ export default class Recover extends Component {
                 anyway or &quot;Back&quot; to return to the upload form.</p>
             </div>
             <div className="small-button-container">
-              <button type="button" className="recover-back-button"
+              <button type="button" className="recover-back-button" data-testid="second_back_button"
                       onClick={this.hideConfirmation}>Back
               </button>
-              <button type="submit" className="recover-upload-button"
+              <button type="submit" className="recover-upload-button" data-testid="next_button"
                       onClick={this.handleConfirmationSubmit}>Next
               </button>
             </div>

@@ -38,6 +38,17 @@ const STORAGE_ENUM = Object.freeze({
   'SELECTED_NETWORK': 'selected_network'
 })
 
+/**
+ * Default localhost values used when network is localhost
+ *
+ * @type {Readonly<{PORT: string, IP: string, PROTOCOL: string}>}
+ */
+export const LOCALHOST_ENUM = Object.freeze({
+  'PORT': 8000,
+  'IP': '127.0.0.1',
+  'PROTOCOL': 'http'
+})
+
 // urls for block explorers (/accounts dir)
 const TESTNET_BLOCKEXPLORER = 'https://explore-testnet.fetch.ai/'
 const MAINNET_BLOCKEXPLORER = 'https://explore.fetch.ai/'

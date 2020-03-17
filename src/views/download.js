@@ -8,6 +8,8 @@ import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { blockExplorerURL } from '../utils/blockExplorerURL'
+import { historyURL } from '../utils/historyURL'
+import { fetchResource } from '../utils/fetchRescource'
 
 /**
  * component corresponds to download view.
@@ -17,11 +19,12 @@ export default class Download extends Component {
   constructor (props) {
     super(props)
     this.download = this.download.bind(this)
-    this.closeSelf = this.closeSelf.bind(this)
     this.make_QR = this.make_QR.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
+    this.displayBlockExplorerLink = this.displayBlockExplorerLink.bind(this)
 
     this.state = {
+      display_block_explorer_link: false,
       block_explorer_url: blockExplorerURL(),
       address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
       QR: '',
@@ -38,6 +41,21 @@ export default class Download extends Component {
   componentDidMount () {
     Authentication.Authenticate()
     this.make_QR()
+    this.displayBlockExplorerLink()
+  }
+
+  async displayBlockExplorerLink(){
+    const url = historyURL(this.state.address, 1)
+    fetchResource(url).then((response) => {
+      if (response.status !== 200) return;
+
+       response.json().then((result) => {
+         if(result !== "Account does not exist"){
+        this.setState({ display_block_explorer_link: true })
+         }
+       })
+
+    })
   }
 
   componentWillUnmount () {
@@ -71,11 +89,6 @@ export default class Download extends Component {
     element.click()
   }
 
-  closeSelf () {
-    this.setState({ show_self: false })
-    setTimeout(goTo.bind(null, Account), 500)
-  }
-
   render () {
     return (
       <div id="my-extension-root-inner" className="OverlayMain" data-testid="download">
@@ -89,7 +102,7 @@ export default class Download extends Component {
               <span
                 className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
             </div>
-            <img className='cross' src={getAssetURI('cross_icon.svg')} onClick={this.closeSelf}/>
+            <img className='cross' src={getAssetURI('cross_icon.svg')} data-testid="cross" onClick={goTo.bind(null, Account)}/>
           </div>
           <hr></hr>
           <div className="qr_container">
@@ -97,11 +110,14 @@ export default class Download extends Component {
             <span className='qr_caption' onClick={this.handleCopyToClipboard}>{format(this.state.address)} </span>
             <span
               className="tooltiptext tooltiptext-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>
-            <a className='download-button fetch-link' target="_blank" rel="noopener noreferrer"
+            {this.state.display_block_explorer_link?[
+            <a key={2} className='download-button fetch-link'
+               data-testid="block_explorer_url"
+               target="_blank" rel="noopener noreferrer"
                href={`${this.state.block_explorer_url}${this.state.address}`}>
               View on Block Explorer
-            </a>
-            <button className='download-button download-private-key-button' onClick={this.download}>
+            </a>] : ""}
+            <button className='download-button download-private-key-button' data-testid="download_button" onClick={this.download}>
               Export Private Key
             </button>
           </div>

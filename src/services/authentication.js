@@ -52,7 +52,7 @@ export default class Authentication {
     let entity
 
     entity = await Entity._from_json_object(JSON.parse(key_file), password).catch(() => valid_flag = false)
-
+debugger
     // check it creates correct address from decryption.
     if (!valid_flag || new Address(entity).toString() !== address) valid_flag = false
     return valid_flag

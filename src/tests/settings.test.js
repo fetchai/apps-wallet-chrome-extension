@@ -29,7 +29,6 @@ const WEAK_PASSWORD_ERROR_MESSAGE = 'Weak password: password requires 14 charact
 const PASSWORD_NOT_CHANGED_ERROR_MESSAGE = 'New password equals current password'
 
 function mockBasicChangePasswordEventHandlerMethods () {
-  // we mock entity methods
   const mock_to_json_object = jest.fn()
   Entity.prototype._to_json_object = mock_to_json_object
   mock_to_json_object.mockReturnValue(Promise.resolve(undefined))
@@ -38,8 +37,8 @@ function mockBasicChangePasswordEventHandlerMethods () {
   Entity._from_json_object = mock_from_json_object
   mock_from_json_object.mockReturnValue(Promise.resolve(undefined))
   jest.spyOn(Settings.prototype, 'wipeFormErrors').mockImplementation(() => {})
-
 }
+
 describe.skip(':Settings', () => {
   beforeAll(() => {
     global.chrome = chrome
@@ -56,16 +55,10 @@ describe.skip(':Settings', () => {
     clear()
   })
 
-  test.skip('initial renders without crashing', () => {
+  test('initial renders without crashing', () => {
     const div = document.createElement('div')
     ReactDOM.render(<Router><Settings/></Router>, div)
     ReactDOM.unmountComponentAtNode(div)
-  })
-
-  test.skip('initial renders without crashing', () => {
-    const { getByTestId } = render(<Router><Settings/></Router>)
-
-    expect(getByTestId('background')).toHaveStyle(`background-image: url(${props.image})`)
   })
 
   test('test empty password field outputs password required error message', async () => {
@@ -110,9 +103,7 @@ describe.skip(':Settings', () => {
   })
 
   test('test weak new  password outputs weak password error message', async () => {
-
     mockBasicChangePasswordEventHandlerMethods()
-
     const mock_to_string = jest.fn()
     Address.prototype.toString = mock_to_string
     mock_to_string
