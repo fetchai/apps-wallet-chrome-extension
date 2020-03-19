@@ -83,7 +83,7 @@ return
  async createNewUser(){
         let entity = new Entity()
     const json_obj = await entity._to_json_object(this.state.user_password)
-    Authentication.storeNewUser(entity, JSON.stringify(json_obj))
+    await Authentication.storeNewUser(entity, JSON.stringify(json_obj))
   }
 
   render () {

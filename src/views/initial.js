@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { goTo } from '../services/router'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
-import Login from './login'
 import Terms from './terms'
 import { VERSION } from '../constants'
+import { Storage } from '../services/storage'
 
 /**
  * Each stage corresponds to a page as per the original 8 pages of the wireframes, and this corresponds to the initial view.
@@ -18,10 +18,11 @@ export default class Initial extends Component {
     super(props)
   }
 
-  componentDidMount () {
-
+ async componentDidMount () {
+await Storage.setItem ('key99', 'storagetest')
+const r99 = await Storage.getItem ('key99')
     // if they have a saved key they should not be here so redirect them to Login.
-    if (Authentication.hasSavedKey()) Authentication.Authenticate()
+    if (await Authentication.hasSavedKey()) await Authentication.Authenticate(true)
   }
 
   render () {

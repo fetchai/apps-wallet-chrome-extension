@@ -58,7 +58,7 @@ const greaterThanOneDecimalDisplayString = (amount, sign) => {
   if(integer_fet.length >= 2){
     return sign + integer_fet
   } else {
-    return sign + string.substring(0, string.length - 2) + '.' + string.substring(string.length - 2) + "lll"
+    return sign + string.substring(0, string.length - 2) + '.' + string.substring(string.length - 2)
   }
 }
 

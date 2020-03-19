@@ -47,7 +47,8 @@ export class API {
       const response = await fetchResource(BOOTSTRAP_REQUEST_URI + network).catch(() => reject(false))
       if (typeof response === 'undefined' || response.status < 200 || response.status > 300) return reject(false)
       const data = await response.json().catch(() => reject(false))
-      resolve(data[0].address)
+      if(!data.length) reject(false)
+      else  resolve(data[0].address)
     })
     return promise
   }

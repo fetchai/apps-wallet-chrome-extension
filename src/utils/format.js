@@ -5,6 +5,9 @@
  * @param last
  * @returns {string}
  */
-const format = (val, number = 12) => val.substring(0, number) + '.....' + val.substring(val.length - number)
+const format = (val, number = 12) => {
+  if(val === "") return ""
+  return val.substring(0, number) + '.....' + val.substring(val.length - number)
+}
 
 export { format }

@@ -7,6 +7,7 @@ import {
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { validAddress } from '../utils/validAddress'
 import Authentication from '../services/authentication'
+import Storage from '../services/storage'
 
 import { goTo } from '../services/router'
 import Account from './account'
@@ -34,8 +35,6 @@ export default class Send extends Component {
     super(props)
     // eslint-disable-next-line react/prop-types
     this.api = props.api
-    this.address = localStorage.getItem(STORAGE_ENUM.ADDRESS)
-    this.network = localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK)
 
     this.sufficientFunds = this.sufficientFunds.bind(this)
     this.transfer = this.transfer.bind(this)
@@ -50,13 +49,10 @@ export default class Send extends Component {
     this.trunc10DP = this.trunc10DP.bind(this)
 
     this.state = {
-      network: localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK),
       balance: null,
       password: '',
       to_address: '',
-      percentage: localStorage.getItem(STORAGE_ENUM.DOLLAR_PRICE),
       amount: '',
-      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
       copied: false,
       error: false,
       amount_error: false,
@@ -84,9 +80,13 @@ export default class Send extends Component {
   }
 
   async componentDidMount () {
-    Authentication.Authenticate()
+    await Authentication.Authenticate()
     // this.fetchDollarPrice()
     this.balance()
+
+    const network = await Storage.getItem(STORAGE_ENUM.SELECTED_NETWORK)
+    this.setState({network: network})
+
     // this.dollar_price_fet_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
   }
@@ -97,7 +97,8 @@ export default class Send extends Component {
    */
 
   async balance () {
-    const balance = await this.api.balance(this.state.address)
+    const address = await Storage.getItem(STORAGE_ENUM.ADDRESS)
+    const balance = await this.api.balance(address)
     this.setState({ balance: balance })
   }
 
@@ -155,7 +156,7 @@ export default class Send extends Component {
    */
   calculateDollarDisplayAmount (amount, percentage) {
     if (amount === '') return ''
-    const total = amount * percentage
+    const total = parseFloat(amount) * percentage
     const ret = total.toFixed(2)
     if (ret === "0.00") return "  <0.01"
     return ret;
@@ -195,7 +196,9 @@ export default class Send extends Component {
         amount = this.stripMultipleDecimalPoints(amount)
         amount = this.trunc10DP(amount)
 
-    if (this.state.percentage === null) return this.setState({
+    const percentage = await Storage.getItem(STORAGE_ENUM.DOLLAR_PRICE);
+
+    if (percentage === null) return this.setState({
       dollar: null,
       amount: event.target.value,
       amount_error_message: '',
@@ -206,8 +209,9 @@ export default class Send extends Component {
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
     if (parseFloat(amount) === 0) return this.setState({ dollar: 0, amount: 0 })
 
+
     this.setState({
-      dollar: this.calculateDollarDisplayAmount(amount, this.state.percentage),
+      dollar: this.calculateDollarDisplayAmount(amount, percentage),
       amount: amount
     })
   }
@@ -287,7 +291,7 @@ export default class Send extends Component {
           await this.setTransferMessage(TRANSFER_EXECUTED, 'send_executed_loader.gif', false)
           setTimeout(this.setTransferMessage.bind(null, TRANSFER_EXECUTED, null, false), 2300)
 
-          this.setState({ transfer_disabled: false, amount: '' })
+          this.setState({ transfer_disabled: false, amount: '', password: '', dollar: null  })
           resolve(status)
         }
 
@@ -329,15 +333,13 @@ export default class Send extends Component {
    * @returns {false|Promise<string>}
    */
   async transfer () {
-    debugger;
     this.setState({ transfer_disabled: true })
-    const json_str = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
+    const json_str = await Storage.getItem(STORAGE_ENUM.KEY_FILE)
     const entity = await Entity._from_json_object(JSON.parse(json_str), this.state.password)
     let error = false
 
     const txs = await this.api.transfer(entity, this.state.to_address, toCanonicalFet(this.state.amount)).catch((e) => {debugger; error = true})
     if (error || txs === false) {
-      debugger;
       this.setState({ transfer_disabled: false, transfer_error: true, transfer_message: TRANSFER_FAILED_ERROR_MESSAGE })
       return
     }

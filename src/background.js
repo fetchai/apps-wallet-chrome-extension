@@ -1,4 +1,8 @@
 /*global chrome*/
+
+
+
+
 /**
  * This is used to make Cors requests, and is called by fetchResource method in content scripts.
  *

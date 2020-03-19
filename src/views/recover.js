@@ -200,11 +200,9 @@ export default class Recover extends Component {
     let error_flag = false, entity, file_str
 
     if (!this.validPassword()) error_flag = true
-debugger
     if (!(await this.validFile())) error_flag = true
     else {
       file_str = await this.read_file(this.state.file)
-      debugger
       entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password).catch(() => {
         this.setState({
           error_message: UNDECRYPTABLE_ERROR_MESSAGE,
@@ -213,15 +211,9 @@ debugger
         error_flag = true
       })
     }
-debugger
+
     //todo refactor this block for readbility,
     if (this.state.address && entity instanceof Entity) {
-
-      const r = new Address(entity).toString()
-
-if(this.state.address === "2Lhb4PwS7pyAcVWpE5rKBbqDUvGVUxWWfShwVUzTuZvDBuRcfx")  debugger;
-
-
       if (new Address(entity).toString() !== this.state.address) {
         this.setState({
           error_message: INCORRECT_PASSWORD_OR_ADDRESS_ERROR_MESSAGE,
@@ -231,7 +223,7 @@ if(this.state.address === "2Lhb4PwS7pyAcVWpE5rKBbqDUvGVUxWWfShwVUzTuZvDBuRcfx") 
       }
 
       if (!error_flag) {
-        Authentication.storeNewUser(entity, file_str)
+        await Authentication.storeNewUser(entity, file_str)
         goTo(Account)
       }
 
@@ -252,7 +244,7 @@ if(this.state.address === "2Lhb4PwS7pyAcVWpE5rKBbqDUvGVUxWWfShwVUzTuZvDBuRcfx") 
     // we have already confirmed the values are correct earlier, so don't need to validate again.
     const file_str = await this.read_file(this.state.file)
     const entity = await Entity._from_json_object(JSON.parse(file_str), this.state.password)
-    Authentication.storeNewUser(entity, file_str)
+    await Authentication.storeNewUser(entity, file_str)
     goTo(Account)
   }
 

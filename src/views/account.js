@@ -26,6 +26,7 @@ import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { API } from '../services/api'
 import { capitalise } from '../utils/capitalise'
 import { toNonCanonicalFetDisplay } from '../utils/toNonCanonicalFetDisplay'
+import Storage from '../services/storage'
 
 
 /**
@@ -46,17 +47,31 @@ export default class Account extends Component {
     this.scrollHistoryTop = this.scrollHistoryTop.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
     this.fetchDollarPrice = this.fetchDollarPrice.bind(this)
+    this.getAddressSingleton = this.getAddressSingleton.bind(this)
+
     this.state = {
-      network: localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK),
+      network: "",
       balance: null,
-      percentage: localStorage.getItem(STORAGE_ENUM.DOLLAR_PRICE),
+      percentage: null,
       dollar_balance: null,
-      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
+      address: "",
       show_history: false,
       hover_2: false,
       history_first_page_count: 1,
       bootstrap_error: false
     }
+  }
+
+    /**
+   *
+   *
+   * @returns {string | Promise<string>}
+   */
+  async getAddressSingleton() {
+    if(this.state.address !== "") return this.state.address
+      let address = await Storage.getItem(STORAGE_ENUM.ADDRESS);
+      this.setState({address: address})
+      return address
   }
 
   /**
@@ -70,18 +85,22 @@ export default class Account extends Component {
   }
 
   async componentDidMount () {
-    Authentication.Authenticate()
+    await Authentication.Authenticate()
 
-    if (this.state.network === NETWORKS_ENUM.LOCALHOST) {
+    const network = await Storage.getItem(STORAGE_ENUM.SELECTED_NETWORK);
+
+    if (network === NETWORKS_ENUM.LOCALHOST) {
       this.api = new API(LOCALHOST_ENUM.PORT, LOCALHOST_ENUM.IP, LOCALHOST_ENUM.PROTOCOL)
     } else {
-      this.api = await API.fromBootstrap(this.state.network)
+      this.api = await API.fromBootstrap(network)
     }
-
-    this.setState({ network: localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK) })
+    await this.getAddressSingleton()
+    this.setState({ network: network})
     this.balance_request_loop = setInterval(this.balance, BALANCE_CHECK_INTERVAL_MS)
     this.dollar_request_loop = setInterval(this.fetchDollarPrice, DOLLAR_PRICE_CHECK_INTERVAL_MS)
   }
+
+
 
   async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
@@ -104,7 +123,7 @@ export default class Account extends Component {
     const data = await response.json().catch(() => error = true)
     if (error || !data.percentage) return
     this.setState({ percentage: data.percentage }, this.calculateDollarBalance)
-    localStorage.setItem(STORAGE_ENUM.DOLLAR_PRICE, data.percentage)
+    await Storage.setItem(STORAGE_ENUM.DOLLAR_PRICE, data.percentage)
   }
 
   calculateDollarBalance () {
@@ -148,7 +167,6 @@ export default class Account extends Component {
    */
 
   async balance () {
-
     if (this.api === false) return
     const balance = await this.api.balance(this.state.address)
     if (balance === false) return
@@ -178,7 +196,7 @@ export default class Account extends Component {
                   className="hoverable-address"
                   onClick={this.handleCopyToClipboard}
                 >
-                {format(this.state.address)}
+                {(this.state.address !== "") ? format(this.state.address) : ""}
               </span>
                 <span
                   className="tooltiptext tooltiptext-header-positioning">{this.state.copied ? COPIED_MESSAGE : COPY_ADDRESS_TO_CLIPBOARD_MESSAGE}</span>

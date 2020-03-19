@@ -1,14 +1,19 @@
 /*global chrome*/
+/*global StorageArea*/
 import React, { Component } from 'react'
 import { goTo } from '../services/router'
 import Account from './account'
 import { Authentication } from '../services/authentication'
+import { Storage } from '../services/storage'
 import Expand from 'react-expand-animated'
 import { Entity } from 'fetchai-ledger-api/dist/fetchai/ledger/crypto/entity'
 import { NETWORKS_ENUM, STORAGE_ENUM, TRANSITION_DURATION_MS, VERSION } from '../constants'
 import Login from './login'
 import { getAssetURI } from '../utils/getAsset'
 import { capitalise } from '../utils/capitalise'
+import { download } from '../utils/download'
+import Initial from './initial'
+
 
 const PASSWORD_REQUIRED_ERROR_MESSAGE = 'Password required'
 const NEW_PASSWORD_REQUIRED_ERROR_MESSAGE = 'New password required'
@@ -22,7 +27,7 @@ const PASSWORDS_DONT_MATCH_ERROR_MESSAGE = 'Passwords must match'
  */
 export default class Settings extends Component {
 
-  constructor (props) {
+constructor (props) {
     super(props)
     this.HandleLogOut = this.HandleLogOut.bind(this)
     this.toggle = this.toggle.bind(this)
@@ -32,12 +37,16 @@ export default class Settings extends Component {
     this.wipeFormErrors = this.wipeFormErrors.bind(this)
     this.handleNetworkChange = this.handleNetworkChange.bind(this)
     this.hasError = this.hasError.bind(this)
+    this.awaitState = this.awaitState.bind(this)
+    this.clearHistory = this.clearHistory.bind(this)
 
     this.state = {
-      network: localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK),
+      // network:
       collapsible_1: false,
       collapsible_2: false,
       collapsible_3: false,
+      collapsible_4: false,
+      storage_cleared: false,
       password: '',
       new_password_confirm: '',
       new_password: '',
@@ -47,6 +56,10 @@ export default class Settings extends Component {
       password_error: false,
       new_password_error: false
     }
+  }
+
+  async awaitState (state) {
+   return new Promise(resolve => this.setState(state, resolve))
   }
 
   async wipeFormErrors (clear_output = false) {
@@ -69,7 +82,6 @@ export default class Settings extends Component {
       }, resolve))
 
     } else {
-
       return new Promise(resolve => this.setState({
         password_confirm_error: false,
         password_error: false,
@@ -79,6 +91,12 @@ export default class Settings extends Component {
 
   }
 
+  clearHistory() {
+    chrome.storage.sync.clear()
+    this.setState({storage_cleared: true})
+    setTimeout(goTo.bind(null, Initial), 5000)
+  }
+
   hasError () {
     return (this.state.password_confirm_error ||
       this.state.password_error ||
@@ -86,16 +104,17 @@ export default class Settings extends Component {
   }
 
   async componentDidMount () {
-    Authentication.Authenticate()
+        const network =  await Storage.getItem(STORAGE_ENUM.SELECTED_NETWORK);
+        this.setState({network: network})
+        await Authentication.Authenticate()
   }
 
   async handleNetworkChange (event) {
     const selected_network = event.target.value
-
     await this.handleChange(event)
     // clear cached values on window object
     delete window.fetchai_history
-    localStorage.setItem(STORAGE_ENUM.SELECTED_NETWORK, selected_network)
+    await Storage.setItem(STORAGE_ENUM.SELECTED_NETWORK, selected_network)
   }
 
   async handleChange (event) {
@@ -178,7 +197,17 @@ export default class Settings extends Component {
    * @param index of collapsible to toggle
    */
   toggle (index) {
-    for (let i = 1; i <= 3; i++) {
+    if(index === 4)  {
+     let collapsible_4 = !this.state.collapsible_4
+      return this.setState({ collapsible_4: collapsible_4, collapsible_5: false }, this.wipeFormErrors.bind(null, true))
+    }
+    if(index === 5)  {
+      let collapsible_5 = !this.state.collapsible_5
+      return this.setState({ collapsible_5: collapsible_5, collapsible_4: false }, this.wipeFormErrors.bind(null, true))
+    }
+
+    // for the big 3 collapsibles
+    for (let i = 1; i <= 5; i++) {
       let collapse = 'collapsible_' + i
 
       if (i === index) {
@@ -218,10 +247,10 @@ export default class Settings extends Component {
    */
   async update_password () {
     //IMPORTANT NOTE: relies on original password being checked for correctness before invoking this, else it will lead to key loss
-    const orig_key_file = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
+    const orig_key_file = await Storage.getItem(STORAGE_ENUM.KEY_FILE)
     const entity = await Entity._from_json_object(JSON.parse(orig_key_file), this.state.password)
     const key_file = await entity._to_json_object(this.state.new_password)
-    localStorage.setItem(STORAGE_ENUM.KEY_FILE, JSON.stringify(key_file))
+    await Storage.setItem(STORAGE_ENUM.KEY_FILE, JSON.stringify(key_file))
     this.setState({
         password: '',
         new_password_confirm: '',
@@ -266,13 +295,15 @@ export default class Settings extends Component {
               <div className="input_container">
                 <label htmlFor="conversion">Choose<br></br>Network</label>
                 <div className="select_container">
-                  <select onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select"
-                          name="network">
-                    <option selected={this.state.network == NETWORKS_ENUM.TESTNET}
-                            value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
-                    <option selected={this.state.network == NETWORKS_ENUM.MAINNET}
-                            value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
-                  </select>
+                  {(this.state.network) ? [
+                    <select key={1}  onChange={this.handleNetworkChange.bind(this)} id="network" className="custom_select"
+                            name="network">
+                      <option selected={this.state.network == NETWORKS_ENUM.TESTNET}
+                              value={NETWORKS_ENUM.TESTNET}>{capitalise(NETWORKS_ENUM.TESTNET)}</option>
+                      <option selected={this.state.network == NETWORKS_ENUM.MAINNET}
+                              value={NETWORKS_ENUM.MAINNET}>{capitalise(NETWORKS_ENUM.MAINNET)}</option>
+                    </select>]
+                  : ""}
                 </div>
               </div>
             </form>
@@ -281,17 +312,19 @@ export default class Settings extends Component {
           <Expand
             open={this.state.collapsible_2}
             duration={TRANSITION_DURATION_MS}
-
             transitions={transitions}
           >
             <form id="form">
-              <legend className="change_password_legend">Change Password</legend>
+              <legend className="change_password_legend settings_about" onClick={() => this.toggle(4)}>Change Password</legend>
+               <Expand
+                open={this.state.collapsible_4}
+            duration={TRANSITION_DURATION_MS}
+            transitions={transitions}>
               <input type="password" className={`change_password_input ${this.state.password_error ? 'red_error' : ''}`}
                      placeholder="Old Password"
                      data-testid="settings_password"
                      id="password" name="password" value={this.state.password}
                      onChange={this.handleChange.bind(this)}></input>
-
               <input type="password"
                      className={`change_password_input ${this.state.new_password_error ? 'red_error' : ''}`}
                      placeholder="New Password"
@@ -310,11 +343,22 @@ export default class Settings extends Component {
                       data-testid="settings_submit"
                       onClick={this.handlePasswordUpdate}>Update
               </button>
+               </Expand>
               <output type="text"
                       data-testid="settings_output"
-                      className={`change_password_input change_password_output change_password_error ${this.hasError() ? 'red_error' : ''}`}
+                      className={`change_password_error ${this.hasError() ? 'red_error' : ''} ${this.state.collapsible_4 ? 'change_password_input change_password_output ' : ''}`}
                       id="output">{this.state.output}</output>
             </form>
+             <button className={`clear-storage-header settings_about ${this.state.collapsible_4 ? "" : 'clear-storage-header-margin'}`} onClick={() => this.toggle(5)}>Delete Account</button>
+             <Expand
+                open={this.state.collapsible_5}
+            duration={TRANSITION_DURATION_MS}
+            transitions={transitions}>
+               <button className="clear-storage" onClick={download}>Download Key</button>
+               <button  disabled={this.state.storage_cleared} className="clear-storage disabled-pointer" onClick={this.clearHistory}>Delete Account</button>
+               <output className={`deleted-output-message red ${this.state.storage_cleared ? '': "download-key-file-message"}`}>
+                 {this.state.storage_cleared? "Deleted" : "Deleted Key file cannot be recovered" }</output>
+             </Expand>
           </Expand>
           <button className="settings_button clear" onClick={() => this.toggle(3)}>About</button>
           <Expand

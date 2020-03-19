@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { goTo } from '../services/router'
 import Account from './account'
 import Authentication from '../services/authentication'
+import Storage from '../services/storage'
 import { getAssetURI } from '../utils/getAsset'
 import { STORAGE_ENUM, VERSION } from '../constants'
 
@@ -15,9 +16,6 @@ export default class Login extends Component {
 
   constructor (props) {
     super(props)
-    debugger;
-
-    console.log("hello")
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
 
@@ -46,7 +44,7 @@ export default class Login extends Component {
       this.setState({ output: `Incorrect password`, login_error: true })
       return
     }
-    localStorage.setItem(STORAGE_ENUM.LOGGED_IN, 'true')
+    await Storage.setItem(STORAGE_ENUM.LOGGED_IN, 'true')
     goTo(Account)
   }
 

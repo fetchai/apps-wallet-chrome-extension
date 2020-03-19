@@ -6,10 +6,12 @@ import Account from './account'
 import { format } from '../utils/format'
 import { getAssetURI } from '../utils/getAsset'
 import Authentication from '../services/authentication'
+import Storage from '../services/storage'
 import { copyToClipboard } from '../utils/copyAddressToClipboard'
 import { blockExplorerURL } from '../utils/blockExplorerURL'
 import { historyURL } from '../utils/historyURL'
 import { fetchResource } from '../utils/fetchRescource'
+import { download } from '../utils/download'
 
 /**
  * component corresponds to download view.
@@ -18,40 +20,59 @@ import { fetchResource } from '../utils/fetchRescource'
 export default class Download extends Component {
   constructor (props) {
     super(props)
-    this.download = this.download.bind(this)
+
     this.make_QR = this.make_QR.bind(this)
     this.handleCopyToClipboard = this.handleCopyToClipboard.bind(this)
     this.displayBlockExplorerLink = this.displayBlockExplorerLink.bind(this)
+    this.getAddressSingleton = this.getAddressSingleton.bind(this)
 
     this.state = {
+      address: "",
       display_block_explorer_link: false,
-      block_explorer_url: blockExplorerURL(),
-      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
+      block_explorer_url: "",
       QR: '',
       hover_1: false,
       copied: false
     }
   }
 
+    /**
+   *
+   *
+   * @returns {string | Promise<string>}
+   */
+  async getAddressSingleton() {
+    if(this.state.address !== "") return this.state.address
+      let address = await Storage.getItem(STORAGE_ENUM.ADDRESS);
+      this.setState({address: address})
+      return address
+  }
+
+
   async handleCopyToClipboard () {
     const copied_status = await copyToClipboard(this.state.address)
     this.setState({ copied: copied_status })
   }
 
-  componentDidMount () {
-    Authentication.Authenticate()
-    this.make_QR()
+  async componentDidMount () {
+    await Authentication.Authenticate()
+    await this.make_QR()
     this.displayBlockExplorerLink()
+    this.getAddressSingleton()
   }
 
   async displayBlockExplorerLink(){
-    const url = historyURL(this.state.address, 1)
+
+   const block_explorer_url = await blockExplorerURL();
+
+    const address = await this.getAddressSingleton()
+    const url = await historyURL(address, 1)
     fetchResource(url).then((response) => {
       if (response.status !== 200) return;
 
        response.json().then((result) => {
          if(result !== "Account does not exist"){
-        this.setState({ display_block_explorer_link: true })
+        this.setState({ display_block_explorer_link: true, block_explorer_url: block_explorer_url })
          }
        })
 
@@ -66,27 +87,12 @@ export default class Download extends Component {
    * Create a QR code image from a users address and
    * stores it as a DataURI (string) in state
    */
-  make_QR () {
+  async make_QR () {
+      const address = await this.getAddressSingleton()
     let qr = qrCode(4, 'M')
-    qr.addData(this.state.address)
+    qr.addData(address)
     qr.make()
     this.setState({ QR: qr.createDataURL(2, 0) })
-  }
-
-  /**
-   * Causes download of encrypted key file as json file, taking key file from storage.
-   *
-   * @returns {Promise<void>}
-   */
-
-  async download () {
-    const json_str = localStorage.getItem(STORAGE_ENUM.KEY_FILE)
-    const element = document.createElement('a')
-    const file = new Blob([json_str], { type: 'text/plain' })
-    element.href = URL.createObjectURL(file)
-    element.download = KEY_FILE_NAME
-    document.body.appendChild(element)
-    element.click()
   }
 
   render () {
@@ -117,7 +123,7 @@ export default class Download extends Component {
                href={`${this.state.block_explorer_url}${this.state.address}`}>
               View on Block Explorer
             </a>] : ""}
-            <button className='download-button download-private-key-button' data-testid="download_button" onClick={this.download}>
+            <button className='download-button download-private-key-button' data-testid="download_button" onClick={download}>
               Export Private Key
             </button>
           </div>

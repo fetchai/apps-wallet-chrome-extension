@@ -1,4 +1,5 @@
 import { ACCOUNT_HISTORY_URI, NETWORKS_ENUM, STORAGE_ENUM } from '../constants'
+import { Storage } from '../services/storage'
 
 /**
  * return block explorer url (with accounts path) based on whichever network is users selected network.
@@ -6,8 +7,8 @@ import { ACCOUNT_HISTORY_URI, NETWORKS_ENUM, STORAGE_ENUM } from '../constants'
  * @returns {string}
  */
 
-const historyURL = (address, page_number) => {
-  const network = localStorage.getItem(STORAGE_ENUM.SELECTED_NETWORK)
+const historyURL = async (address, page_number) => {
+  const network = await Storage.getItem(STORAGE_ENUM.SELECTED_NETWORK)
   if (!Object.values(NETWORKS_ENUM).some(el => el === network)) throw new Error('selected network must be within networks enum')
 
   let url = ACCOUNT_HISTORY_URI.replace('NETWORKNAME', network).replace('ACCOUNTADDRESS', address)

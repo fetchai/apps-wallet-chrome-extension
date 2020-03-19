@@ -5,10 +5,11 @@ import { getAssetURI } from '../utils/getAsset'
 import { fetchResource } from '../utils/fetchRescource'
 import RegularHistoryItem from '../dumb_components/regularHistoryItem'
 import ExpandedHistoryItem from '../dumb_components/expandedHistoryItem'
-import { getElementById } from '../utils/getElementById'
 import { blockExplorerURL } from '../utils/blockExplorerURL'
 import { historyURL } from '../utils/historyURL'
 import { BN } from 'bn.js'
+import Storage from '../services/storage'
+
 
 /**
  * Whilst all other components in views map directly to a page in the original eight wire-frames this component does not. This component is the infinite scroll which
@@ -25,6 +26,7 @@ export default class History extends Component {
     this.filterResults = this.filterResults.bind(this)
     this.merge_without_duplicates = this.merge_without_duplicates.bind(this)
     this.fetchFirstPage = this.fetchFirstPage.bind(this)
+    this.getAddressSingleton = this.getAddressSingleton.bind(this)
 
     // eslint-disable-next-line react/prop-types
     this.setHistoryCount = props.setHistoryCount
@@ -32,9 +34,9 @@ export default class History extends Component {
     this.state = {
       // eslint-disable-next-line react/prop-types
       show_history: props.show_history,
-      address: localStorage.getItem(STORAGE_ENUM.ADDRESS),
-      blockexplorer_url: blockExplorerURL('transactions/'),
+      blockexplorer_url: "",
       items: 20,
+      address: "",
       // an array containing page numbers of all fetched pages of transaction history
       loaded_page_numbers: [0],
       has_more_items: true,
@@ -51,9 +53,9 @@ export default class History extends Component {
   }
 
   async componentDidMount () {
-
     if (typeof window.fetchai_history !== 'undefined') {
-      this.setState({ results: window.fetchai_history, blockexplorer_url: blockExplorerURL('transactions/') })
+      const blockexplorer_url = await blockExplorerURL('transactions/');
+      this.setState({ results: window.fetchai_history, blockexplorer_url: blockexplorer_url })
       this.setHistoryCount(window.fetchai_history.length)
     }
 
@@ -107,13 +109,26 @@ export default class History extends Component {
   }
 
   /**
+   *
+   *
+   * @returns {address | Promise<address>}
+   */
+  async getAddressSingleton(){
+    if(this.state.address !== "") return this.state.address
+      let address = await Storage.getItem(STORAGE_ENUM.ADDRESS);
+      this.setState({address: address})
+      return address
+  }
+
+  /**
    * use this method to to get first page of history.
    * This is polled for so we can filter in new results.
    *
    * @returns {Promise<void>}
    */
   async fetchFirstPage () {
-    const url = historyURL(this.state.address, 1)
+    const address = await this.getAddressSingleton()
+    const url = await historyURL(address, 1)
     fetchResource(url).then((response) => { this.handlePageFetchResponse(response)})
   }
 
@@ -125,7 +140,8 @@ export default class History extends Component {
    * @returns {Promise<void>}
    */
   async fetchAnotherPageOfHistory () {
-    const url = historyURL(this.state.address, Math.max(...this.state.loaded_page_numbers) + 1)
+    const address = await this.getAddressSingleton()
+    const url = await historyURL(address, Math.max(...this.state.loaded_page_numbers) + 1)
     fetchResource(url).then((response) => { this.handlePageFetchResponse(response)})
   }
 
@@ -201,7 +217,7 @@ export default class History extends Component {
       let amount = new BN(el.amount)
 
       // we decide here if amount is positive or negative
-      if (el.from_address === this.state.address) amount = amount.neg()
+      if (el.from_address === this.getAddressSingleton()) amount = amount.neg()
       const status = (amount === 0) ? 'unknown' : 'Executed';
 
       return {
@@ -242,7 +258,7 @@ export default class History extends Component {
                                       digest={this.state.results[i].digest}
                                       status={this.state.results[i].status}
                                       from_address={this.state.results[i].from_address}
-                                      address={this.state.address}
+                                      address={this.getAddressSingleton()}
                                       to_address={this.state.results[i].to_address}
                                       amount={this.state.results[i].amount}
                                       block_explorer_url={this.state.blockexplorer_url}
