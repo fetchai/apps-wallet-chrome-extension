@@ -10,11 +10,8 @@ const DEFAULT_FEE_LIMIT = 20
 
 // uris we use for requests for data
 const DOLLAR_PRICE_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/'
-
 const ACCOUNT_HISTORY_URI = `https://blockexplorer.geuwe2a-NETWORKNAME.fetch-ai.com/api/v1/accounts/ACCOUNTADDRESS/transfers`
-
 const BOOTSTRAP_REQUEST_URI = `https://bootstrap.fetch.ai/endpoints/?network=`
-
 // the intervals in MS we poll for data at
 const DOLLAR_PRICE_CHECK_INTERVAL_MS = 5000
 const BALANCE_CHECK_INTERVAL_MS = 1000

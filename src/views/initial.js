@@ -19,8 +19,6 @@ export default class Initial extends Component {
   }
 
  async componentDidMount () {
-await Storage.setItem ('key99', 'storagetest')
-const r99 = await Storage.getItem ('key99')
     // if they have a saved key they should not be here so redirect them to Login.
     if (await Authentication.hasSavedKey()) await Authentication.Authenticate(true)
   }

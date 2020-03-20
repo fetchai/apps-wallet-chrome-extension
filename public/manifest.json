@@ -1,7 +1,7 @@
 {
   "short_name": "Fetch.ai Wallet",
   "name": "Fetch.ai Web Wallet",
-  "version": "1.0",
+  "version": "1.1",
   "manifest_version": 2,
   "icons": { "96": "/assets/favicon-96x96.png",
            "16": "/assets/favicon-16x16.png",
@@ -9,9 +9,7 @@
   "background": {
     "scripts": ["app/background.js"]
   },
-  "browser_action": {
-     "default_popup": "/index.html"
-  },
+  "browser_action": {},
   "content_scripts" : [
     {
       "matches": [ "<all_urls>" ],
