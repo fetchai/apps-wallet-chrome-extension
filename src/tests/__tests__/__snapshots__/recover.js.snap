@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`:Recover initial snapshot test 1`] = `
+<div
+  className="OverlayMain"
+  data-testid="recover"
+  id="my-extension-root-inner"
+>
+  <div
+    className="OverlayMainInner"
+  >
+    <h2>
+      Recover
+    </h2>
+    <hr />
+    <div
+      className=""
+      style={
+        Object {
+          "height": "auto",
+          "opacity": 1,
+          "overflow": "unset",
+          "transition": "height 500ms ease-in-out,opacity 500ms ease-in-out,background 500ms ease-in-out",
+        }
+      }
+    >
+      <form
+        className="recover-form"
+        id="form"
+      >
+        <legend
+          className="recover-legend"
+        >
+          Upload File with Password
+        </legend>
+        <button
+          className="recover-input   upload-button"
+          onClick={[Function]}
+        >
+          
+        </button>
+        <input
+          className="hide"
+          id="file"
+          label="file"
+          onChange={[Function]}
+          type="file"
+        />
+        <input
+          className="recover-input "
+          id="password"
+          name="password"
+          onChange={[Function]}
+          placeholder="Password"
+          type="password"
+          value=""
+        />
+        <input
+          className="recover-input recover-address "
+          id="address"
+          label="address"
+          name="address"
+          onChange={[Function]}
+          placeholder="Address (optional)"
+          type="text"
+          value=""
+        />
+        <output
+          className="recover-output "
+          id="output"
+          type="text"
+        >
+          
+        </output>
+        <div
+          className="small-button-container"
+        >
+          <button
+            className="recover-back-button"
+            onClick={[Function]}
+            type="button"
+          >
+            Back
+          </button>
+          <button
+            className="recover-upload-button"
+            onClick={[Function]}
+            type="submit"
+          >
+            Upload
+          </button>
+        </div>
+      </form>
+    </div>
+    <div
+      className=""
+      style={
+        Object {
+          "height": 0,
+          "opacity": 0,
+          "overflow": "hidden",
+          "transition": "height 500ms ease-in-out,opacity 500ms ease-in-out,background 500ms ease-in-out",
+        }
+      }
+    >
+      <div
+        className="recover-warning-container"
+      >
+        <p>
+          Warning! Not providing your public address means that recovery won't error if your password is incorrect. 
+        </p>
+        <p>
+          It will instead decrypt to a random incorrect address (probably without funds).
+        </p>
+        <p>
+          If this happens don't panic but clear your local storage and try again.
+        </p>
+        <p>
+          Click "Next" to proceed anyway or "Back" to return to the upload form.
+        </p>
+      </div>
+      <div
+        className="small-button-container"
+      >
+        <button
+          className="recover-back-button"
+          onClick={[Function]}
+          type="button"
+        >
+          Back
+        </button>
+        <button
+          className="recover-upload-button"
+          onClick={[Function]}
+          type="submit"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

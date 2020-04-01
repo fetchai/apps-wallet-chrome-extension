@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`:Initial initial renders without crashing 1`] = `undefined`;
+
+exports[`:Initial initial snapshot test 1`] = `
+<div
+  id="my-extension-root-inner"
+>
+  <video
+    autoPlay="autoplay"
+    className="vid"
+    loop="loop"
+    muted="muted"
+    playsInline="playsinline"
+  >
+    <source
+      type="video/mp4"
+    />
+  </video>
+  <div
+    className="overlay1"
+  >
+    <img
+      alt="Fetch.ai's Logo"
+      className="logo"
+    />
+  </div>
+  <div
+    className="overlay2"
+  >
+    <div
+      className="overlay3"
+    >
+      <button
+        className="button-free-standing"
+        data-testid="recover_button"
+        onClick={[Function]}
+      >
+        Recover
+      </button>
+      <button
+        className="button-free-standing"
+        onClick={[Function]}
+      >
+        Create
+      </button>
+    </div>
+  </div>
+</div>
+`;
