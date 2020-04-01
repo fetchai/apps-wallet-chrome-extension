@@ -24,7 +24,7 @@ providing relavent links within our [Block Explorer](https://explore.fetch.ai/) 
 
 ### Building from source files. 
 
-####Note: Built files are included in this repo for ease of use: 
+#### Note: Built files are included in this repo for ease of use: 
 
 - Install [Node.js](https://nodejs.org) version >== 10
     - If you are using [nvm](https://github.com/creationix/nvm#installation) (recommended) running `nvm use` will automatically choose the right node version for you.
