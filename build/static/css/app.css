@@ -995,6 +995,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     justify-content: center;
+        padding-bottom: 5px;
 }
 
 #my-extension-root-inner .send-form {

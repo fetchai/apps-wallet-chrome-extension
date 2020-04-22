@@ -1,7 +1,7 @@
 // const NETWORK_NAME = 'devnet'
 // name to assign to downloadable key file on the end-users system.
 const KEY_FILE_NAME = 'private_key.json'
-const VERSION = '1.1.0'
+const VERSION = '1.2.0'
 
 // flag to change when running as extension or in browser.
 const EXTENSION = true
@@ -9,19 +9,14 @@ const EXTENSION = true
 const DEFAULT_FEE_LIMIT = 20
 
 // uris we use for requests for data
-const DOLLAR_PRICE_URI = 'https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/'
-
+const DOLLAR_PRICE_URI = 'https://explore.fetch.ai/api/v1/get_price/'
 const ACCOUNT_HISTORY_URI = `https://blockexplorer.geuwe2a-NETWORKNAME.fetch-ai.com/api/v1/accounts/ACCOUNTADDRESS/transfers`
-
 const BOOTSTRAP_REQUEST_URI = `https://bootstrap.fetch.ai/endpoints/?network=`
-
 // the intervals in MS we poll for data at
 const DOLLAR_PRICE_CHECK_INTERVAL_MS = 5000
 const BALANCE_CHECK_INTERVAL_MS = 1000
-
 // the multiple difference between regular FET and canonical FET
 const CANONICAL_DIFFERENCE = 10000000000
-
 // copy hover messages
 const COPIED_MESSAGE = 'Copied!'
 const COPY_ADDRESS_TO_CLIPBOARD_MESSAGE = 'Copy Address to clipboard'

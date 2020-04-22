@@ -192,24 +192,27 @@ export default class Send extends Component {
    * @param event
    */
   async handleAmountChange (event) {
+
     let amount = this.stripNonNumericChars(event.target.value)
+
         amount = this.stripMultipleDecimalPoints(amount)
+
         amount = this.trunc10DP(amount)
-
+debugger;
     const percentage = await Storage.getItem(STORAGE_ENUM.DOLLAR_PRICE);
-
+debugger;
     if (percentage === null) return this.setState({
       dollar: null,
-      amount: event.target.value,
+      amount: amount,
       amount_error_message: '',
       amount_error: false
     })
-
+debugger;
     await this.sufficientFunds(amount)
     //todo consider number overflow (53 byte) issue then delete this comment when addressed.
     if (parseFloat(amount) === 0) return this.setState({ dollar: 0, amount: 0 })
 
-
+debugger;
     this.setState({
       dollar: this.calculateDollarDisplayAmount(amount, percentage),
       amount: amount

@@ -117,6 +117,7 @@ export default class Account extends Component {
    */
   async fetchDollarPrice () {
     const response = await fetchResource(DOLLAR_PRICE_URI)
+    debugger;
     if (response.status !== 200) return
     let error = false
     const data = await response.json().catch(() => error = true)

@@ -46,6 +46,7 @@ class Main extends React.Component {
 const app = document.createElement('div')
 app.style.overflow = 'hidden'
 app.id = 'my-extension-root'
-document.getElementById('root').appendChild(app)
+// we have rare id for root to prevent conflicts with page, otherwise with common id it could conflict and be injected twice.
+document.getElementById('root-2dHdxs1cZYs61h598UQnvSM3gFsyx81rqbWrSDu1vp1QJpEDE7').appendChild(app)
 ReactDOM.render(<Main/>, app)
 setUpIframe()
