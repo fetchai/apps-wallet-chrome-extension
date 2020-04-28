@@ -1,7 +1,7 @@
 {
   "short_name": "Fetch.ai Wallet",
   "name": "Fetch.ai Web Wallet",
-  "version": "1.2",
+  "version": "1.4",
   "description": "The Fetch.ai Web Wallet is a Chrome Extension for making interactions with the Fetch.ai Ledger super easy",
   "manifest_version": 2,
   "icons": { "96": "/assets/favicon-96x96.png",
@@ -15,7 +15,7 @@
   },
   "content_scripts" : [
     {
-      "matches": [ "<all_urls>" ],
+      "matches": ["http://fetch.ai/"],
       "css": ["/static/css/app.css"],
       "js": ["/static/js/content.js"]
     }
@@ -31,9 +31,7 @@
     "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*"
   ],
   "permissions": [
-          "storage",
-    "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/get_price/",
-    "https://blockexplorer.geuwe2a-devnet.fetch-ai.com/api/v1/transactions*"
-        ],
+          "storage"
+],
   "content_security_policy": "script-src 'self' 'sha256-GgRxrVOKNdB4LrRsVPDSbzvfdV4UqglmviH9GoBJ5jk='; object-src 'self'"
 }

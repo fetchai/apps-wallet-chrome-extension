@@ -117,7 +117,6 @@ export default class History extends Component {
   async getAddressSingleton(){
     if(this.state.address !== "") return this.state.address
     let address = await Storage.getItem(STORAGE_ENUM.ADDRESS);
-    address = "2LQ4Hzzt28WoQAm22oC92MKG2WNM7QT1dqDmW48vuz4Jj5qr2w"
       this.setState({address: address})
       return address
   }

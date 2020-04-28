@@ -38,6 +38,7 @@ export default class Authentication {
   }
 
   static async logOut () {
+      delete window.fetchai_history
     await Storage.setItem(STORAGE_ENUM.LOGGED_IN, 'false')
   }
 

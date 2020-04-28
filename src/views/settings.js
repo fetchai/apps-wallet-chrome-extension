@@ -93,6 +93,7 @@ constructor (props) {
 
   clearHistory() {
     chrome.storage.sync.clear()
+    delete window.fetchai_history
     this.setState({storage_cleared: true})
     setTimeout(goTo.bind(null, Initial), 5000)
   }
